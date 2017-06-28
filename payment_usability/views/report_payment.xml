@@ -1,0 +1,124 @@
+<odoo>
+    <template id="report_payment_dcc">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+				<t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})" />
+		        <div class="page">
+					<style>
+						div{
+							font-size: 16px;
+						}
+					</style>
+					<div class="row">
+						<div class="col-xs-9">
+						</div>	
+						<div class="col-xs-3">
+						     <strong>Date:</strong>
+							 <span t-field="o.payment_date" />
+						</div>					
+					</div>
+
+		            <br/>
+					
+					<div class="row">
+						<div class="col-xs-4">
+						</div>
+						<div class="col-xs-2">
+							<strong>Received from:</strong>
+						</div>
+						<div class="col-xs-6">
+							 <span t-field="o.payment_info"/>
+						</div>
+					</div>
+					
+					<div class="row">
+						<div class="col-xs-4">
+						</div>
+						<div class="col-xs-2">
+							<strong>The sum of:</strong>
+						</div>
+						<div class="col-xs-6">
+							<span t-field="o.amount"
+								t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+						</div>
+					</div>
+					
+					<div class="row">
+						<div class="col-xs-4">
+						</div>
+						<div class="col-xs-2">
+							<strong>being:</strong>
+						</div>
+						<div class="col-xs-6">
+							<span>Payment on Account</span>
+						</div>
+					</div>
+              
+					<!--<table class="table table-condensed">
+		            	<tr>
+		                	<td class="col-xs-6">
+		                    	<b><span>Received from:</span></b>
+		                    </td>
+		                    <td class="text-right">
+		                        <b><span t-field="o.partner_id.name"/></b>
+		                    </td>
+		                    <td/>
+		               	</tr>
+						<br/>
+		                <tr>
+		        			<td colspan="3">
+		            			<b><span>The sum of:</span></b>
+		                   	</td>
+		                    <td class="text-right">
+		        				<b><span t-field="o.amount"
+		                     		t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></b>
+		                    </td>
+		                    <td/>
+		                    </tr>
+							<br/>
+		                    <tr>
+		                        <td colspan="3">
+		                            <b><span>being:</span></b>
+		                        </td>
+		                        <td class="text-right">
+									Payment on Account
+		                        </td>
+		                        <td/>
+		                    </tr>
+					
+						<div class="col-xs-3">
+								<tr style="border-top:2px solid black !important;">
+									Cashier Signature
+								</tr>
+							</div>
+						</div>
+					</table>-->
+				
+					<br/>
+					<div class="row">
+						<div class="col-xs-6">
+							</div>
+						<div class="col-xs-3">
+						    	<span t-field="o.amount" /> K
+							</div>
+					</div>
+					<br/>
+					<br/>
+					<br/>
+					<div class="row">
+						<div class="col-xs-6">
+						</div>
+						<div class="col-xs-3">
+							<tr style="border-top:2px solid black !important;">
+								Cashier Signature
+							</tr>
+						</div>
+					</div>
+		    	</div>
+            
+			</t>
+		</t>
+    
+	</template>
+
+</odoo>

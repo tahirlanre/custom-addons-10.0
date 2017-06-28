@@ -1,0 +1,29 @@
+<odoo>
+	<record id="paperformat_dulux_custom_payment_paper"
+	        model="report.paperformat"> 
+	  <field name="name">Dulux Custom Payment Paper</field>
+	  <field name="format">Letter</field> 
+	  <field name="page_height">0</field> 
+	  <field name="page_width">0</field> 
+	  <field name="orientation">Landscape</field> 
+	  <field name="margin_top">20</field> 
+	  <field name="margin_bottom">50</field> 
+	  <field name="margin_left">7</field> 
+	  <field name="margin_right">7</field> 
+	  <field name="header_line" eval="False" /> 
+	  <field name="header_spacing">35</field>
+	  <field name="dpi">90</field> 
+	</record>
+	
+    <report
+        id="payment_receipt"
+        model="account.payment"
+        string="DCC Receipt"
+        report_type="qweb-pdf"
+        name="payment_usability.report_payment_dcc"
+        file="payment_usability.report_payment_dcc"
+		paperformat="paperformat_dulux_custom_payment_paper"
+    />
+	
+
+</odoo>

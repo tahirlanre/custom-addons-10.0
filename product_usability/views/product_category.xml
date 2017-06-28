@@ -1,0 +1,14 @@
+<odoo>
+	<record id="product_category_form_view_custom" model="ir.ui.view">
+        <field name="name">product.category.form.custom</field>
+        <field name="model">product.category</field>
+		<field name="inherit_id" ref="product.product_category_form_view" />
+        <field name="arch" type="xml">
+			<xpath expr="//h1" position="after">
+				<br/>
+                <label for="code" string="Category code" class="oe_edit_only"/>
+                <h1><field name="code"/></h1>
+			</xpath>
+		</field>
+	</record>
+</odoo>

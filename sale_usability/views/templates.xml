@@ -1,0 +1,115 @@
+<odoo>
+	<record id="view_order_form_customer_details" model="ir.ui.view">
+        <field name="name">sale.order.form.customer.details</field>
+        <field name="model">sale.order</field>
+		<field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+	        <field name="partner_id" position="after">
+	          <field name="customer_details"/>
+	        </field>
+	        <xpath expr="//field[@name='order_line']/tree/field[@name='tax_id']" position="replace">
+	        </xpath>
+			<xpath expr="//group[@name='sales_person']" position="before">
+				<group string="Payment Information">
+					<field name="receipt_no"/>
+				</group>
+			</xpath>
+		</field>
+	</record>
+	
+	<record id="invoice_form_customer_details" model="ir.ui.view">
+        <field name="name">account.invoice.form.customer.details</field>
+        <field name="model">account.invoice</field>
+		<field name="inherit_id" ref="account.invoice_form"/>
+        <field name="arch" type="xml">
+	        <field name="partner_id" position="after">
+	          <field name="customer_details"/>
+	        </field>
+		</field>
+	</record>
+	
+	<record id="view_partner_form" model="ir.ui.view">
+		<field name="name">res.partner.form.custom</field>
+		<field name="model">res.partner</field>
+		<field name="inherit_id" ref="base.view_partner_form"/>
+		<field name="arch" type="xml">
+			<field name="name" position="before">
+				<field name="ref" placeholder="Customer code"/>
+			</field>
+			<xpath expr="//group//field[@name='ref']" position="attributes">
+				<attribute name="invisible">1</attribute>
+			</xpath>
+		</field>
+	</record>	
+	
+	<record id="view_order_tree_custom" model="ir.ui.view">
+		<field name="name">sale.order.tree.custom</field>
+		<field name="model">sale.order</field>
+		<field name="inherit_id" ref="sale.view_order_tree"/>
+		<field name="arch" type="xml">
+			<xpath expr="//tree" position="replace">
+                <tree string="Sales Orders" decoration-bf="message_needaction==True" decoration-muted="state=='cancel'">
+                    <field name="message_needaction" invisible="1"/>
+                    <field name="customer_code"/>
+                    <field name="name" string="Order Number"/>
+                    <field name="date_order"/>
+                    <field name="name_from_customer_details"/>
+                    <field name="amount_total" sum="Total Tax Included" widget="monetary"/>
+                    <field name="invoice_status"/>
+                    <field name="state" invisible="1"/>
+                </tree>
+			</xpath>
+		</field>
+	</record>
+	
+    <record id="view_quotation_tree_custom" model="ir.ui.view">
+        <field name="name">sale.order.tree.custom</field>
+        <field name="model">sale.order</field>
+		<field name="inherit_id" ref="sale.view_quotation_tree"/>
+        <field name="arch" type="xml">
+			<xpath expr="//tree" position="replace">
+            <tree string="Quotation" class="o_sale_order" decoration-bf="message_needaction==True" decoration-muted="state=='cancel'">
+                <field name="message_needaction" invisible="1"/>
+                <field name="customer_code"/>
+                <field name="name" string="Order Number"/>
+                <field name="date_order"/>
+                <field name="name_from_customer_details"/>
+                <field name="amount_total" sum="Total Tax Included" widget="monetary"/>
+                <field name="invoice_status"/>
+                <field name="state" invisible="1"/>
+            </tree>
+		</xpath>
+        </field>
+    </record>
+	
+    <record id="invoice_tree_custom" model="ir.ui.view">
+        <field name="name">account.invoice.tree.custom</field>
+        <field name="model">account.invoice</field>
+		<field name="inherit_id" ref="account.invoice_tree"/>
+        <field name="arch" type="xml">
+			<xpath expr="//tree" position="replace">
+            <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" string="Invoice">
+                <field name="customer_code" string="Customer"/>
+                <field name="date_invoice"/>
+                <field name="number"/>
+                <field name="commercial_partner_id" invisible="1"/>
+                <field name="reference" invisible="1"/>
+                <field name="name" invisible="1"/>
+                <field name="journal_id" invisible="1"/>
+                <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+				<field name="name_from_customer_details"/>
+               <!-- <field name="user_id"/>
+                <field name="date_due"/>-->
+                <field name="origin"/>
+                <field name="amount_total_signed" string="Total" sum="Total"/>
+                <field name="residual_signed" string="Amount Due" sum="Amount Due"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="company_currency_id" invisible="1"/>
+                <field name="state"/>
+                <field name="type" invisible="context.get('type',True)"/>
+            </tree>
+			</xpath>
+        </field>
+    </record>
+		
+</odoo>
