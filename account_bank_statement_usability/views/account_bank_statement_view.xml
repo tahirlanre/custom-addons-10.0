@@ -5,12 +5,31 @@
 		   <field name="inherit_id" ref="account.view_bank_statement_form"/>
            <field name="arch" type="xml">
 			   <xpath expr="//group//group[2]" position="replace">
-				  
-			   
 			   </xpath>
-			   <field name="ref" position="after">
-				   <field name="account_id"/>
-			   </field>
+			   <xpath expr="//page[@name='statement_line_ids']" position="replace">
+                   <page string="Transactions" name="statement_line_ids">
+                       <field name="line_ids" context="{'date':date}">
+                           <tree editable="bottom" string="Statement lines" decoration-muted="journal_entry_ids">
+                               <field name="sequence"  widget="handle"/>
+                               <field name="journal_entry_ids" invisible="1"/>
+                               <field name="date" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
+							   <field name="account_id"/>
+                               <field name="name" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
+                               <field name="partner_id" domain="['|',('parent_id','=',False),('is_company','=',True)]"
+                                    context="{'default_supplier': 1}"
+                                    attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }" invisible="1"/>
+							   
+                               <field name="ref" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }" groups="base.group_no_one" invisible = "1"/>
+                               <field name="amount" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
+                               <field name="journal_currency_id" invisible="1"/>
+                               <field name="amount_currency" invisible="1" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
+                               <field name="currency_id" options="{'no_create': True}" invisible="1" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
+                               <field name="bank_account_id" invisible="1" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"
+                                   domain="['|', ('partner_id', '=', partner_id), ('partner_id', '=', False)]"/>
+                           </tree>
+                       </field>
+                   </page>
+			   </xpath>
 		   </field>
 	   </record>
 </odoo>

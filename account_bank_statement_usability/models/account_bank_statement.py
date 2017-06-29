@@ -43,6 +43,7 @@ class AccountBankStatementLine(models.Model):
     account_id = fields.Many2one('account.account', required=True, string='Counterpart Account', domain=[('deprecated', '=', False)],
         help="This technical field can be used at the statement line creation/import time in order to avoid the reconciliation"
              " process on it later on. The statement line will simply create a counterpart on this account")
+    name = fields.Char(string='Description', required=True)
              
 class AccountBankStatement(models.Model):
     _inherit = "account.bank.statement"
