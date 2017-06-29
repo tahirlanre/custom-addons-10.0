@@ -26,7 +26,7 @@
     'company': 'SITASYS Limited',
     'website': '',
     'category': 'Sales',
-    'depends': ['account','product_margin'],
+    'depends': ['account','product_margin','sale_margin'],
     'license': 'AGPL-3',
     'data': [
         'views/product_product.xml',
