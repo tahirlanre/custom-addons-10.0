@@ -1,0 +1,5 @@
+<odoo>
+	<template id="report_financial_custom" inherit_id="account.report_financial">
+		
+	</template>
+</odoo>
