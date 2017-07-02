@@ -58,28 +58,16 @@ class ProductProduct(models.Model):
                 where l.product_id = %s and i.state in %s and i.type IN %s and (i.date_invoice IS NULL or (i.date_invoice>=%s and i.date_invoice<=%s and i.company_id=%s))
                 """
             
-            sqlstr1="""
-                select
-            	sum(sl.purchase_price * sl.qty_invoiced) as total_cost
-            	from sale_order_line sl
-            	left join product_product product on (product.id=sl.product_id)
-            	left join sale_order so on (so.id=sl.order_id)
-            	left join account_invoice a on (a.origin=so.name)
-            	where sl.product_id = %s and sl.state = %s and a.state IN %s and a.type IN %s and (a.date_invoice IS NULL or (a.date_invoice>=%s and a.date_invoice<=%s))
-                """
-                
             invoice_types = ('out_invoice', 'in_refund')
             sale_state = 'sale'
             self.env.cr.execute(sqlstr, (val.id, states, invoice_types, date_from, date_to, company_id))
             result = self.env.cr.fetchall()[0]
-            self.env.cr.execute(sqlstr1, (val.id, sale_state, states, invoice_types, date_from, date_to))
-            result1 = self.env.cr.fetchall()[0]
             res[val.id]['sale_avg_price'] = result[0] and result[0] or 0.0
             res[val.id]['sale_num_invoiced'] = result[1] and result[1] or 0.0
             res[val.id]['turnover'] = result[2] and result[2] or 0.0
             res[val.id]['sale_expected'] = result[3] and result[3] or 0.0
             res[val.id]['sales_gap'] = res[val.id]['sale_expected'] - res[val.id]['turnover']
-            res[val.id]['total_cost'] = result1[0] and result1[0] or 0.0
+            res[val.id]['total_cost'] = val.standard_price * res[val.id]['sale_num_invoiced']
             ctx = self.env.context.copy()
             ctx['force_company'] = company_id
             invoice_types = ('in_invoice', 'out_refund')
