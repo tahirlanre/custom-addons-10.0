@@ -25,12 +25,12 @@
         - Show Gross Profit and Net Profit on P&L Report
     """,
     'author': 'Tahir Aduragba',
-    'category': 'Accounting',
+    'category': 'Accounts',
     'depends': ['base', 'account'],
     'license': 'AGPL-3',
     'data': [
         'views/account_financial_report_data.xml',
-        'views/account_financial_report_view.xml',
+        'views/report_financial.xml',
     ],
     'demo': [],
     'installable': True,
@@ -38,5 +38,6 @@
 
 }
 
+#TODO write format function
 #TODO consider signs on reports
 #TODO develop addon for House Affairs charts of account
