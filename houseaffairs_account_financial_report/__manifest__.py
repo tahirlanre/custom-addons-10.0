@@ -19,7 +19,7 @@
 {
     'name': 'Custom Financial Report for House Affairs Nigeria Limited',
     'summary': """""",
-    'version': '10.0.1.0',
+    'version': '10.0.1.1',
     'description': """
         - Show balances after account reports
         - Show Gross Profit and Net Profit on P&L Report

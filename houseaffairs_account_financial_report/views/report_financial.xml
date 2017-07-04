@@ -19,9 +19,383 @@
                         </p>
                     </div>
                 </div>
-
+				
+                <table class="table table-condensed" t-if="not data['enable_filter'] and not data['debit_credit']">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th class="text-right" style="text-decoration:underline;">Period</th>
+							<th></th>
+                            <th class="text-right" style="text-decoration:underline;">Year to Date</th>
+							<th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="get_account_lines" t-as="a">
+                            <t t-if="a['level'] != 0">
+                               <!-- <t t-if="a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                <t t-if="not a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>-->
+							    <t t-set="style" t-value="'font-weight: bold;'"/>
+								<t t-if="a.get('name') == 'Sales'"><t t-set="sales_balance" t-value="a.get('balance')"/></t>
+								<t t-if="a.get('name') == 'Cost of Sales'"><t t-set="c_o_sales_balance" t-value="a.get('balance')"/></t>
+								<t t-if="a.get('name') == 'Direct Expenses'"><t t-set="d_expenses_balance" t-value="a.get('balance')"/></t>
+								<t t-if="a.get('name') == 'Overheads'"><t t-set="overheads_balance" t-value="a.get('balance')"/></t>
+								<t t-if="a.get('name') == 'Fixed Assets'"><t t-set="fixed_assets_balance" t-value="a.get('balance')"/></t>
+								<t t-if="a.get('name') == 'Current Assets'"><t t-set="current_assets_balance" t-value="a.get('balance')"/></t>
+								<t t-if="a.get('name') == 'Current Liabilities'"><t t-set="current_liabilities_balance" t-value="a.get('balance')"/></t>
+								<t t-if="a.get('name') == 'Long Term Liabilities'"><t t-set="long_term_liabilities_balance" t-value="a.get('balance')"/></t>
+								<t t-if="'Capital' or  'Reserves' in a.get('name')"><t t-set="capital_balance" t-value="a.get('balance')"/></t>
+                                <td>
+                                    <span style="color: white;" t-esc="'..' * a.get('level', 0)"/>
+                                    <span t-att-style="style" t-esc="a.get('name')"/>
+                                </td>
+								<t t-foreach="a.get('sub_lines')" t-as="sub_a">
+									<t t-set="sub_style" t-value="'font-weight: normal;'"/>
+									<tr>
+										<td>
+											<span style="color: white;" t-esc="'..' * sub_a.get('level', 0)"/>
+											<span t-att-style="sub_style" t-esc="sub_a.get('name')"/>
+										</td>
+									
+										<!-- check if balance is +ve or -ve. if -ve, replace - sign with paranthesis-->
+										<t t-if="sub_a.get('balance') &gt; 0 or sub_a.get('balance') == 0">
+											<td class="text-right">
+												<span t-att-style="sub_style" t-esc="'{:,.2f}'.format(abs(sub_a.get('balance')))"/>
+											</td>
+										</t>
+								
+										<t t-if="sub_a.get('balance') &lt; 0">
+											<td class="text-right">
+												(<span t-att-style="sub_style" t-esc="'{:,.2f}'.format(abs(sub_a.get('balance')))"/>)
+											</td>
+										</t>
+									</tr>
+								</t>
+								<!--if report_type, balance should move to new row and align to cells for report balance-->
+								<t t-if="not a.get('level') &gt; 1">
+									<tr></tr>
+									<td></td>
+								</t>
+								<td></td>
+								<!-- check if balance is +ve or -ve. if -ve, replace - sign with paranthesis-->
+								<t t-if="a.get('balance') &gt; 0 or a.get('balance') == 0">
+									<td class="text-right">
+										<span t-att-style="style" t-esc="'{:,.2f}'.format(abs(a.get('balance')))"/>
+									</td>
+								</t>
+							
+								<t t-if="a.get('balance') &lt; 0">
+									<td class="text-right">
+										(<span t-att-style="style" t-esc="'{:,.2f}'.format(abs(a.get('balance')))"/>)
+									</td>
+								</t>
+								<t t-if="a.get('name') == 'Direct Expenses'">
+									<tr>
+										<td t-att-style="style">
+											<span style="color: white;" t-esc="'..' * 10"/>
+											<span>Gross Profit/(Loss)</span>
+										</td>
+										<td class="text-right" t-att-style="style">
+										</td>
+										<td class="text-right" t-att-style="style">
+											<t t-set="gross_profit_loss" t-value="sales_balance - (c_o_sales_balance+d_expenses_balance)"/>
+											<t t-if="gross_profit_loss &gt; 0"><t t-esc="'{:,.2f}'.format(gross_profit_loss)"/></t>
+											<t t-if="gross_profit_loss &lt; 0">(<t t-esc="'{:,.2f}'.format(abs(gross_profit_loss))"/>)</t>
+										</td>
+									</tr>
+								</t>
+								<t t-if="a.get('name') == 'Overheads'">
+									<tr>
+										<td t-att-style="style">
+											<span style="color: white;" t-esc="'..' * 10"/>
+											<span>Net Profit/(Loss)</span>
+										</td>
+										<td class="text-right" t-att-style="style">
+										</td>
+										<td class="text-right" t-att-style="style">
+											<t t-set="net_profit_loss" t-value="gross_profit_loss - overheads_balance"/>
+											<t t-if="net_profit_loss &gt; 0"><t t-esc="'{:,.2f}'.format(net_profit_loss)"/></t>
+											<t t-if="net_profit_loss &lt; 0">(<t t-esc="'{:,.2f}'.format(abs(net_profit_loss))"/>)</t>
+										</td>
+									</tr>
+								</t>
+								<t t-if="a.get('name') == 'Current Liabilities'">
+									<tr>
+										<td t-att-style="style">
+											<span style="color: white;" t-esc="'..' * 10"/>
+											<span>Current Assets less Current Liabilities</span>
+										</td>
+										<td class="text-right" t-att-style="style">
+										</td>
+										<td class="text-right" t-att-style="style">
+											<t t-set="current_assets_less_liabilities" t-value="current_assets_balance - current_liabilities_balance"/>
+											<t t-if="current_assets_less_liabilities &gt; 0"><t t-esc="'{:,.2f}'.format(current_assets_less_liabilities)"/></t>
+											<t t-if="current_assets_less_liabilities &lt; 0">(<t t-esc="'{:,.2f}'.format(abs(current_assets_less_liabilities))"/>)</t>
+										</td>
+									</tr>
+									<tr>
+										<td t-att-style="style">
+											<span style="color: white;" t-esc="'..' * 10"/>
+											<span>Total Assets less Current Liabilities</span>
+										</td>
+										<td class="text-right" t-att-style="style">
+										</td>
+										<td class="text-right" t-att-style="style">
+											<t t-set="total_assets_less_current_liabilities" t-value="(current_assets_balance+fixed_assets_balance) - current_liabilities_balance"/>
+											<t t-if="total_assets_less_current_liabilities &gt; 0"><t t-esc="'{:,.2f}'.format(total_assets_less_current_liabilities)"/></t>
+											<t t-if="total_assets_less_current_liabilities &lt; 0">(<t t-esc="'{:,.2f}'.format(abs(total_assets_less_current_liabilities))"/>)</t>
+										</td>
+									</tr>
+								</t>
+								<t t-if="a.get('name') == 'Long Term Liabilities'">
+									<tr>
+										<td t-att-style="style">
+											<span style="color: white;" t-esc="'..' * 10"/>
+											<span>Total Assets less Total Liabilities</span>
+										</td>
+										<td class="text-right" t-att-style="style">
+										</td>
+										<td class="text-right" t-att-style="style">
+											<t t-set="total_assets_less_total_liabilities" t-value="(fixed_assets_balance+current_assets_balance) - (current_liabilities_balance+long_term_liabilities_balance)"/>
+											<t t-if="total_assets_less_total_liabilities &gt; 0"><t t-esc="'{:,.2f}'.format(total_assets_less_total_liabilities)"/></t>
+											<t t-if="total_assets_less_total_liabilities &lt; 0">(<t t-esc="'{:,.2f}'.format(abs(total_assets_less_total_liabilities))"/>)</t>
+										</td>
+									</tr>
+								</t>
+                            </t>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table table-condensed" t-if="data['enable_filter'] == 1 and not data['debit_credit']">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th class="text-right" style="text-decoration:underline;">Period</th>
+							<th></th>
+                            <th class="text-right" style="text-decoration:underline;">Year to Date</th>
+							<th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="get_account_lines" t-as="a">
+                            <t t-if="a['level'] != 0">
+                               <!-- <t t-if="a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                <t t-if="not a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>-->
+							    <t t-set="style" t-value="'font-weight: bold;'"/>
+								<t t-if="a.get('name') == 'Sales'">
+									<t t-set="sales_balance" t-value="a.get('balance')"/>
+									<t t-set="sales_balance_cmp" t-value="a.get('balance_cmp')"/>
+								</t>
+								<t t-if="a.get('name') == 'Cost of Sales'">
+									<t t-set="c_o_sales_balance" t-value="a.get('balance')"/>
+									<t t-set="c_o_sales_balance_cmp" t-value="a.get('balance_cmp')"/>	
+								</t>
+								<t t-if="a.get('name') == 'Direct Expenses'">
+									<t t-set="d_expenses_balance" t-value="a.get('balance')"/>
+									<t t-set="d_expenses_balance_cmp" t-value="a.get('balance_cmp')"/>
+								</t>
+								<t t-if="a.get('name') == 'Overheads'">
+									<t t-set="overheads_balance" t-value="a.get('balance')"/>
+									<t t-set="overheads_balance_cmp" t-value="a.get('balance_cmp')"/>
+								</t>
+								<t t-if="a.get('name') == 'Fixed Assets'">
+									<t t-set="fixed_assets_balance" t-value="a.get('balance')"/>
+									<t t-set="fixed_assets_balance_cmp" t-value="a.get('balance_cmp')"/>
+								</t>
+								<t t-if="a.get('name') == 'Current Assets'">
+									<t t-set="current_assets_balance" t-value="a.get('balance')"/>
+									<t t-set="current_assets_balance_cmp" t-value="a.get('balance_cmp')"/>
+								</t>
+								<t t-if="a.get('name') == 'Current Liabilities'">
+									<t t-set="current_liabilities_balance" t-value="a.get('balance')"/>
+									<t t-set="current_liabilities_balance_cmp" t-value="a.get('balance_cmp')"/>
+								</t>
+								<t t-if="a.get('name') == 'Long Term Liabilities'">
+									<t t-set="long_term_liabilities_balance" t-value="a.get('balance')"/>
+									<t t-set="long_term_liabilities_balance_cmp" t-value="a.get('balance_cmp')"/>
+								</t>
+								<t t-if="'Capital' or  'Reserves' in a.get('name')"><t t-set="capital_balance" t-value="a.get('balance')"/></t>
+                                <td>
+                                    <span style="color: white;" t-esc="'..' * a.get('level', 0)"/>
+                                    <span t-att-style="style" t-esc="a.get('name')"/>
+                                </td>
+								<t t-foreach="a.get('sub_lines')" t-as="sub_a">
+									<t t-set="sub_style" t-value="'font-weight: normal;'"/>
+									<tr>
+										<td>
+											<span style="color: white;" t-esc="'..' * sub_a.get('level', 0)"/>
+											<span t-att-style="sub_style" t-esc="sub_a.get('name')"/>
+										</td>
+									
+										<!-- check if balance is +ve or -ve. if -ve, replace - sign with paranthesis-->
+										<t t-if="sub_a.get('balance') &gt; 0 or sub_a.get('balance') == 0">
+											<td class="text-right">
+												<span t-att-style="sub_style" t-esc="'{:,.2f}'.format(abs(sub_a.get('balance')))"/>
+											</td>
+										</t>
+										<t t-if="sub_a.get('balance') &lt; 0">
+											<td class="text-right">
+												(<span t-att-style="sub_style" t-esc="'{:,.2f}'.format(abs(sub_a.get('balance')))"/>)
+											</td>
+										</t>
+										<td>
+										</td>
+										<t t-if="sub_a.get('balance_cmp') &gt; 0 or sub_a.get('balance_cmp') == 0">
+											<td class="text-right">
+												<span t-att-style="sub_style" t-esc="'{:,.2f}'.format(abs(sub_a.get('balance_cmp')))"/>
+											</td>
+										</t>
+										<t t-if="sub_a.get('balance_cmp') &lt; 0">
+											<td class="text-right">
+												(<span t-att-style="sub_style" t-esc="'{:,.2f}'.format(abs(sub_a.get('balance_cmp')))"/>)
+											</td>
+										</t>
+									</tr>
+								</t>
+								<!--if report_type, balance should move to new row and align to cells for report balance-->
+								<t t-if="not a.get('level') &gt; 1">
+									<tr></tr>
+									<td></td>
+								</t>
+								<td></td>
+								<!-- check if balance is +ve or -ve. if -ve, replace - sign with paranthesis-->
+								<t t-if="a.get('balance') &gt; 0 or a.get('balance') == 0">
+									<td class="text-right">
+										<span t-att-style="style" t-esc="'{:,.2f}'.format(abs(a.get('balance')))"/>
+									</td>
+								</t>
+								<t t-if="a.get('balance') &lt; 0">
+									<td class="text-right">
+										(<span t-att-style="style" t-esc="'{:,.2f}'.format(abs(a.get('balance')))"/>)
+									</td>
+								</t>
+								<td></td>
+								<t t-if="a.get('balance_cmp') &gt; 0 or a.get('balance_cmp') == 0">
+									<td class="text-right">
+										<span t-att-style="style" t-esc="'{:,.2f}'.format(abs(a.get('balance_cmp')))"/>
+									</td>
+								</t>
+								<t t-if="a.get('balance_cmp') &lt; 0">
+									<td class="text-right">
+										(<span t-att-style="style" t-esc="'{:,.2f}'.format(abs(a.get('balance_cmp')))"/>)
+									</td>
+								</t>
+								
+								<t t-if="a.get('name') == 'Direct Expenses'">
+									<tr>
+										<td t-att-style="style">
+											<span style="color: white;" t-esc="'..' * 10"/>
+											<span>Gross Profit/(Loss)</span>
+										</td>
+										<td class="text-right" t-att-style="style">
+										</td>
+										<td class="text-right" t-att-style="style">
+											<t t-set="gross_profit_loss" t-value="sales_balance - (c_o_sales_balance+d_expenses_balance)"/>
+											<t t-if="gross_profit_loss &gt; 0"><t t-esc="'{:,.2f}'.format(gross_profit_loss)"/></t>
+											<t t-if="gross_profit_loss &lt; 0">(<t t-esc="'{:,.2f}'.format(abs(gross_profit_loss))"/>)</t>
+										</td>
+										<td class="text-right" t-att-style="style">
+										</td>
+										<td class="text-right" t-att-style="style">
+											<t t-set="gross_profit_loss_cmp" t-value="sales_balance_cmp - (c_o_sales_balance_cmp+d_expenses_balance_cmp)"/>
+											<t t-if="gross_profit_loss_cmp &gt; 0"><t t-esc="'{:,.2f}'.format(gross_profit_loss_cmp)"/></t>
+											<t t-if="gross_profit_loss_cmp &lt; 0">(<t t-esc="'{:,.2f}'.format(abs(gross_profit_loss_cmp))"/>)</t>
+									
+										</td>
+									</tr>
+								</t>
+								<t t-if="a.get('name') == 'Overheads'">
+									<tr>
+										<td t-att-style="style">
+											<span style="color: white;" t-esc="'..' * 10"/>
+											<span>Net Profit/(Loss)</span>
+										</td>
+										<td class="text-right" t-att-style="style">
+										</td>
+										<td class="text-right" t-att-style="style">
+											<t t-set="net_profit_loss" t-value="gross_profit_loss - overheads_balance"/>
+											<t t-if="net_profit_loss &gt; 0"><t t-esc="'{:,.2f}'.format(net_profit_loss)"/></t>
+											<t t-if="net_profit_loss &lt; 0">(<t t-esc="'{:,.2f}'.format(abs(net_profit_loss))"/>)</t>
+										</td>
+										<td class="text-right" t-att-style="style">
+										</td>
+										<td class="text-right" t-att-style="style">
+											<t t-set="net_profit_loss_cmp" t-value="gross_profit_loss_cmp - overheads_balance_cmp"/>
+											<t t-if="net_profit_loss_cmp &gt; 0"><t t-esc="'{:,.2f}'.format(net_profit_loss_cmp)"/></t>
+											<t t-if="net_profit_loss_cmp &lt; 0">(<t t-esc="'{:,.2f}'.format(abs(net_profit_loss_cmp))"/>)</t>
+										</td>
+									</tr>
+								</t>
+								<t t-if="a.get('name') == 'Current Liabilities'">
+									<tr>
+										<td t-att-style="style">
+											<span style="color: white;" t-esc="'..' * 10"/>
+											<span>Current Assets less Current Liabilities</span>
+										</td>
+										<td class="text-right" t-att-style="style">
+										</td>
+										<td class="text-right" t-att-style="style">
+											<t t-set="current_assets_less_liabilities" t-value="current_assets_balance - current_liabilities_balance"/>
+											<t t-if="current_assets_less_liabilities &gt; 0"><t t-esc="'{:,.2f}'.format(current_assets_less_liabilities)"/></t>
+											<t t-if="current_assets_less_liabilities &lt; 0">(<t t-esc="'{:,.2f}'.format(abs(current_assets_less_liabilities))"/>)</t>
+										</td>
+										<td class="text-right" t-att-style="style">
+										</td>
+										<td class="text-right" t-att-style="style">
+											<t t-set="current_assets_less_liabilities_cmp" t-value="current_assets_balance_cmp - current_liabilities_balance_cmp"/>
+											<t t-if="current_assets_less_liabilities_cmp &gt; 0"><t t-esc="'{:,.2f}'.format(current_assets_less_liabilities)"/></t>
+											<t t-if="current_assets_less_liabilities_cmp &lt; 0">(<t t-esc="'{:,.2f}'.format(abs(current_assets_less_liabilities))"/>)</t>
+										</td>
+									</tr>
+									<tr>
+										<td t-att-style="style">
+											<span style="color: white;" t-esc="'..' * 10"/>
+											<span>Total Assets less Current Liabilities</span>
+										</td>
+										<td class="text-right" t-att-style="style">
+										</td>
+										<td class="text-right" t-att-style="style">
+											<t t-set="total_assets_less_current_liabilities" t-value="(current_assets_balance+fixed_assets_balance) - current_liabilities_balance"/>
+											<t t-if="total_assets_less_current_liabilities &gt; 0"><t t-esc="'{:,.2f}'.format(total_assets_less_current_liabilities)"/></t>
+											<t t-if="total_assets_less_current_liabilities &lt; 0">(<t t-esc="'{:,.2f}'.format(abs(total_assets_less_current_liabilities))"/>)</t>
+										</td>
+										<td class="text-right" t-att-style="style">
+										</td>
+										<td class="text-right" t-att-style="style">
+											<t t-set="total_assets_less_current_liabilities_cmp" t-value="(current_assets_balance_cmp+fixed_assets_balance_cmp) - current_liabilities_balance_cmp"/>
+											<t t-if="total_assets_less_current_liabilities_cmp &gt; 0"><t t-esc="'{:,.2f}'.format(total_assets_less_current_liabilities_cmp)"/></t>
+											<t t-if="total_assets_less_current_liabilities_cmp &lt; 0">(<t t-esc="'{:,.2f}'.format(abs(total_assets_less_current_liabilities_cmp))"/>)</t>
+										</td>
+									</tr>
+								</t>
+								<t t-if="a.get('name') == 'Long Term Liabilities'">
+									<tr>
+										<td t-att-style="style">
+											<span style="color: white;" t-esc="'..' * 10"/>
+											<span>Total Assets less Total Liabilities</span>
+										</td>
+										<td class="text-right" t-att-style="style">
+										</td>
+										<td class="text-right" t-att-style="style">
+											<t t-set="total_assets_less_total_liabilities" t-value="(fixed_assets_balance+current_assets_balance) - (current_liabilities_balance+long_term_liabilities_balance)"/>
+											<t t-if="total_assets_less_total_liabilities &gt; 0"><t t-esc="'{:,.2f}'.format(total_assets_less_total_liabilities)"/></t>
+											<t t-if="total_assets_less_total_liabilities &lt; 0">(<t t-esc="'{:,.2f}'.format(abs(total_assets_less_total_liabilities))"/>)</t>
+										</td>
+										<td class="text-right" t-att-style="style">
+										</td>
+										<td class="text-right" t-att-style="style">
+											<t t-set="total_assets_less_total_liabilities_cmp" t-value="(fixed_assets_balance_cmp+current_assets_balance_cmp) - (current_liabilities_balance_cmp+long_term_liabilities_balance_cmp)"/>
+											<t t-if="total_assets_less_total_liabilities_cmp &gt; 0"><t t-esc="'{:,.2f}'.format(total_assets_less_total_liabilities_cmp)"/></t>
+											<t t-if="total_assets_less_total_liabilities_cmp &lt; 0">(<t t-esc="'{:,.2f}'.format(abs(total_assets_less_total_liabilities_cmp))"/>)</t>
+										</td>
+									</tr>
+								</t>
+                            </t>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            
+   
 		</xpath>
 	</template>
 </odoo>
