@@ -22,9 +22,10 @@
 ##############################################################################
 {
     'name': 'Sale Usability',
-    'summary': """""",
+    'summary': """User friendly features""",
     'version': '10.0.1.0',
     'description': """
+        - Custom UI improvements
         - Editable name field in Sales Order form
     """,
     'author': 'Tahir Aduragba',
@@ -43,3 +44,4 @@
 }
 
 # TODO show wizard to accept or decline confirmation when customer over credit limit
+# TODO create Customer Invoices menu in Sales
