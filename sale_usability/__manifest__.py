@@ -21,7 +21,7 @@
 #
 ##############################################################################
 {
-    'name': 'Sale Usability',
+    'name': 'Sales Usability',
     'summary': """User friendly features""",
     'version': '10.0.1.0',
     'description': """
