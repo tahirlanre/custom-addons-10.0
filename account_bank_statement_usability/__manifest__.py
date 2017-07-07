@@ -21,10 +21,13 @@
 #
 ##############################################################################
 {
-    'name': 'Payment in Bank Statement',
-    'summary': """""",
+    'name': 'Account Bank Statement Usability',
+    'summary': """Custom account bank statment features for House Affairs Nigeria Limited""",
     'version': '10.0.1.0',
-    'description': """""",
+    'description': """
+        - Create payments (outward) in account bank statments
+        - Custom user interface
+    """,
     'author': 'Tahir Aduragba',
     'category': 'Accounting',
     'depends': ['base', 'account'],
