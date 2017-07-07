@@ -46,7 +46,10 @@
 			
 			<xpath expr="//t[@t-name='JournalBodyBankCash']//div[@name='latest_statement']" position="attributes">
                 <attribute name="invisible">1</attribute>
-					
+			</xpath>
+			<!--Display journal default debit account code in Journal Dashboard-->
+			<xpath expr="//t[@t-name='JournalTop']//a[@name='open_action']" position="before">
+				<field name="default_debit_account_code"/>
 			</xpath>
 		</field>
 	</record>
