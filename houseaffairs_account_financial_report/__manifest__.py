@@ -18,7 +18,7 @@
 ##############################################################################
 {
     'name': 'Custom Financial Report for House Affairs Nigeria Limited',
-    'summary': """""",
+    'summary': """Financial report customisation""",
     'version': '10.0.1.1',
     'description': """
         - Show balances after account reports

@@ -1,8 +1,8 @@
 {
-    'name': 'Account usability for House Affairs Nigeria Limited',
-    'summary': 'User friendly features.',
+    'name': 'Accounts user interface customisation for House Affairs Nigeria Limited',
+    'summary': 'Custom user interface features.',
     'description': """
-        -User interface improvements to Journal Entries""",
+        -Hides fields that are not needed in journal entry lines""",
     'category': 'Account',
     'author': 'Tahir Aduragba',
     'depends': ['account'],
