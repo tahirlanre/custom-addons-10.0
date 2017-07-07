@@ -6,6 +6,9 @@
            <field name="arch" type="xml">
 			   <xpath expr="//group//group[2]" position="replace">
 			   </xpath>
+			   <field name="name" position="attributes">
+				   <attribute name="invisible">1</attribute>
+			   </field>
 			   <xpath expr="//page[@name='statement_line_ids']" position="replace">
                    <page string="Transactions" name="statement_line_ids">
                        <field name="line_ids" context="{'date':date}">
@@ -14,12 +17,12 @@
                                <field name="journal_entry_ids" invisible="1"/>
                                <field name="date" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
 							   <field name="account_id"/>
+							   <field name="ref" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }" groups="base.group_no_one"/>
                                <field name="name" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
                                <field name="partner_id" domain="['|',('parent_id','=',False),('is_company','=',True)]"
                                     context="{'default_supplier': 1}"
                                     attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }" invisible="1"/>
 							   
-                               <field name="ref" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }" groups="base.group_no_one" invisible = "1"/>
                                <field name="amount" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
                                <field name="journal_currency_id" invisible="1"/>
                                <field name="amount_currency" invisible="1" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
