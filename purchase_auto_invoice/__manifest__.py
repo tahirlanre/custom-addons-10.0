@@ -28,7 +28,7 @@
     """,
     'author': 'Tahir Aduragba',
     'category': 'Purchases',
-    'depends': ['base', 'purchase'],
+    'depends': ['base', 'purchase', 'purchase_discount'],
     'license': 'AGPL-3',
     'data': [
     ],
