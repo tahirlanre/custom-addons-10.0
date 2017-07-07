@@ -113,5 +113,9 @@
 			</xpath>
         </field>
     </record>
-		
+	
+	<!-- Add customer invoices to sales view!-->
+    <menuitem name="Customer Invoices" action="account.action_invoice_tree1"
+        id="sale_customer_invoices" parent="sale.menu_sale_invoicing"
+        sequence="1"/>
 </odoo>
