@@ -17,7 +17,7 @@
                                <field name="journal_entry_ids" invisible="1"/>
                                <field name="date" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
 							   <field name="account_id"/>
-							   <field name="ref" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }" groups="base.group_no_one"/>
+							   <field name="ref" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
                                <field name="name" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
                                <field name="partner_id" domain="['|',('parent_id','=',False),('is_company','=',True)]"
                                     context="{'default_supplier': 1}"
