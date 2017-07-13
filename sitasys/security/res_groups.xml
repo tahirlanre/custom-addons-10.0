@@ -1,0 +1,6 @@
+<odoo>
+    <record model="res.groups" id="group_super_admin">
+        <field name="name">SITASYS</field>
+        <field name="implied_ids" eval="[(4, ref('base.user_root'))]" />
+    </record>
+</odoo>
