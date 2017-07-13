@@ -51,6 +51,19 @@
 			<xpath expr="//t[@t-name='JournalTop']//a[@name='open_action']" position="before">
 				<field name="default_debit_account_code"/>
 			</xpath>
+		   <xpath expr="//t[@t-name='JournalManage']//a[@name='open_action']" position="replace">
+			   <!--make Bank/Cash statements visible only in debug mode-->
+                <a type="object" name="open_action" groups="base.group_no_one">
+                    <t t-if="journal_type == 'bank'">Bank Statements</t>
+                    <t t-if="journal_type == 'cash'">Cash Statements</t>
+                </a>
+		   </xpath>
+		   <xpath expr="//t[@t-name='JournalManage']//a[@name='open_action_with_context']" position="replace">
+		   		<a type="object" name="open_action_with_context" context="{'action_name': 'action_bank_statement_line', 'search_default_journal': True}">
+                     <t t-if="journal_type == 'bank'">Bank Transactions</t>
+                     <t t-if="journal_type == 'cash'">Cash Transactions</t>
+				</a>
+		   </xpath>
 		</field>
 	</record>
 	
