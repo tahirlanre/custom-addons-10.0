@@ -35,4 +35,25 @@
 			   </xpath>
 		   </field>
 	   </record>
+	   
+	   <record id="view_bank_statement_line_tree_custom" model="ir.ui.view">
+		   <field name="name">account.bank.statement.line.tree.custom</field>
+           <field name="model">account.bank.statement.line</field>
+		   <field name="inherit_id" ref="account.view_bank_statement_line_tree"/>
+		   <field name="arch" type="xml">
+			   <xpath expr="//tree" position="replace">
+                   <tree string="Statement lines" create="false">
+                       <field name="sequence" readonly="1" invisible="1"/>
+                       <field name="statement_id" invisible="1"/>
+                       <field name="journal_id" invisible="1" />
+                       <field name="date"/>
+                       <field name="ref"/>
+                       <field name="name"/>
+                       <field name="partner_id" invisible="1"/>
+                       <field name="amount"/>
+                       <field name="journal_currency_id" invisible="1"/>
+                   </tree>
+			   </xpath>
+		   </field>
+	   </record>
 </odoo>
