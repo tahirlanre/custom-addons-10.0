@@ -44,4 +44,3 @@
 }
 
 # TODO show wizard to accept or decline confirmation when customer over credit limit
-# TODO create Customer Invoices menu in Sales
