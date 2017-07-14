@@ -42,5 +42,3 @@
 
 }
 
-
-#TODO create account bank statement line view
