@@ -2,6 +2,7 @@
 # © 2016 ACSONE SA/NV (<http://acsone.eu>)
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 from odoo import api, fields, models
+from odoo import exceptions
 
 import odoo.addons.decimal_precision as dp
 
@@ -21,5 +22,12 @@ class Partner(models.Model):
             name += partner.name or ""
             data.append((partner.id, name))
         return data
-                
-    #ref = fields.Char(string='Internal Reference', required=True, index=True)   #make ref compulsory when creating a customer
+        
+    @api.model
+    def create(self,vals):
+        if self.search([('ref','=',vals['ref'])]):
+            raise exceptions.Warning('Customer/Supplier code already exists')
+        res = super(Partner,self).create(vals)
+        return res
+    
+    ref = fields.Char(string='Internal Reference', required=True, index=True)   #make ref compulsory when creating a customer
