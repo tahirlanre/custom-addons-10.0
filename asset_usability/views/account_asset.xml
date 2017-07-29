@@ -1,4 +1,5 @@
 <odoo>
+	<!--Change group to financial accountant!-->
     <menuitem name="Generate Assets Entries" action="account_asset.action_asset_depreciation_confirmation_wizard"
         id="account_asset.menu_asset_depreciation_confirmation_wizard"
         parent="account.menu_finance_entries" sequence="111" groups="account.group_account_user"/>
