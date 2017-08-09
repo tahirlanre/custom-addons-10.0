@@ -343,8 +343,8 @@
 										</td>
 										<td class="text-right" t-att-style="style">
 											<t t-set="current_assets_less_liabilities_cmp" t-value="current_assets_balance_cmp - current_liabilities_balance_cmp"/>
-											<t t-if="current_assets_less_liabilities_cmp &gt; 0"><t t-esc="'{:,.2f}'.format(current_assets_less_liabilities)"/></t>
-											<t t-if="current_assets_less_liabilities_cmp &lt; 0">(<t t-esc="'{:,.2f}'.format(abs(current_assets_less_liabilities))"/>)</t>
+											<t t-if="current_assets_less_liabilities_cmp &gt; 0"><t t-esc="'{:,.2f}'.format(current_assets_less_liabilities_cmp)"/></t>
+											<t t-if="current_assets_less_liabilities_cmp &lt; 0">(<t t-esc="'{:,.2f}'.format(abs(current_assets_less_liabilities_cmp))"/>)</t>
 										</td>
 									</tr>
 									<tr>
