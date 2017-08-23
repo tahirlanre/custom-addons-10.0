@@ -56,11 +56,11 @@ class StockReportXls(ReportXlsx):
             sale_value = 0
             purchase_value = 0
             product = self.env['product.product'].browse(obj.id)
-            sale_obj = self.env['sale.order.line'].search([('order_id.state', '=', 'done'),
+            """sale_obj = self.env['sale.order.line'].search([('order_id.state', '=', 'done'),
                                                            ('product_id', '=', product.id),
                                                            ('order_id.warehouse_id', '=', warehouse)])
             for i in sale_obj:
-                sale_value = sale_value + i.product_uom_qty
+                sale_value = sale_value + i.product_uom_qty"""
             purchase_obj = self.env['purchase.order.line'].search([('order_id.state', '=', 'done'),
                                                                    ('product_id', '=', product.id),
                                                                    ('order_id.picking_type_id', '=', warehouse)])
@@ -70,6 +70,7 @@ class StockReportXls(ReportXlsx):
                             product.with_context({'warehouse': warehouse}).outgoing_qty - \
                             product.with_context({'warehouse': warehouse}).incoming_qty
             value = available_qty * product.standard_price
+            sale_value = available_qty * product.list_price
             vals = {
                 'sku': product.default_code,
                 'name': product.name,
@@ -89,13 +90,14 @@ class StockReportXls(ReportXlsx):
 
     def generate_xlsx_report(self, workbook, data, lines):
         get_warehouse = self.get_warehouse(data)
-        count = len(get_warehouse[0]) * 11 + 6
+        count = len(get_warehouse[0]) * 3 + 6
         sheet = workbook.add_worksheet('Stock Info')
         format1 = workbook.add_format({'font_size': 14, 'bottom': True, 'right': True, 'left': True, 'top': True, 'align': 'vcenter', 'bold': True})
         format11 = workbook.add_format({'font_size': 12, 'align': 'center', 'right': True, 'left': True, 'bottom': True, 'top': True, 'bold': True})
         format21 = workbook.add_format({'font_size': 10, 'align': 'center', 'right': True, 'left': True,'bottom': True, 'top': True, 'bold': True})
         format3 = workbook.add_format({'bottom': True, 'top': True, 'font_size': 12})
         font_size_8 = workbook.add_format({'bottom': True, 'top': True, 'right': True, 'left': True, 'font_size': 8})
+        numformat1 = workbook.add_format({'bottom': True, 'top': True, 'right': True, 'left': True, 'font_size': 10,'bold': True, 'num_format': '#,##0.00'})
         red_mark = workbook.add_format({'bottom': True, 'top': True, 'right': True, 'left': True, 'font_size': 8,
                                         'bg_color': 'red'})
         justify = workbook.add_format({'bottom': True, 'top': True, 'right': True, 'left': True, 'font_size': 12})
@@ -110,24 +112,25 @@ class StockReportXls(ReportXlsx):
         w_col_no = 6
         w_col_no1 = 7
         for i in get_warehouse[0]:
-            w_col_no = w_col_no + 11
+            w_col_no = w_col_no + 3
             sheet.merge_range(3, w_col_no1, 3, w_col_no, i, format11)
             w_col_no1 = w_col_no1 + 11
-        sheet.write(4, 0, 'SKU', format21)
+        sheet.write(4, 0, 'Product reference', format21)
         sheet.merge_range(4, 1, 4, 3, 'Name', format21)
         sheet.merge_range(4, 4, 4, 5, 'Category', format21)
         sheet.write(4, 6, 'Cost Price', format21)
         p_col_no1 = 7
         for i in get_warehouse[0]:
             sheet.write(4, p_col_no1, 'Available', format21)
-            sheet.write(4, p_col_no1 + 1, 'Virtual', format21)
-            sheet.write(4, p_col_no1 + 2, 'Incoming', format21)
-            sheet.write(4, p_col_no1 + 3, 'Outgoing', format21)
-            sheet.merge_range(4, p_col_no1 + 4, 4, p_col_no1 + 5, 'Net On Hand', format21)
-            sheet.merge_range(4, p_col_no1 + 6, 4, p_col_no1 + 7, 'Total Sold', format21)
-            sheet.merge_range(4, p_col_no1 + 8, 4, p_col_no1 + 9, 'Total Purchased', format21)
-            sheet.write(4, p_col_no1 + 10, 'Valuation', format21)
-            p_col_no1 = p_col_no1 + 11
+            #sheet.write(4, p_col_no1 + 1, 'Virtual', format21)
+            #sheet.write(4, p_col_no1 + 2, 'Incoming', format21)
+            #sheet.write(4, p_col_no1 + 3, 'Outgoing', format21)
+            #sheet.merge_range(4, p_col_no1 + 4, 4, p_col_no1 + 5, 'Net On Hand', format21)
+            #sheet.merge_range(4, p_col_no1 + 6, 4, p_col_no1 + 7, 'Total Sold', format21)
+            #sheet.merge_range(4, p_col_no1 + 8, 4, p_col_no1 + 9, 'Total Purchased', format21)
+            sheet.write(4, p_col_no1 + 1, 'Inventory Value', format21)
+            sheet.write(4, p_col_no1 + 2, 'Sale Value', format21)
+            p_col_no1 = p_col_no1 + 1
         prod_row = 5
         prod_col = 0
         for i in get_warehouse[1]:
@@ -148,7 +151,7 @@ class StockReportXls(ReportXlsx):
                     sheet.write(prod_row, prod_col, each['available'], red_mark)
                 else:
                     sheet.write(prod_row, prod_col, each['available'], font_size_8)
-                if each['virtual'] < 0:
+                """if each['virtual'] < 0:
                     sheet.write(prod_row, prod_col + 1, each['virtual'], red_mark)
                 else:
                     sheet.write(prod_row, prod_col + 1, each['virtual'], font_size_8)
@@ -171,13 +174,20 @@ class StockReportXls(ReportXlsx):
                 if each['purchase_value'] < 0:
                     sheet.merge_range(prod_row, prod_col + 8, prod_row, prod_col + 9, each['purchase_value'], red_mark)
                 else:
-                    sheet.merge_range(prod_row, prod_col + 8, prod_row, prod_col + 9, each['purchase_value'], font_size_8)
+                    sheet.merge_range(prod_row, prod_col + 8, prod_row, prod_col + 9, each['purchase_value'], font_size_8)"""
                 if each['total_value'] < 0:
-                    sheet.write(prod_row, prod_col + 10, each['total_value'], red_mark)
+                    sheet.write(prod_row, prod_col + 1, each['total_value'], red_mark)
                 else:
-                    sheet.write(prod_row, prod_col + 10, each['total_value'], font_size_8)
+                    sheet.write(prod_row, prod_col + 1, each['total_value'], font_size_8)
+                if each['sale_value'] < 0:
+                    sheet.write(prod_row, prod_col + 2, each['sale_value'], red_mark)
+                else:
+                    sheet.write(prod_row, prod_col + 2, each['sale_value'], font_size_8)
                 prod_row = prod_row + 1
+            sheet.write_formula(prod_row,prod_col,'=SUM(H'+ str(prod_row) + ':H4)',numformat1)
+            sheet.write_formula(prod_row,prod_col+1,'=SUM(I'+ str(prod_row) + ':I4)',numformat1)
+            sheet.write_formula(prod_row,prod_col+2,'=SUM(J'+ str(prod_row) + ':J4)',numformat1)
             prod_row = 5
-            prod_col = prod_col + 11
+            prod_col = prod_col + 1
 
 StockReportXls('report.export_stockinfo_xls.stock_report_xls.xlsx', 'product.product')
