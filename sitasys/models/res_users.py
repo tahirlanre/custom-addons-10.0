@@ -9,7 +9,6 @@ class ResUsers(models.Model):
     
     @api.model
     def create(self,vals):
-        import pdb; pdb.set_trace()
         users = self.env['res.users'].search([])
         total_users = len(users)
         current_user = self.env.user
