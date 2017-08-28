@@ -21,13 +21,12 @@ class SaleOrder(models.Model):
         invoice_vals.update({'sale_id':self.id})
         return invoice_vals
     
-    # TODO refactor check_limit to use partner balance instead
     @api.one
     def check_limit(self):
-        #import pdb; pdb.set_trace()
+        current_user = self.env.user
+        manager_group = 'sales_team.group_sale_manager'
         partner = self.partner_id
-        today_dt = datetime.strftime(datetime.now().date(), DF)
-        """moveline_obj = self.env['account.move.line']
+        moveline_obj = self.env['account.move.line']
         movelines = moveline_obj.\
             search([('partner_id', '=', partner.id),
                     ('account_id.user_type_id.name', 'in',
@@ -35,28 +34,22 @@ class SaleOrder(models.Model):
 
         debit, credit = 0.0, 0.0
         today_dt = datetime.strftime(datetime.now().date(), DF)
-        
+
         for line in movelines:
-            if line.date_maturity < today_dt:
-                credit += line.debit
-                debit += line.credit"""
-    
-        if (partner.balance + self.amount_total) > partner.credit_limit:
-            warning_mess = {
-                'title': _('Credit Over Limits!'),
-                'message' : _('Confirming this order will raise customer balance above credit limit by %s Naira as on %s !\nCheck Partner Accounts or Credit Limits') % \
-                    (partner.balance + self.amount_total - partner.credit_limit, today_dt)
-            }
-            return {'warning': warning_mess}
-            """if not partner.over_credit:                                     #remove over credit
+            #if line.date_maturity < today_dt:
+            credit += line.debit
+            debit += line.credit
+        if (credit - debit + self.amount_total) > partner.credit_limit:
+            #if not partner.over_credit:
+            if not current_user.has_group(manager_group):
                 msg = 'Can not confirm Sale Order,Total mature due Amount ' \
                       '%s as on %s !\nCheck Partner Accounts or Credit ' \
                       'Limits !' % (credit - debit, today_dt)
-                raise UserError(_('Credit Over Limits !\n' + msg))
-            else:
-                partner.write({
-                    'credit_limit': credit - debit + self.amount_total})
-                return True"""
+                raise UserError(_('Credit Over Limits !\n' + msg))            
+            #else:
+            #    partner.write({
+            #        'credit_limit': credit - debit + self.amount_total})
+            #    return True
         else:
             return True
 
