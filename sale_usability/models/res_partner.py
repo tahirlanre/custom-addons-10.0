@@ -32,3 +32,4 @@ class Partner(models.Model):
         return res
     
     ref = fields.Char(string='Internal Reference', required=True, index=True)   #make ref compulsory when creating a customer
+    over_credit = fields.Boolean('Allow Over Credit?')

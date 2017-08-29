@@ -40,12 +40,11 @@ class SaleOrder(models.Model):
             credit += line.debit
             debit += line.credit
         if (credit - debit + self.amount_total) > partner.credit_limit:
-            #if not partner.over_credit:
-            if not current_user.has_group(manager_group):
-                msg = 'Can not confirm Sale Order,Total mature due Amount ' \
+            if not partner.over_credit:
+                msg = 'Can not confirm Sale Order, Total mature due Amount ' \
                       '%s as on %s !\nCheck Partner Accounts or Credit ' \
                       'Limits !' % (credit - debit, today_dt)
-                raise UserError(_('Credit Over Limits !\n' + msg))            
+                raise UserError(_('Credit Over Limits !\n' + msg))
             #else:
             #    partner.write({
             #        'credit_limit': credit - debit + self.amount_total})

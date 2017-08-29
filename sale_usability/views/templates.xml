@@ -42,6 +42,7 @@
 			<!-- FIXME update view for fde -->
             <field name="credit" position="after">
                 <field name="credit_limit" groups="base.group_erp_manager"/>
+                <field name="over_credit" groups="base.group_erp_manager"/>
             </field>
 		</field>
 	</record>	
