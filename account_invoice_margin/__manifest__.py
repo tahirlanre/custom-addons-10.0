@@ -14,5 +14,7 @@
     'data': [
         'views/invoice_margin_view.xml',
     ],
+    
+    #TODO show margin on account invoice
 
 }
