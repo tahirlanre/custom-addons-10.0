@@ -7,7 +7,7 @@ import odoo.addons.decimal_precision as dp
 class PurchaseOrder(models.Model):
     _inherit = "purchase.order"
     
-    def _update_product_cost_price(self):
+    """def _update_product_cost_price(self):
         ProductProduct = self.env['product.product']
         PurchaseOrderLine = self.env['purchase.order.line']
         new_std_price = 0.0
@@ -22,7 +22,7 @@ class PurchaseOrder(models.Model):
             
                 if po_line.update_cost_price and product.standard_price != new_std_price:
                     product.write({'standard_price':new_std_price})
-        return True
+        return True"""
                     
     
 class PurchaseOrderLine(models.Model):
@@ -60,7 +60,7 @@ class PurchaseOrderLine(models.Model):
         return price_unit
     
     discount = fields.Float(string='Discount (%)', digits=dp.get_precision('Discount'), default=0.0)
-    update_cost_price = fields.Boolean(string="Update Cost Price?", default= True, help="Select to update cost price of product after transfer")
+    #update_cost_price = fields.Boolean(string="Update Cost Price?", default= True, help="Select to update cost price of product after transfer")
     
     _sql_constraints = [
         ('discount_limit', 'CHECK (discount <= 100.0)',
@@ -68,20 +68,20 @@ class PurchaseOrderLine(models.Model):
     ]
     
     
-class StockPicking(models.Model):
+"""class StockPicking(models.Model):
     _inherit = "stock.picking"
 
     @api.multi
     def do_transfer(self):
-        """
+        
             On transfer update cost price
-        """
+        
         return_val = super(StockPicking, self).do_transfer()
         for rec in self: 
             if rec.purchase_id and rec.picking_type_id.code == "incoming":
                 rec.purchase_id._update_product_cost_price()
         
-        return return_val
+        return return_val"""
         
         
     
