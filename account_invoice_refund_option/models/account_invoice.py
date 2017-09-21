@@ -16,7 +16,9 @@ class AccountInvoice(models.Model):
         states={"draft": [("readonly", False)]},
         help="Indicate if this invoice is a refund.",
     )
-
+    
+    goods_return_note = fields.Char(string="Goods return note", readonly=True, states={"draft": [("readonly", False)]},)
+    
     @api.multi
     @api.depends("type")
     def _compute_is_refund(self):
