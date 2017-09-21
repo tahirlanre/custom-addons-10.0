@@ -58,7 +58,7 @@ class ProductProduct(models.Model):
                 where l.product_id = %s and i.state in %s and i.type IN %s and (i.date_invoice IS NULL or (i.date_invoice>=%s and i.date_invoice<=%s and i.company_id=%s))
                 """
             
-            invoice_types = ('out_invoice', 'in_refund')
+            invoice_types = ('out_invoice',)
             sale_state = 'sale'
             self.env.cr.execute(sqlstr, (val.id, states, invoice_types, date_from, date_to, company_id))
             result = self.env.cr.fetchall()[0]
@@ -70,8 +70,27 @@ class ProductProduct(models.Model):
             res[val.id]['total_cost'] = val.standard_price * res[val.id]['sale_num_invoiced']
             ctx = self.env.context.copy()
             ctx['force_company'] = company_id
-            invoice_types = ('in_invoice', 'out_refund')
             
+            #Get details of sale refunds and subtract from sales
+            invoice_types = ('out_refund',)
+            self.env.cr.execute(sqlstr, (val.id, states, invoice_types, date_from, date_to, company_id))
+            result = self.env.cr.fetchall()[0]
+            sale_qty_returned = result[1] and result[1] or 0.0
+            sale_turnover_returned = result[2] and result[2] or 0.0
+            sale_total_cost_returned = val.standard_price * sale_qty_returned
+            sale_expected_return = result[3] and result[3] or 0.0
+            res[val.id]['sale_num_invoiced'] -= sale_qty_returned
+            res[val.id]['turnover'] -= sale_turnover_returned
+            res[val.id]['sale_expected'] -= sale_expected_return
+            res[val.id]['total_cost'] -= sale_total_cost_returned
+            
+            res[val.id]['total_margin'] = res[val.id]['turnover'] - res[val.id]['total_cost']
+            res[val.id]['expected_margin'] = res[val.id]['sale_expected'] - res[val.id]['normal_cost']
+            res[val.id]['total_margin_rate'] = res[val.id]['turnover'] and res[val.id]['total_margin'] * 100 / res[val.id]['turnover'] or 0.0
+            res[val.id]['expected_margin_rate'] = res[val.id]['sale_expected'] and res[val.id]['expected_margin'] * 100 / res[val.id]['sale_expected'] or 0.0   
+            
+            
+            invoice_types = ('in_invoice',)
             self.env.cr.execute(sqlstr, (val.id, states, invoice_types, date_from, date_to, company_id))
             result = self.env.cr.fetchall()[0]
             res[val.id]['purchase_avg_price'] = result[0] and result[0] or 0.0
@@ -79,11 +98,14 @@ class ProductProduct(models.Model):
             #res[val.id]['total_cost'] = result[2] and result[2] or 0.0
             res[val.id]['normal_cost'] = val.standard_price * res[val.id]['purchase_num_invoiced']
             res[val.id]['purchase_gap'] = res[val.id]['normal_cost'] - res[val.id]['total_cost']
-
-            res[val.id]['total_margin'] = res[val.id]['turnover'] - res[val.id]['total_cost']
-            res[val.id]['expected_margin'] = res[val.id]['sale_expected'] - res[val.id]['normal_cost']
-            res[val.id]['total_margin_rate'] = res[val.id]['turnover'] and res[val.id]['total_margin'] * 100 / res[val.id]['turnover'] or 0.0
-            res[val.id]['expected_margin_rate'] = res[val.id]['sale_expected'] and res[val.id]['expected_margin'] * 100 / res[val.id]['sale_expected'] or 0.0    
+            
+            #Get total number of qty in purchase refunds and subtract from purchase_num_invoiced
+            invoice_types = ('out_invoice',)
+            self.env.cr.execute(sqlstr, (val.id, states, invoice_types, date_from, date_to, company_id))
+            result = self.env.cr.fetchall()[0]
+            purchase_qty_returned = result[1] and result[1] or 0.0
+            res[val.id]['purchase_num_invoiced'] -= purchase_qty_returned
+            
             for k, v in res[val.id].items():
                 setattr(val, k, v)
         return res
