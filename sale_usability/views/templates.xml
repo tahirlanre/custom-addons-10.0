@@ -33,11 +33,11 @@
 		<field name="model">res.partner</field>
 		<field name="inherit_id" ref="base.view_partner_form"/>
 		<field name="arch" type="xml">
-			<field name="name" position="before">
-				<h2>
-					<field name="ref" placeholder="Customer code"/>
-				</h2>
-			</field>
+			<xpath expr="//sheet//h1" position="before">
+				<h1>
+					<field name="ref" placeholder="Code"/>
+				</h1>
+			</xpath>
 			<xpath expr="//group//field[@name='ref']" position="replace"></xpath>
 			<!-- FIXME update view for fde -->
             <field name="credit" position="after">

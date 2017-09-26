@@ -1,0 +1,35 @@
+<odoo>
+	<record model="ir.ui.view" id="view_account_prepayment_form">
+        <field name="name">account.prepayment.form</field>
+        <field name="model">account.prepayment</field>
+        <field name="arch" type="xml">
+			<form string="Prepayment">
+				<header>
+					<button name="validate" states="draft" string="Confirm" type="object" class="oe_highlight"/>
+					<field name="state" widget="statusbar" statusbar_visible="draft,open"/>
+					<!-- May be will be implemented in future>
+					<button name="set_to_draft" string="Set to Draft" type="object" attrs="{'invisible': ['|', ('entry_count', '!=', 0), ('state', '!=', 'open')]}"/>!-->
+				</header>
+				<sheet>
+					<div class="oe_tittle">
+						<label for="" class="oe_edit_only"/>
+						<h1>
+							<field name="name" placeholder="e.g. Insurance Policy"/>
+						</h1>
+					</div>
+					<group name="group_top">
+						<group name="group_left"></group>
+						<group name="group_right"></group>
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>
+	
+	<act_window id="action_account_prepayment"
+		name="Account Prepayments"
+		res_model="account.prepayment"
+		view_mode="tree,form"/>
+	
+		<menuitem parent="account.menu_finance_entries" id="menu_account_prepayment" action="action_account_prepayment" sequence="102" groups="account.group_account_user"/>
+</odoo>
