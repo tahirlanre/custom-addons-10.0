@@ -30,7 +30,7 @@ class AccountPrepayment(models.Model):
         help="When a prepayment is created, the status is 'Draft'.\n"
             "If the prepayment is confirmed, the status goes in 'Running' and the prepayment lines can be posted in the accounting.\n"
             "You can manually close a prepayment when the prepayment is over. If the last line of prepayment is posted, the prepayment automatically goes in that status.")
-    month_number = fields.Integer(string='Number of Months', default=12, help="The number of months needed to post prepayment entries")
+    month_number = fields.Integer(string='Number of Months', default=12, required=True, readonly=True, states={'draft': [('readonly', False)]}, help="The number of months needed to post prepayment entries")
     value_residual = fields.Float(compute='_amount_residual', method=True, digits=0, string='Residual Value')
     month_residual = fields.Integer(compute='_month_residual', method=True, digits=0, string='Months Remaining')
     type = fields.Selection([('income', 'Prepaid Income'), ('expense', 'Prepaid Expense')], required=True, index=True, default='expense')
@@ -56,6 +56,14 @@ class AccountPrepayment(models.Model):
                 total_amount += line.amount
         self.value_residual = self.value - total_amount
         
+    def compute_prepayment_line_amount(self, sequence, month_number, residual_amount):
+        amount = 0
+        if sequence == month_number:
+            amount = residual_amount
+        else:
+            amount = self.value_monthly
+        return amount
+          
     @api.multi
     def compute_prepayment_lines(self):
         self.ensure_one()
@@ -65,7 +73,7 @@ class AccountPrepayment(models.Model):
         commands = [(2, line_id.id, False) for line_id in unposted_prepayment_line_ids]
         
         if self.entry_count == 0:
-            amount_to_post = self.value_monthly
+            #amount_to_post = self.value_monthly
             residual_amount = self.value_residual
             prepayment_date = datetime.strptime(self.date[:7] + '-01', DF).date()
             
@@ -77,7 +85,8 @@ class AccountPrepayment(models.Model):
             
             for x in range(len(posted_prepayment_line_ids), undone_month_number):
                 sequence = x + 1
-                amount = self.currency_id.round(amount_to_post)
+                amount = self.compute_prepayment_line_amount(sequence,undone_month_number,residual_amount)
+                amount = self.currency_id.round(amount)
                 if float_is_zero(amount, precision_rounding=self.currency_id.rounding):
                     continue
                 residual_amount -= amount
@@ -171,6 +180,7 @@ class AccountPrepayment(models.Model):
 class AccountPrepaymentLine(models.Model):
     _name = "account.prepayment.line"
     
+    name = fields.Char(string='Depreciation Name', required=True, index=True)
     amount = fields.Float(string='Current Depreciation', digits=0, required=True)
     move_id = fields.Many2one('account.move', string='Prepayment Entry')
     move_check = fields.Boolean(compute='_get_move_check', string='Linked', track_visibility='always', store=True)
