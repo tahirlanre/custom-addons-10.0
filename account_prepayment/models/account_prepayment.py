@@ -227,7 +227,6 @@ class AccountPrepaymentLine(models.Model):
        created_moves = self.env['account.move']
        prec = self.env['decimal.precision'].precision_get('Account')
        for line in self:
-           #category_id = line.asset_id.category_id
            prepayment_date = self.env.context.get('prepayment_date') or line.prepayment_date or fields.Date.context_today(self)
            company_currency = line.prepayment_id.currency_id
            current_currency = line.prepayment_id.currency_id
@@ -239,10 +238,6 @@ class AccountPrepaymentLine(models.Model):
                'debit': 0.0 if float_compare(amount, 0.0, precision_digits=prec) > 0 else -amount,
                'credit': amount if float_compare(amount, 0.0, precision_digits=prec) > 0 else 0.0,
                'journal_id': line.prepayment_id.journal_id.id,
-               #'partner_id': line.asset_id.partner_id.id,
-               #'analytic_account_id': category_id.account_analytic_id.id if category_id.type == 'sale' else False,
-               #'currency_id': company_currency != current_currency and current_currency.id or False,
-               #'amount_currency': company_currency != current_currency and - 1.0 * line.amount or 0.0,
            }
            move_line_2 = {
                'name': prepayment_name,
@@ -250,10 +245,6 @@ class AccountPrepaymentLine(models.Model):
                'credit': 0.0 if float_compare(amount, 0.0, precision_digits=prec) > 0 else -amount,
                'debit': amount if float_compare(amount, 0.0, precision_digits=prec) > 0 else 0.0,
                'journal_id': line.prepayment_id.journal_id.id,
-               #'partner_id': line.asset_id.partner_id.id,
-               #'analytic_account_id': category_id.account_analytic_id.id if category_id.type == 'purchase' else False,
-               #'currency_id': company_currency != current_currency and current_currency.id or False,
-               #'amount_currency': company_currency != current_currency and line.amount or 0.0,
            }
            move_vals = {
                'ref': line.prepayment_id.code,
@@ -268,7 +259,11 @@ class AccountPrepaymentLine(models.Model):
        if created_moves:
            created_moves.post()
        return [x.id for x in created_moves]
-            
+    
+    @api.multi
+    def close_prepayment(self):
+        #TODO we need to re-evaluate the prepayments to determine whether we can close them
+        pass
         
     @api.multi
     def unlink(self):
