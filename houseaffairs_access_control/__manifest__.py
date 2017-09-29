@@ -9,5 +9,6 @@
         'security/ir.model.access.csv',
         'views/salesman_views.xml',
         'views/account_views.xml',
+        'views/account_move.xml',
     ],
 }
