@@ -55,6 +55,24 @@ class AccountPrepayment(models.Model):
             if line.move_check:
                 total_amount += line.amount
         self.value_residual = self.value - total_amount
+    
+    @api.multi
+    def _compute_entries(self,date):
+        prepayment_line_ids = self.env['account.prepayment.line'].search([
+            ('prepayment_id', 'in', self.ids), ('prepayment_date', '<=', date),
+            ('move_check', '=', False)])
+        return prepayment_line_ids.create_move()
+        
+    @api.model
+    def compute_generated_entries(self, date, prepayment_type=None):
+        import pdb; pdb.set_trace()
+        created_move_ids = []
+        type_domain = []
+        if prepayment_type:
+            type_domain = [('type','=',prepayment_type)]
+        prepayments = self.env['account.prepayment'].search(type_domain + [('state', '=', 'open')])
+        created_move_ids += prepayments._compute_entries(date)
+        return created_move_ids
         
     def compute_prepayment_line_amount(self, sequence, month_number, residual_amount):
         amount = 0
@@ -180,8 +198,8 @@ class AccountPrepayment(models.Model):
 class AccountPrepaymentLine(models.Model):
     _name = "account.prepayment.line"
     
-    name = fields.Char(string='Depreciation Name', required=True, index=True)
-    amount = fields.Float(string='Current Depreciation', digits=0, required=True)
+    name = fields.Char(string='Prepayment Entry Name', required=True, index=True)
+    amount = fields.Float(string='Current Prepayment Entry', digits=0, required=True)
     move_id = fields.Many2one('account.move', string='Prepayment Entry')
     move_check = fields.Boolean(compute='_get_move_check', string='Linked', track_visibility='always', store=True)
     move_posted_check = fields.Boolean(compute='_get_move_posted_check', string='Posted', track_visibility='always', store=True)
@@ -206,12 +224,56 @@ class AccountPrepaymentLine(models.Model):
     
     @api.multi
     def create_move(self):
-        print 'Post entry for prepayment line'      
+       created_moves = self.env['account.move']
+       prec = self.env['decimal.precision'].precision_get('Account')
+       for line in self:
+           #category_id = line.asset_id.category_id
+           prepayment_date = self.env.context.get('prepayment_date') or line.prepayment_date or fields.Date.context_today(self)
+           company_currency = line.prepayment_id.currency_id
+           current_currency = line.prepayment_id.currency_id
+           amount = current_currency.compute(line.amount, company_currency)
+           prepayment_name = line.prepayment_id.name + ' (%s/%s)' % (line.sequence, len(line.prepayment_id.prepayment_line_ids))
+           move_line_1 = {
+               'name': prepayment_name,
+               'account_id': line.prepayment_id.account_prepayment_expense_id.id,
+               'debit': 0.0 if float_compare(amount, 0.0, precision_digits=prec) > 0 else -amount,
+               'credit': amount if float_compare(amount, 0.0, precision_digits=prec) > 0 else 0.0,
+               'journal_id': line.prepayment_id.journal_id.id,
+               #'partner_id': line.asset_id.partner_id.id,
+               #'analytic_account_id': category_id.account_analytic_id.id if category_id.type == 'sale' else False,
+               #'currency_id': company_currency != current_currency and current_currency.id or False,
+               #'amount_currency': company_currency != current_currency and - 1.0 * line.amount or 0.0,
+           }
+           move_line_2 = {
+               'name': prepayment_name,
+               'account_id': line.prepayment_id.account_prepayment_id.id,
+               'credit': 0.0 if float_compare(amount, 0.0, precision_digits=prec) > 0 else -amount,
+               'debit': amount if float_compare(amount, 0.0, precision_digits=prec) > 0 else 0.0,
+               'journal_id': line.prepayment_id.journal_id.id,
+               #'partner_id': line.asset_id.partner_id.id,
+               #'analytic_account_id': category_id.account_analytic_id.id if category_id.type == 'purchase' else False,
+               #'currency_id': company_currency != current_currency and current_currency.id or False,
+               #'amount_currency': company_currency != current_currency and line.amount or 0.0,
+           }
+           move_vals = {
+               'ref': line.prepayment_id.code,
+               'date': prepayment_date or False,
+               'journal_id': line.prepayment_id.journal_id.id,
+               'line_ids': [(0, 0, move_line_1), (0, 0, move_line_2)],
+           }
+           move = self.env['account.move'].create(move_vals)
+           line.write({'move_id': move.id, 'move_check': True})
+           created_moves |= move
+
+       if created_moves:
+           created_moves.post()
+       return [x.id for x in created_moves]
+            
         
     @api.multi
     def unlink(self):
         for record in self:
             if record.move_check:
-                msg = _("You cannot delete posted depreciation lines.")
+                msg = _("You cannot delete posted prepayment entries.")
                 raise UserError(msg)
         return super(AccountPrepaymentLine, self).unlink()

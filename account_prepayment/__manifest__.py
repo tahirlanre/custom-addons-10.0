@@ -14,6 +14,7 @@
         'security/account_prepayment_security.xml',
         'security/ir.model.access.csv',
         'views/account_prepayment.xml',
+        'wizard/account_prepayment_wizard.xml',
     ],
     'installable': True,
 }
