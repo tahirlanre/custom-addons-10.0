@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_account_prepayment_user,account.prepayment.user,model_account_prepayment,account.group_account_user,1,0,0,0
+access_account_prepayment_manager,account.prepayment.manager,model_account_prepayment,account.group_account_manager,1,1,1,1
+access_account_prepayment_line_user,account.prepayment.line.user,model_account_prepayment_line,account.group_account_user,1,0,0,0
+access_account_prepayment_line_manager,account.prepayment.line.manager,model_account_prepayment_line,account.group_account_manager,1,1,1,1

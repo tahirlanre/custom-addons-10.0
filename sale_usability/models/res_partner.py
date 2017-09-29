@@ -25,9 +25,11 @@ class Partner(models.Model):
         
     @api.model
     def create(self,vals):
-        if self.search([('ref','=',vals['ref'])]):
-            raise exceptions.Warning('Customer/Supplier code already exists')
+        if vals.get('ref'):
+            if self.search([('ref','=',vals['ref'])]):
+                raise exceptions.Warning('Customer/Supplier code already exists')
         res = super(Partner,self).create(vals)
         return res
     
     ref = fields.Char(string='Internal Reference', required=True, index=True)   #make ref compulsory when creating a customer
+    over_credit = fields.Boolean('Allow Over Credit?')

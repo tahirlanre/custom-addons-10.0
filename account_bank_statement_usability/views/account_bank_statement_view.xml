@@ -42,7 +42,7 @@
 		   <field name="inherit_id" ref="account.view_bank_statement_line_tree"/>
 		   <field name="arch" type="xml">
 			   <xpath expr="//tree" position="replace">
-                   <tree string="Statement lines" create="false">
+                   <tree string="Statement lines" decoration-muted="journal_entry_ids" create="false">
                        <field name="sequence" readonly="1" invisible="1"/>
                        <field name="statement_id" invisible="1"/>
                        <field name="journal_id" invisible="1" />
@@ -52,6 +52,7 @@
                        <field name="partner_id" invisible="1"/>
                        <field name="amount"/>
                        <field name="journal_currency_id" invisible="1"/>
+					   <field name="journal_entry_ids" invisible="1"/>
                    </tree>
 			   </xpath>
 		   </field>

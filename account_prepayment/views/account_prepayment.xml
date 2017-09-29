@@ -1,0 +1,78 @@
+<odoo>
+	<record model="ir.ui.view" id="view_account_prepayment_form">
+        <field name="name">account.prepayment.form</field>
+        <field name="model">account.prepayment</field>
+        <field name="arch" type="xml">
+			<form string="Prepayment">
+				<header>
+					<button name="validate" states="draft" string="Confirm" type="object" class="oe_highlight"/>
+					<field name="state" widget="statusbar" statusbar_visible="draft,open"/>
+					<!-- May be will be implemented in future>
+					<button name="set_to_draft" string="Set to Draft" type="object" attrs="{'invisible': ['|', ('entry_count', '!=', 0), ('state', '!=', 'open')]}"/>!-->
+				</header>
+				<sheet>
+					<div class="oe_tittle">
+						<label string="Description" class="oe_edit_only"/>
+						<h1>
+							<field name="name" placeholder="e.g. Insurance Policy"/>
+						</h1>
+					</div>
+					<group name="group_top">
+						<group name="group_left">
+                            <field name="code"/>
+                            <field name="date" help="Date prepayment will start running"/>
+                            <field name="month_number" help="# of months prepayment will run for"/>
+                            <field name="type" invisible="1"/>
+						</group>
+						<group name="group_right">
+							<field name="currency_id" groups="base.group_multi_currency"/>
+							<field name="journal_id"/>
+							<field name="account_prepayment_id"/>
+							<field name="account_prepayment_expense_id"/>
+							<field name="value" widget="monetary" options="{'currency_field': 'currency_id'}" help="Gross value of prepayment"/>
+						</group>
+					</group>
+					<notebook colspan="4">
+						<page string="Prepayment Lines">
+							<field name="prepayment_line_ids" mode="tree" options="{'reload_whole_on_button': true}">
+                                <tree string="Prepayment entries" decoration-info="(move_check == False)" create="false">
+                                    <field name="prepayment_date"/>
+                                    <field name="prepayment_value" readonly="1"/>
+                                    <field name="amount" widget="monetary" string="Depreciation"/>
+                                    <field name="remaining_value" readonly="1" widget="monetary" string="Residual"/>
+                                    <field name="move_check" invisible="1"/>
+                                    <field name="move_posted_check" invisible="1"/>
+                                    <field name="parent_state" invisible="1"/>
+                                    <button name="create_move" type="object" widget="widgetonbutton"/>
+                                </tree>
+							</field>
+						</page>
+					</notebook>
+				</sheet>
+			</form>
+		</field>
+	</record>
+	
+	<record model="ir.ui.view" id="view_account_prepayment_expense_tree">
+		<field name="name">account.prepayment.expense.tree</field>
+		<field name="model">account.prepayment</field>
+		<field name="arch" type="xml">
+			<tree string="Prepayments" decoration-info="(state == 'draft')" decoration-muted="(state == 'close')">
+				<field name="name"/>
+				<field name="date"/>
+				<field name="value" widget="monetary"/>
+				<field name="month_number"/>
+				<field name="value_monthly" widget="monetary"/>
+				<field name="entry_count"/>
+				<field name="state"/>
+			</tree>
+		</field>
+	</record>
+	
+	<act_window id="action_account_prepayment"
+		name="Prepayments"
+		res_model="account.prepayment"
+		view_mode="tree,form"/>
+	
+		<menuitem parent="account.menu_finance_entries" id="menu_account_prepayment" action="action_account_prepayment" sequence="102" groups="account.group_account_user"/>
+</odoo>

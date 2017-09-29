@@ -15,6 +15,7 @@ class StockPicking(models.Model):
         return_val = super(StockPicking, self).do_transfer()
         orders_to_invoice = []  
         for rec in self: 
+            #FIXME check products invoicing policy
             if rec.sale_id and rec.picking_type_id.code == "outgoing":
                 rec.sale_id.action_invoice_create() 
         
