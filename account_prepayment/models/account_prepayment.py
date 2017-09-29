@@ -65,7 +65,6 @@ class AccountPrepayment(models.Model):
         
     @api.model
     def compute_generated_entries(self, date, prepayment_type=None):
-        import pdb; pdb.set_trace()
         created_move_ids = []
         type_domain = []
         if prepayment_type:
