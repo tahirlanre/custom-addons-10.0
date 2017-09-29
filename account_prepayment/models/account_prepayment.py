@@ -233,14 +233,14 @@ class AccountPrepaymentLine(models.Model):
            prepayment_name = line.prepayment_id.name + ' (%s/%s)' % (line.sequence, len(line.prepayment_id.prepayment_line_ids))
            move_line_1 = {
                'name': prepayment_name,
-               'account_id': line.prepayment_id.account_prepayment_expense_id.id,
+               'account_id': line.prepayment_id.account_prepayment_id.id,
                'debit': 0.0 if float_compare(amount, 0.0, precision_digits=prec) > 0 else -amount,
                'credit': amount if float_compare(amount, 0.0, precision_digits=prec) > 0 else 0.0,
                'journal_id': line.prepayment_id.journal_id.id,
            }
            move_line_2 = {
                'name': prepayment_name,
-               'account_id': line.prepayment_id.account_prepayment_id.id,
+               'account_id': line.prepayment_id.account_prepayment_expense_id.id,
                'credit': 0.0 if float_compare(amount, 0.0, precision_digits=prec) > 0 else -amount,
                'debit': amount if float_compare(amount, 0.0, precision_digits=prec) > 0 else 0.0,
                'journal_id': line.prepayment_id.journal_id.id,
