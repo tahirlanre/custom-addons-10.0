@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<record id="invoice_form_custom" model="ir.ui.view">
+		<field name="name">account.invoice.form.custom</field>
+		<field name="model">account.invoice</field>
+		<field name="inherit_id" ref="account.invoice_form"/>
+		<field name="arch" type="xml">
+			<field name="sent" position="after">
+				<field name="nb_print" invisible="1"/>
+			</field>
+			<xpath expr="//header//button[2]" position="replace">
+				<button name="invoice_print" string="Print" type="object" attrs="{'invisible':['|',('state', '=', 'draft'),('nb_print','!=',0)]}" groups="base.group_user"/>
+			</xpath>
+			<xpath expr="//header//button[4]" position="replace">
+			</xpath>
+		</field>
+	</record>
+</odoo>

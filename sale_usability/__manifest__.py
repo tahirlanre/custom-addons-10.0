@@ -28,16 +28,15 @@
         - Custom UI improvements
         - Editable name field in Sales Order form
         - Set credit limit for each customer
-        - Custom invoice
     """,
     'author': 'Tahir Aduragba',
     'category': 'Sales',
     'depends': ['base', 'sale','report_extended'],
     'license': 'AGPL-3',
     'data': [ 'views/templates.xml',
-    'views/invoice_report.xml',
+    #'views/invoice_report.xml',
     'views/sale_order_report.xml',
-    'views/reports.xml',
+    #'views/reports.xml',
     ],
     'demo': [],
     'installable': True,
