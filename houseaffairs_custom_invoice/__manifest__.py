@@ -27,11 +27,11 @@
     'description': """""",
     'author': 'Tahir Aduragba',
     'category': 'Accounting',
-    'depends': ['base', 'account'],
+    'depends': ['base', 'account', 'sale_usability'],
     'license': 'AGPL-3',
     'data': [
         'views/report_invoice.xml',
-        'views/report.xml',
+        'views/account_invoice.xml',
     ],
     'demo': [],
     'installable': True,

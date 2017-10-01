@@ -1,9 +1,116 @@
-<odoo>
-	<data>
-   		<template id="report_invoice_custom_document" inherit_id="account.report_invoice_document" primary="True">
-           
-		    <xpath expr="//div[@class='col-xs-4 pull-right']" position="replace">
-		            <div style="padding-top: 250px;">
+<odoo>	
+<template id="report_invoice">
+	<t t-call="report.html_container">
+		<t t-foreach="docs" t-as="o">
+			<div class="page">
+				<style>		
+					.invoice_heading{
+						text-align: center;
+						font-style: italic;
+					}
+					
+					div{
+						font-size: 18px;
+					}
+					
+					.heading{
+						font-size: 18px;
+						font-style: bold;
+					}
+				</style>
+				<!--<h3 class="invoice_heading">
+	               <strong t-if="o.type == 'out_invoice' and (o.state == 'open' or o.state == 'paid')">SALES INVOICE</strong>
+	               <strong t-if="o.type == 'out_invoice' and o.state == 'proforma2'">PRO-FORMA</strong>
+					<strong t-if="o.type == 'out_invoice' and o.state == 'draft'">Draft Invoice</strong>
+		            <strong t-if="o.type == 'out_invoice' and o.state == 'cancel'">Cancelled Invoice</strong>
+		            <strong t-if="o.type == 'out_refund'">Refund</strong>
+		            <strong t-if="o.type == 'in_refund'">Vendor Refund</strong>
+	                <strong t-if="o.type == 'in_invoice'">Vendor Bill</strong>
+				</h3>-->
+				<br/>
+				
+				<div class="row">
+					<div class="col-xs-8">
+						<strong>Customer code: </strong>
+						<span t-field="o.partner_id.ref"/>
+					</div>
+					<div class="col-xs-4">
+						<strong>Invoice No: </strong>
+						<span t-field="o.number"/>
+					</div>
+				</div>
+				
+				<div class="row">
+					<div class="col-xs-8">
+						<span t-field="o.customer_details"/>
+					</div>
+					<div class="col-xs-4">
+						<strong>Date: </strong>
+						<span t-field="o.date_invoice"/>
+					</div>
+				</div>
+				
+				<div class="row">
+					<div class="col-xs-8">
+					</div>
+					<div class="col-xs-4">
+						<strong>Receipt No: </strong>
+						<span t-field="o.sale_id.receipt_no"/>
+					</div>
+				</div>
+				
+	            <!-- Is there a discount on at least one line? -->
+	            <t t-set="display_discount" t-value="any([l.discount for l in o.invoice_line_ids])"/>
+				
+				<br/>
+			
+	            <table class="table table-condensed">
+	                <thead>
+	                    <tr class="heading">
+	                        <th>REFERENCE</th>
+	                        <th>DESCRIPTION</th>
+	                        <th class="text-right">QTY.</th>
+	                        <th class="text-right">UNIT PRICE</th>
+	                        <th t-if="display_discount" class="text-right" groups="sale.group_discount_per_so_line">DISC.(%)</th>
+	                        <th t-if="display_discount" class="text-right" groups="sale.group_discount_per_so_line">DISC. AMOUNT</th>
+	                        <th class="text-right">NET AMOUNT</th>
+	                    </tr>
+	                </thead>
+	                <tbody class="invoice_tbody">
+	                    <tr t-foreach="o.invoice_line_ids" t-as="l">
+	                        <td><span t-field="l.product_id.code"/></td>
+	                        <td><span t-field="l.name"/></td>
+	                        <td class="text-right">
+	                            <span t-field="l.quantity"/>
+	                            <span t-field="l.uom_id"  groups="product.group_uom"/>
+	                        </td>
+	                        <td class="text-right">
+	                            <span t-field="l.price_unit"/>
+	                        </td>
+	                        <td t-if="display_discount" class="text-right" groups="sale.group_discount_per_so_line">
+	                            <span t-field="l.discount"/>%
+	                        </td>
+	                        <td t-if="display_discount" class="text-right" groups="sale.group_discount_per_so_line">
+	                            <span t-field="l.discount_net_amount"/>
+	                        </td>
+	                        <td class="text-right">
+	                            <span t-field="l.price_subtotal" 
+	                                t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+	                        </td>
+	                    </tr>
+	                </tbody>
+				</table>
+				
+			</div>	
+			
+			<div class="footer">
+				<style>	
+					div{
+						font-size: 16px;
+					}
+				</style>
+				<div class="last-page">
+					<div class="row">
 		                <div class="col-xs-4 pull-right">
 		                    <table class="table table-condensed">
 		                        <tr class="border-black">
@@ -13,7 +120,7 @@
 		                            </td>
 		                        </tr>
 		                        <t t-foreach="o._get_tax_amount_by_group()" t-as="amount_by_group">
-		                            <tr>
+		                            <tr class="border-black">
 		                                <td>Total VAT Amount</td>
 		                                <td class="text-right">
 		                                    <span t-esc="amount_by_group[1]"/>
@@ -28,16 +135,39 @@
 		                        </tr>
 		                    </table>
 		                </div>
-		            </div>
-		    </xpath>
-		</template>
-        
-		<template id="report_invoice_custom">
-           <!--<t t-call="report.html_container">-->
-                <t t-foreach="docs" t-as="o">
-                    <t t-call="houseaffairs_custom_invoice.report_invoice_custom_document" t-lang="o.partner_id.lang"/>
-                </t>
-				<!--</t>-->
-        </template>
-    </data>
+					</div>
+				</div>
+			</div>
+        </t>
+	</t>
+</template>
+
+
+	<report
+    	id="account_invoice_houseaffairs"
+    	model="account.invoice"
+   	 	string="House Affairs Invoice"
+    	report_type="qweb-pdf"
+    	name="houseaffairs_custom_invoice.report_invoice"
+    	file="houseaffairs_custom_invoice.report_invoice"
+		paperformat="paperformat_houseaffairs_custom_invoice_paper"
+		menu="False"
+		/>
+		
+	<record id="paperformat_houseaffairs_custom_invoice_paper"
+	        model="report.paperformat"> 
+	  <field name="name">House Affairs Custom Invoice Paper</field>
+	  <field name="format">A4</field> 
+	  <field name="page_height">0</field> 
+	  <field name="page_width">0</field> 
+	  <field name="orientation">Portrait</field> 
+	  <field name="margin_top">40</field> 
+	  <field name="margin_bottom">80</field> 
+	  <field name="margin_left">7</field> 
+	  <field name="margin_right">1</field> 
+	  <field name="header_line" eval="False" /> 
+	  <field name="header_spacing">35</field>
+	  <field name="dpi">90</field> 
+	</record>
+	
 </odoo>
