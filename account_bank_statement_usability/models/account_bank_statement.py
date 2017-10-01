@@ -20,8 +20,7 @@ class account_journal(models.Model):
             'view_mode': 'form',
             'res_model': 'account.bank.statement',
             'context': ctx,
-        }
-        
+        }    
         
 class AccountBankStatementLine(models.Model):
     _inherit = "account.bank.statement.line"
@@ -48,6 +47,12 @@ class AccountBankStatementLine(models.Model):
              
 class AccountBankStatement(models.Model):
     _inherit = "account.bank.statement"
+         
+    @api.model  
+    def create(self, vals):
+        statement = super(AccountBankStatement, self).create(vals)
+        statement.button_confirm_bank()     #validate statement/transaction
+        return statement
             
     @api.multi
     def _balance_check(self):

@@ -38,7 +38,7 @@
                                 <tree string="Prepayment entries" decoration-info="(move_check == False)" create="false">
                                     <field name="prepayment_date"/>
                                     <field name="prepayment_value" readonly="1"/>
-                                    <field name="amount" widget="monetary" string="Depreciation"/>
+                                    <field name="amount" widget="monetary" string="Prepayment Entry"/>
                                     <field name="remaining_value" readonly="1" widget="monetary" string="Residual"/>
                                     <field name="move_check" invisible="1"/>
                                     <field name="move_posted_check" invisible="1"/>

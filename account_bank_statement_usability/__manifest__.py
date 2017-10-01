@@ -25,7 +25,8 @@
     'summary': """Custom account bank statment features for House Affairs Nigeria Limited""",
     'version': '10.0.1.0',
     'description': """
-        - Create payments (outward) in account bank statments
+        - Create payments (outward) in account bank statments and cash transactions
+        - Auto validate statement/transaction after saving
         - Custom user interface
     """,
     'author': 'Tahir Aduragba',
@@ -42,3 +43,5 @@
 
 }
 
+
+#TODO add confirmation wizard before auto validating
