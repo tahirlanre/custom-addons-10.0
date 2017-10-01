@@ -11,3 +11,5 @@
         'views/account_views.xml',
     ],
 }
+
+#TODO add confirmation wizard before automatically posting
