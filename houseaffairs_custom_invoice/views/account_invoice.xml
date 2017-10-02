@@ -8,10 +8,12 @@
 			<field name="sent" position="after">
 				<field name="nb_print" invisible="1"/>
 			</field>
-			<xpath expr="//header//button[2]" position="replace">
-				<button name="invoice_print" string="Print" type="object" attrs="{'invisible':['|',('state', '=', 'draft'),('nb_print','!=',0)]}" groups="base.group_user"/>
+			<xpath expr="//button[@name='invoice_print'][1]" position="attributes">
+				<attribute name="attrs">{'invisible':[('state', '=', 'draft')]}</attribute>
+				<attribute name="class"></attribute>
 			</xpath>
-			<xpath expr="//header//button[4]" position="replace">
+			<xpath expr="//button[@name='invoice_print'][2]" position="attributes">
+					<attribute name="invisible">1</attribute>
 			</xpath>
 		</field>
 	</record>
