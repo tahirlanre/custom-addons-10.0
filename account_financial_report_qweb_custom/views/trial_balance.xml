@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<template id="report_trial_balance_qweb_lines_header_custom" inherit_id="account_financial_report_qweb.report_trial_balance_qweb_lines_header">
+		<xpath expr="//div[@class='act_as_row labels']" position="replace">
+            <div class="act_as_row labels">
+                <t t-if="not show_partner_details">
+                    <!--## Code-->
+                    <div class="act_as_cell" style="width: 100px;">Code</div>
+                    <!--## Account-->
+                    <div class="act_as_cell" style="width: 600px;">Account</div>
+                </t>
+                <t t-if="show_partner_details">
+                    <!--## Partner-->
+                    /<div class="act_as_cell" style="width: 700px;">Partner</div>
+                </t>
+                <!--## Initial balance
+                <div class="act_as_cell" style="width: 110px;">Initial balance</div>-->
+                <!--## Debit-->
+                <div class="act_as_cell" style="width: 110px;">Debit</div>
+                <!--## Credit-->
+                <div class="act_as_cell" style="width: 110px;">Credit</div>
+                <!--## Ending balance
+                <div class="act_as_cell" style="width: 110px;">Ending balance</div>-->
+            </div>
+		</xpath>
+	</template>
+	<template id="report_trial_balance_qweb_line_custom" inherit_id="account_financial_report_qweb.report_trial_balance_qweb_line">
+		<xpath expr="//div[@class='act_as_row lines']" position="replace">
+	        <!-- # line -->
+	        <div class="act_as_row lines">
+	            <t t-if="not show_partner_details">
+	                <!--## Code-->
+	                <div class="act_as_cell left"><span t-field="line.code"/></div>
+	            </t>
+	            <!--## Account/Partner-->
+	            <div class="act_as_cell left"><span t-field="line.name"/></div>
+	            <!--## Initial balance
+	            <div class="act_as_cell amount"><span t-field="line.initial_balance"/></div>-->
+	            <!--## Debit
+	            <div class="act_as_cell amount"><span t-field="line.debit"/></div>-->
+	            <!--## Credit
+	            <div class="act_as_cell amount"><span t-field="line.credit"/></div>-->
+	            <!--## Ending balance-->
+				<t t-if="line.final_balance &gt; 0">
+					<div class="act_as_cell amount"><span t-field="line.final_balance"/></div>
+					<div class="act_as_cell amount"><span/></div>
+				</t>
+				<t t-if="line.final_balance &lt; 0">
+					<div class="act_as_cell amount"><span/></div>
+					<div class="act_as_cell amount"><span t-esc="'{:,.2f}'.format(abs(line.final_balance))"/></div>
+				</t>
+			</div>
+		</xpath>
+	</template>
+	
+	<record id="make_invisible" model="res.groups">
+		<field name="name">Invisible</field>
+	</record>
+	
+	<!--
+		hide PDF Reports/Aged Partner Balance menu
+	-->
+	<record model="ir.ui.menu" id="account.menu_aged_trial_balance">
+		<field name="groups_id" eval="[(6,0,[ref('make_invisible')])]"/>
+	</record>
+	
+	<!--
+		hide PDF Reports/Trial Balance menu
+	-->
+	<record model="ir.ui.menu" id="account.menu_general_Balance_report">
+		<field name="groups_id" eval="[(6,0,[ref('make_invisible')])]"/>
+	</record>
+	
+	<!--
+		hide PDF Reports/General Ledger menu
+	-->
+	<record model="ir.ui.menu" id="account.menu_general_ledger">
+		<field name="groups_id" eval="[(6,0,[ref('make_invisible')])]"/>
+	</record>
+</odoo>
