@@ -1,0 +1,56 @@
+<odoo>
+	 <!-- Sales Reps Form View -->
+	<record id="view_sales_rep_form" model="ir.ui.view">
+		<field name="name">sales.rep.form</field>
+		<field name="model">sales.rep</field>
+		<field name="arch" type="xml">
+			<form string="Sales Representative">
+				<sheet>
+                    <div class="oe_button_box" name="button_box">
+                          <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                              <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                          </button>
+                      </div>
+                      <div class="oe_title">
+                          <label for="name" class="oe_edit_only" string="Sales representative"/>
+                          <h1>
+                              <field name="name" placeholder="Contact person name..."/>
+                          </h1>
+                          <div name="options_active"/>
+                      </div>
+                      <group>
+                          <group name="left">
+							  <field name="phone"/>
+                              <field name="user_id" domain="[('share', '=', False)]"/>
+                          </group>
+                          <group name="right">
+                          </group>
+                      </group>
+				</sheet>
+			</form>
+		</field>
+	</record>
+	
+
+	<!-- Sales Reps Tree View -->
+    <record id="sales_rep_view_tree" model="ir.ui.view">
+        <field name="name">sales.rep.tree</field>
+        <field name="model">sales.rep</field>
+        <field name="arch" type="xml">
+            <tree string="Sales Representative">
+                <field name="name"/>
+                <field name="active" invisible="1"/>
+                <field name="phone"/>
+            </tree>
+        </field>
+    </record>
+	
+	
+	<act_window id="action_sales_rep"
+		name="Sales Representatives"
+		res_model="sales.rep"
+		view_mode="tree,form"/>
+	
+		<menuitem parent="sales_team.menu_sale_config" id="menu_account_prepayment" action="action_sales_rep" sequence="102" groups="account.group_account_user"/>
+	
+</odoo>
