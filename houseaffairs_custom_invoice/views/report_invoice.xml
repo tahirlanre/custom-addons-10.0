@@ -141,19 +141,7 @@
         </t>
 	</t>
 </template>
-
-
-	<report
-    	id="account_invoice_houseaffairs"
-    	model="account.invoice"
-   	 	string="House Affairs Invoice"
-    	report_type="qweb-pdf"
-    	name="houseaffairs_custom_invoice.report_invoice"
-    	file="houseaffairs_custom_invoice.report_invoice"
-		paperformat="paperformat_houseaffairs_custom_invoice_paper"
-		menu="False"
-		/>
-		
+	
 	<record id="paperformat_houseaffairs_custom_invoice_paper"
 	        model="report.paperformat"> 
 	  <field name="name">House Affairs Custom Invoice Paper</field>
@@ -169,5 +157,17 @@
 	  <field name="header_spacing">35</field>
 	  <field name="dpi">90</field> 
 	</record>
+
+	<report
+    	id="account_invoice_houseaffairs"
+    	model="account.invoice"
+   	 	string="House Affairs Invoice"
+    	report_type="qweb-pdf"
+    	name="houseaffairs_custom_invoice.report_invoice"
+    	file="houseaffairs_custom_invoice.report_invoice"
+		paperformat="paperformat_houseaffairs_custom_invoice_paper"
+		menu="False"
+		/>
+		
 	
 </odoo>
