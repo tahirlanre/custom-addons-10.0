@@ -8,6 +8,8 @@
     'data': [
         'views/res_partner.xml',
         'views/sales_rep.xml',
+        'security/sales_rep_security.xml',
+        'security/ir.model.access.csv',
     ],
 }
 
