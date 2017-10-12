@@ -9,6 +9,7 @@ class ProductMargin(models.TransientModel):
     category_from = fields.Many2one('product.category', string='To category', required=True)
     
     #check if product was sold in the period
+    #FIXME TODO method is needs refactor
     def _sales_in_period(self,product):
         states = ()
         if self.invoice_state == 'paid':
@@ -17,7 +18,7 @@ class ProductMargin(models.TransientModel):
             states = ('open', 'paid')
         elif self.invoice_state == 'draft_open_paid':
             states = ('draft', 'open', 'paid')
-        invoice_types = ('out_invoice', 'in_refund') 
+        invoice_types = ('out_invoice', 'out_refund') 
         lines_in_period = self.env['account.invoice.line'].search([('product_id','=',product.id),('invoice_id.date_invoice','>=',self.from_date),('invoice_id.date_invoice','<=',self.to_date),('invoice_id.type','in',invoice_types),('invoice_id.state','in',states)])
         if len(lines_in_period) > 0:
             return True
