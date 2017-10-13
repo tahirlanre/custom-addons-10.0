@@ -24,7 +24,7 @@ class AccountingReport(models.TransientModel):
 class ReportFinancial(models.AbstractModel):
     _inherit = 'report.account.report_financial'
         
-    def _compute_report_balance(self, reports):
+    """def _compute_report_balance(self, reports):
         '''returns a dictionary with key=the ID of a record and value=the credit, debit and balance amount
            computed for this record. If the record is of type :
                'accounts' : it's the sum of the linked accounts
@@ -71,7 +71,7 @@ class ReportFinancial(models.AbstractModel):
                 for key, value in res2.items():
                     for field in fields:
                         res[report.id][field] += value[field]
-        return res
+        return res"""
         
     def get_account_lines(self,data):
         lines = []
@@ -79,15 +79,14 @@ class ReportFinancial(models.AbstractModel):
         child_reports = account_report._get_children_by_order()
         res = self.with_context(data.get('used_context'))._compute_report_balance(child_reports)
         if data['enable_filter']:
-            #FIXME
             comparison_res = self.with_context(data.get('comparison_context'))._compute_report_balance(child_reports)
             for report_id, value in comparison_res.items():
                 res[report_id]['comp_bal'] = value['balance']
-                report_acc = res[report_id].get('account_type')
+                report_acc = res[report_id].get('account')
                 if report_acc:
-                    for account_type_id, val in comparison_res[report_id].get('account_type').items():
-                        report_acc[account_type_id]['comp_bal'] = val['balance']
-
+                    for account_id, val in comparison_res[report_id].get('account').items():
+                        report_acc[account_id]['comp_bal'] = val['balance']
+                        
         for report in child_reports:
             vals = {
                 'name': report.name,
@@ -108,30 +107,30 @@ class ReportFinancial(models.AbstractModel):
                 #the rest of the loop is used to display the details of the financial report, so it's not needed here.
                 continue
 
-            #if res[report.id].get('account'):
-            if res[report.id].get('account_type'):
+            if res[report.id].get('account'):
+            #if res[report.id].get('account_type'):
                 sub_lines = []
-                #for account_id, value in res[report.id]['account'].items():
-                for account_type_id, value in res[report.id]['account_type'].items():
+                for account_id, value in res[report.id]['account'].items():
+                #for account_type_id, value in res[report.id]['account_type'].items():
                     #if there are accounts to display, we add them to the lines with a level equals to their level in
                     #the COA + 1 (to avoid having them with a too low level that would conflicts with the level of data
                     #financial reports for Assets, liabilities...)
-                    account_type_balance = 0.0
+                    #account_type_balance = 0.0
                     flag = False
-                    #account = self.env['account.account'].browse(account_id)
-                    account_type = self.env['account.account.type'].browse(account_type_id)
-                    for account_id, value1 in value['account'].items():
-                        account_type_balance += value1['balance']
-                        account = self.env['account.account'].browse(account_id) #FIXME bad programming.....
+                    account = self.env['account.account'].browse(account_id)
+                    #account_type = self.env['account.account.type'].browse(account_type_id)
+                    #for account_id, value1 in value['account'].items():
+                        #account_type_balance += value1['balance']
+                        #account = self.env['account.account'].browse(account_id) #FIXME bad programming.....
                     
                     sub_vals = {
-                        #'name': account.code + ' ' + account.name,
-                        'name': account_type.name,
-                        #'balance': value['balance'] * report.sign or 0.0,
+                        'name': account.code + ' ' + account.name,
+                        #'name': account_type.name,
                         'balance': value['balance'] * report.sign or 0.0,
+                        #'balance': value['balance'] * report.sign or 0.0,
                         'type': 'account',
                         'level': report.display_detail == 'detail_with_hierarchy' and 4,
-                        #'account_type': account.internal_type,
+                        'account_type': account.internal_type,
                     }
                     if data['debit_credit']:
                         sub_vals['debit'] = value['debit']

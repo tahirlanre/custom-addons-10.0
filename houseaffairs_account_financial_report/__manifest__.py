@@ -23,14 +23,16 @@
     'description': """
         - Show balances after account reports
         - Show Gross Profit and Net Profit on P&L Report
+        - Add excel export
     """,
     'author': 'Tahir Aduragba',
     'category': 'Accounts',
-    'depends': ['base', 'account'],
+    'depends': ['base', 'account', 'report_xlsx'],
     'license': 'AGPL-3',
     'data': [
         'views/account_financial_report_data.xml',
         'views/report_financial.xml',
+        'wizard/account_financial_report_wizard.xml',
     ],
     'demo': [],
     'installable': True,
