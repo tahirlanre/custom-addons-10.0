@@ -1,0 +1,14 @@
+<odoo>
+    <record id="accounting_report_view_xlsx" model="ir.ui.view">
+        <field name="name">Accounting Report Xlsx</field>
+        <field name="model">accounting.report</field>
+        <field name="inherit_id" ref="account.accounting_report_view"/>
+        <field name="arch" type="xml">
+			<button name="check_report" position="after">
+				or
+				<button name="button_export_xlsx" string="Export XLSX" type="object"/>
+				or
+			</button>
+		</field>
+    </record>
+</odoo>

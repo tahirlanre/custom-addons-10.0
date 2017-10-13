@@ -1,11 +1,2 @@
 <odoo>
-	<data>
-       <record id="account_financial_report_profitloss_toreport1" model="account.financial.report">
-            <field name="name">Gross Profit</field>
-            <field name="parent_id" ref="account.account_financial_report_income0"/>
-            <field name="display_detail">no_detail</field>
-            <field name="type">account_report</field>
-            <field name="account_report_id" ref="account.account_financial_report_profitandloss0"/>
-        </record>
-    </data>
 </odoo>
