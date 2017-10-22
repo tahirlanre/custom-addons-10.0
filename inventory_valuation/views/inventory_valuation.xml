@@ -62,7 +62,7 @@
 		string="Inventory Valuation"
 		model="product.product"
 		menu="False"
-		report_type="qweb-html"
+		report_type="qweb-pdf"
 		name="inventory_valuation.report_inventory_valuation"
 		/>
 		
