@@ -66,5 +66,11 @@
 		name="inventory_valuation.report_inventory_valuation"
 		/>
 		
-		
+		<report id="inventory_valuation_report_xlsx"
+			string="Inventory Valuation XLSX"
+			model="product.product"
+			report_type="xlsx"
+			name="inventory_valuation.inventory.valuation.xlsx"
+			file="inventory_valuation.inventory.valuation.xlsx"
+			/>
 </odoo>

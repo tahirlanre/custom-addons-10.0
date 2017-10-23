@@ -26,3 +26,6 @@ class InventoryValuationWizard(models.TransientModel):
         data = self._prepare_inventory_valuation()
         return self.env['report'].get_action(self, 'inventory_valuation.report_inventory_valuation', data=data)
         
+    @api.multi
+    def button_export_excel(self):
+        return ""
