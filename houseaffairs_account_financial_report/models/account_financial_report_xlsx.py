@@ -35,7 +35,6 @@ class account_financial_report_xlsx(ReportXlsx):
         self.format_report_title = None
         
     def generate_xlsx_report(self, workbook, data, objects):
-        import pdb; pdb.set_trace()
         
         report = objects
         
