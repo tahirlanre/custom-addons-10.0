@@ -16,7 +16,7 @@
 				
 				<div class="row bg-primary">
 				  <div class="col-xs-2">
-				    <span class="glyphicon glyphicon-pushpin" /> 
+				    <span class="col-xs-2" />
 				      Product Code
 				  </div> 
 				  <div class="col-xs-4">Product Description</div> 

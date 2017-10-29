@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<template id="inventory_sales_analysis.report_inventory_sales_analysis_qweb">
+		<t t-call="report.html_container">
+			<t t-foreach="docs" t-as="o">
+				<div class="page">
+					<h1 align="center">Inventory Sales Analysis</h1>
+					<h2 align="center">
+						<t t-esc="res_company.name"/>
+					</h2>
+					<div>
+						From Date: 
+						<span t-field="o.start_date"/>
+					</div>
+					<div>
+						To Date: 
+						<span t-field="o.end_date"/>
+					</div>
+					<br />
+					<!-- Diplay product lines-->
+					<t t-if="o.group_by_product">
+						<t t-call="inventory_sales_analysis.report_inventory_sales_analysis_product"/>
+					</t>
+					
+					<!-- Display parnter lines-->
+					<t t-if="o.group_by_partner">
+						<t t-call="inventory_sales_analysis.report_inventory_sales_analysis_partner"/>
+					</t>
+					
+					<!--Display sales rep lines-->
+					<t t-if="o.group_by_sales_rep">
+						<t t-call="inventory_sales_analysis.report_inventory_sales_analysis_sales_rep"/>
+					</t>
+				</div>
+			</t>
+		</t>
+	</template>
+	<template id="inventory_sales_analysis.report_inventory_sales_analysis_line">
+		<t t-foreach="o.line_ids" t-as="line">
+			<div class="row">
+				<div class="col-md-2">
+				</div>
+				<div class="col-md-3">
+					<span t-field="line.number"/>
+				</div>
+				<div class="col-md-1">
+					<span t-field="line.qty"/>
+				</div>
+				<div class="col-md-1">
+					<span t-esc="'{:,.2f}'.format(line.amount)"/>
+				</div>
+				<div class="col-md-1">
+					<span t-esc="'{:,.2f}'.format(line.cost)"/>
+				</div>
+				<div class="col-md-1">
+					<span t-esc="'{:,.2f}'.format(line.profit)"/>
+				</div>
+				<div class="col-md-1">
+					<span t-esc="'{:,.2f}'.format(line.percent_profit)"/>
+				</div>
+				<div class="col-md-1">
+					<span t-esc="'{:,.2f}'.format(line.percent_markup)"/>
+				</div>
+			</div>
+		</t>
+		
+		
+	</template>
+
+	<template id="inventory_sales_analysis.report_inventory_sales_analysis_product">	
+		<div class="row bg-primary">
+		  <div class="col-md-1" style="width: 14.166666661%">
+		      Item Code
+		  </div> 
+		  <div class="col-md-1" style="width: 21.666666658%">Item Description</div> 
+		  <div class="col-md-1">Qty</div> 
+		  <div class="col-md-1" style="width: 12.499999995%">Amount</div> 
+		  <div class="col-md-1" style="width: 12.499999995%">Cost</div> 
+		  <div class="col-md-1" style="width: 12.499999995%">Profit</div>
+		  <div class="col-md-1">Profit %</div>
+		  <div class="col-md-1" style="width: 9.999999996%">Markup %</div>
+		</div>
+		<t t-foreach="o.product_ids" t-as="product">
+			<div class="row">
+				<div class="col-md-1" style="width: 14.166666661%">
+					<span t-field="product.code"/>
+				</div>
+				<div class="col-md-1" style="width: 21.666666658%">
+					<span t-field="product.name"/>
+				</div>
+				<div class="col-md-1">
+					<span t-field="product.qty"/>
+				</div>
+				<div class="col-md-1" style="width: 12.499999995%">
+					<span t-esc="'{:,.2f}'.format(product.amount)"/>
+				</div>
+				<div class="col-md-1" style="width: 12.499999995%">
+					<span t-esc="'{:,.2f}'.format(product.cost)"/>
+				</div>
+				<div class="col-md-1" style="width: 12.499999995%">
+					<span t-esc="'{:,.2f}'.format(product.profit)"/>
+				</div>
+				<div class="col-md-1">
+					<span t-esc="'{:,.2f}'.format(product.percent_profit)"/>
+				</div>
+				<div class="col-md-1" style="width: 9.999999996%">
+					<span t-esc="'{:,.2f}'.format(product.percent_markup)"/>
+				</div>
+			</div>
+		</t>
+	</template>
+	
+	<template id="inventory_sales_analysis.report_inventory_sales_analysis_partner">	
+		<div class="row bg-primary">
+		  <div class="col-md-1" style="width: 12.499999995%">
+		      Code
+		  </div> 
+		  <div class="col-md-1" style="width: 23.333333324%">Customer</div> 
+		  <div class="col-md-1">Qty</div> 
+		  <div class="col-md-1" style="width: 12.499999995%">Amount</div> 
+		  <div class="col-md-1" style="width: 12.499999995%">Cost</div> 
+		  <div class="col-md-1" style="width: 12.499999995%">Profit</div>
+		  <div class="col-md-1">Profit %</div>
+		  <div class="col-md-1" style="width: 9.999999996%">Markup %</div>
+		</div>
+		<t t-foreach="o.partner_ids" t-as="partner">
+			<div class="row">
+				<div class="col-md-1" style="width: 12.499999995%">
+					<span t-field="partner.code"/>
+				</div>
+				<div class="col-md-1" style="width: 23.333333324%">
+					<span t-field="partner.name"/>
+				</div>
+				<div class="col-md-1">
+					<span t-field="partner.qty"/>
+				</div>
+				<div class="col-md-1" style="width: 12.499999995%">
+					<span t-esc="'{:,.2f}'.format(partner.amount)"/>
+				</div>
+				<div class="col-md-1" style="width: 12.499999995%">
+					<span t-esc="'{:,.2f}'.format(partner.cost)"/>
+				</div>
+				<div class="col-md-1" style="width: 12.499999995%">
+					<span t-esc="'{:,.2f}'.format(partner.profit)"/>
+				</div>
+				<div class="col-md-1">
+					<span t-esc="'{:,.2f}'.format(partner.percent_profit)"/>
+				</div>
+				<div class="col-md-1" style="width: 9.999999996%">
+					<span t-esc="'{:,.2f}'.format(partner.percent_markup)"/>
+				</div>
+			</div>
+		</t>
+	</template>
+	
+	<template id="inventory_sales_analysis.report_inventory_sales_analysis_sales_rep">	
+		<div class="row bg-primary">
+		  
+		  <div class="col-md-3">Sales rep</div> 
+		  <div class="col-md-1">Qty</div> 
+		  <div class="col-md-1" style="width: 12.499999995%">Amount</div> 
+		  <div class="col-md-1" style="width: 12.499999995%">Cost</div> 
+		  <div class="col-md-1" style="width: 12.499999995%">Profit</div>
+		  <div class="col-md-1" style="width: 12.499999995%">Profit %</div>
+		  <div class="col-md-1" style="width: 12.499999995%">Markup %</div>
+		</div>
+		<t t-foreach="o.sales_rep_ids" t-as="sales_rep">
+			<div class="row">
+				<div class="col-md-3">
+					<span t-field="sales_rep.name"/>
+				</div>
+				<div class="col-md-1">
+					<span t-field="sales_rep.qty"/>
+				</div>
+				<div class="col-md-1" style="width: 12.499999995%">
+					<span t-esc="'{:,.2f}'.format(sales_rep.amount)"/>
+				</div>
+				<div class="col-md-1" style="width: 12.499999995%">
+					<span t-esc="'{:,.2f}'.format(sales_rep.cost)"/>
+				</div>
+				<div class="col-md-1" style="width: 12.499999995%">
+					<span t-esc="'{:,.2f}'.format(sales_rep.profit)"/>
+				</div>
+				<div class="col-md-1" style="width: 12.499999995%">
+					<span t-esc="'{:,.2f}'.format(sales_rep.percent_profit)"/>
+				</div>
+				<div class="col-md-1" style="width: 12.499999995%">
+					<span t-esc="'{:,.2f}'.format(sales_rep.percent_markup)"/>
+				</div>
+			</div>
+		</t>
+	</template>
+	
+</odoo>
