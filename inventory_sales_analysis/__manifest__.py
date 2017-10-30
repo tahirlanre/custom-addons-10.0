@@ -9,7 +9,7 @@
     'license': 'AGPL-3',
     'summary': '',
     'author': 'Tahir Aduragba',
-    'depends': ['account','stock_account','partner_sales_rep'],
+    'depends': ['account','stock_account','partner_sales_rep','account_invoice_margin'],
     'data': [
         'report/templates/inventory_sales_analysis.xml',
         'wizard/inventory_sales_analysis_wizard.xml',
