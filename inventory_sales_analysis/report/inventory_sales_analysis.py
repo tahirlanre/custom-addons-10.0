@@ -191,7 +191,6 @@ class inventory_sales_analysis(models.TransientModel):
                     else 100 * sum(rl.profit)/sum(rl.amount) end, 
                 case when sum(rl.cost) = 0 then 0 
                     else 100 * sum(rl.profit)/sum(rl.cost) end from
-                avg(rl.percent_markup) from
                 report_inventory_sales_analysis_line rl
                 join res_partner p on rl.partner_id = p.id
                 where rl.report_id = %s
@@ -233,7 +232,6 @@ class inventory_sales_analysis(models.TransientModel):
                     else 100 * sum(rl.profit)/sum(rl.amount) end, 
                 case when sum(rl.cost) = 0 then 0 
                     else 100 * sum(rl.profit)/sum(rl.cost) end from
-                avg(rl.percent_markup) from
                 report_inventory_sales_analysis_line rl
                 join sales_rep sr on rl.sales_rep_id = sr.id
                 where rl.report_id = %s
