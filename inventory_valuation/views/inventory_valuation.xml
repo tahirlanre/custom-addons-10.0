@@ -2,21 +2,20 @@
 	<template id="report_inventory_valuation">
 		<t t-call="report.html_container">
 			<div class="page">
-				<h1 align="center">
-					Inventory Valuation
-				</h1>
-				
-				<h2 align="center">
-					<t t-esc="res_company.name"/>
-				</h2>
-				
 				<h3 align="center">
-					<t t-esc="time.strftime('%A %d %B %Y %I:%M %p', time.strptime(Date,'%Y-%m-%d %H:%M:%S'))"/>
+					Inventory Valuation
 				</h3>
+				
+				<h4 align="center">
+					<t t-esc="res_company.name"/>
+				</h4>
+				
+				<h5 align="center">
+					<t t-esc="time.strftime('%A %d %B %Y %I:%M %p', time.strptime(Date,'%Y-%m-%d %H:%M:%S'))"/>
+				</h5>
 				
 				<div class="row bg-primary">
 				  <div class="col-xs-2">
-				    <span class="col-xs-2" />
 				      Product Code
 				  </div> 
 				  <div class="col-xs-4">Product Description</div> 
