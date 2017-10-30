@@ -3,7 +3,7 @@
 		id="action_report_inventory_sales_analysis_qweb"
 		model="report_inventory_sales_analysis_qweb"
 		string="Inventory Sales Analysis"
-		report_type="qweb-html"
+		report_type="qweb-pdf"
 		name="inventory_sales_analysis.report_inventory_sales_analysis_qweb"
 		file="inventory_sales_analysis.report_inventory_sales_analysis_qweb" />
 		
