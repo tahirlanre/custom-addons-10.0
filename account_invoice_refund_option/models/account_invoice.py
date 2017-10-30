@@ -60,6 +60,7 @@ class AccountInvoiceLine(models.Model):
             'restrict_partner_id': self.invoice_id.partner_id.id,
             'location_id': location_id,
             'location_dest_id': location_dest_id,
+            'origin': self.invoice_id.number,
         }
         
     def _generate_moves(self):

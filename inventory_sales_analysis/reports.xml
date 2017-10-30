@@ -1,0 +1,16 @@
+<odoo>
+	<report 
+		id="action_report_inventory_sales_analysis_qweb"
+		model="report_inventory_sales_analysis_qweb"
+		string="Inventory Sales Analysis"
+		report_type="qweb-pdf"
+		name="inventory_sales_analysis.report_inventory_sales_analysis_qweb"
+		file="inventory_sales_analysis.report_inventory_sales_analysis_qweb" />
+		
+	    <menuitem
+	        parent="stock.menu_warehouse_report"
+	        action="action_inventory_sales_analysis_wizard"
+	        id="menu_open_items_wizard"
+	        sequence="30"
+	        />
+</odoo>
