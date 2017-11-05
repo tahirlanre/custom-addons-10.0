@@ -71,9 +71,6 @@
 		<field name="model">res.partner</field>
 		<field name="inherit_id" ref="base.view_partner_tree"/>
 		<field name="arch" type="xml">
-			<field name ="phone" position="before">
-				<field name="sales_rep_id"/>
-			</field>
 			<field name ="phone" position="after">
 				<field name="credit_limit"/>
 			</field>
