@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<act_window id="action_cashbook_batch" 
+		name="Cashbook Batch" 
+		res_model="account.cashbook.batch" 
+		view_mode="tree,form" />
+		
+	<!--<menuitem id="menu_cashbook_batch" name="Cashbook Batch" action="action_cashbook_batch" parent="account.menu_finance_entries"/>-->
+	
+    <record id="view_cashbook_batch_tree" model="ir.ui.view">
+        <field name="name">account.cashbook.batch.tree</field>
+        <field name="model">account.cashbook.batch</field>
+        <field name="arch" type="xml">
+            <tree decoration-danger="state=='open'" decoration-info="state=='open'" string="Cashbook batches">
+                <field name="name"/>
+                <field name="journal_id"/>
+				<field name="batch_line_no"/>
+				<field name="payment_date"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+	
+    <record id="view_cashbook_batch_search" model="ir.ui.view">
+        <field name="name">account.cashbook.batch.search</field>
+        <field name="model">account.cashbook.batch</field>
+        <field name="arch" type="xml">
+            <search string="Search Cashbook Batches">
+                <field name="name" string="Cashbook Batch"/>
+                <field name="payment_date"/>
+                <filter string="Draft" domain="[('state','=','open')]"/>
+                <filter string="Confirmed" domain="[('state','=','confirm')]"/>
+                <field name="journal_id"/>
+                <group expand="0" string="Group By">
+                    <filter string="Journal" context="{'group_by': 'journal_id'}"/>
+                    <filter string="Status" context="{'group_by': 'state'}"/>
+                    <filter string="Date" context="{'group_by': 'date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+	
+    <record id="view_cashbook_batch_form" model="ir.ui.view">
+        <field name="name">account.bank.statement.form</field>
+        <field name="model">account.cashbook.batch</field>
+        <field name="arch" type="xml">
+			<form string ="Cashbook batches">
+				<header>
+					<button name="post" string="Process Batch" type="object" class="oe_highlight" attrs="{'invisible':['|',('batch_line_ids','=',[]),('state', '!=', 'open')]}"/>
+					<button name="print_confirmation" string="Print" type="object" class="oe_highlight" attrs="{'invisible':['|',('batch_line_ids','=',[]),('state', '=', 'open')]}"/>
+					<field name="state" widget="statusbar" statusbar_visible="open,confirm"/>
+				</header>
+				<sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" name="button_journal_entries"
+                                string="Journal Items" type="object"
+                                groups="account.group_account_manager"
+                                attrs="{'invisible':[('move_line_ids','=',[])]}" icon="fa-bars"/>
+                        <field name="move_line_ids" invisible="1"/>
+                    </div>
+					<group>
+						<group>
+                            <field name="journal_type" invisible="1"/>
+                            <field name="journal_id" domain="[('type', '=', journal_type)]" attrs="{'readonly': [('move_line_ids', '!=', [])]}" widget="selection"/>
+							<field name="move_line_ids" invisible="1"/>
+						</group>
+						<group></group>
+					</group>
+					<field name="batch_line_ids">
+						<tree editable="bottom" decoration-muted="journal_entry_ids">
+                            <field name="sequence"  invisible="1"/>
+                            <field name="journal_entry_ids" invisible="1"/>
+                            <field name="date" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
+							<field name="payment_type" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
+							<field name="account_id" attrs="{'required': [('payment_type', '=', 'gl')], 'invisible': [('payment_type', '!=', 'gl')], 'readonly': [('journal_entry_ids', '!=', [])]}"/>
+                            <field name="partner_id" domain="['|',('parent_id','=',False),('is_company','=',True)]"
+                                 context="{'default_supplier': payment_type == 'ap', 'default_customer': payment_type == 'ar'}"
+                                 attrs="{'required': [('payment_type', '!=', 'gl')], 'readonly' : [('journal_entry_ids', '!=', [])], 'invisible' : [('payment_type', '=', 'gl')]}"/>
+                            <field name="reference" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
+                            <field name="description" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
+                            <field name="payment" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
+                            <field name="deposit" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
+						</tree>
+					</field>
+				</sheet>
+			</form>
+        </field>
+    </record>
+	
+</odoo>
