@@ -288,7 +288,7 @@ class account_journal(models.Model):
             'type': journal_type
         })
 
-        [action] = self.env.ref('houseaffairs_account_cashbook_batch.%s' % action_name).read()
+        [action] = self.env.ref('account_cashbook_batch.%s' % action_name).read()
         action['context'] = ctx
         action['domain'] = self._context.get('use_domain', [])
         if action_name in ['action_cashbook_batch']:
