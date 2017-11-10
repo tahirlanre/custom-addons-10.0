@@ -3,17 +3,17 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 {
-    'name': 'Inventory Sales Analysis',
+    'name': 'Account Cashbook Batch',
     'version': '10.0.1.0.0',
     'category': 'Warehouse',
     'license': 'AGPL-3',
-    'summary': '',
+    'summary': 'Account cashbook batches for House Affairs Nigeria Limited',
     'author': 'Tahir Aduragba',
-    'depends': ['account','stock_account','partner_sales_rep','account_invoice_margin'],
+    'depends': ['account'],
     'data': [
-        'report/templates/inventory_sales_analysis.xml',
-        'wizard/inventory_sales_analysis_wizard.xml',
-        'reports.xml',
+        'views/cashbook_batch_view.xml',
+        'data/cashbook_batch_data.xml',
+        'views/report_cashbook_batch_line.xml',
     ],
     'installable': True,
 }

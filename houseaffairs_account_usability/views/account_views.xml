@@ -17,4 +17,15 @@
 		</field>
 	</record>
 	
+	<record id="account_journal_dashboard_kanban_view_custom" model="ir.ui.view">
+        <field name="name">account.journal.dashboard.kanban</field>
+        <field name="model">account.journal</field>
+		<field name="inherit_id" ref="account.account_journal_dashboard_kanban_view"/>
+        <field name="arch" type="xml">
+			<xpath expr="//t[@t-name='JournalBodyBankCash']//div[@name='latest_statement']" position="attributes">
+                <attribute name="invisible">1</attribute>
+			</xpath>
+		</field>
+	</record>
+	
 </odoo>

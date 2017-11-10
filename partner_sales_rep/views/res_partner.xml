@@ -9,4 +9,16 @@
 			</field>
 		</field>
 	</record>
+	
+	
+	<record id="view_partner_tree_custom_sales_rep" model="ir.ui.view">
+		<field name="name">res.partner.tree.custom</field>
+		<field name="model">res.partner</field>
+		<field name="inherit_id" ref="base.view_partner_tree"/>
+		<field name="arch" type="xml">
+			<field name ="phone" position="before">
+				<field name="sales_rep_id"/>
+			</field>
+		</field>
+	</record>
 </odoo>
