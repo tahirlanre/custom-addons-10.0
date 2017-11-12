@@ -1,0 +1,37 @@
+<odoo>
+	
+	<record id="view_aml_custom" model="ir.ui.view">
+		<field name="name">account.move.line.tree.custom</field>
+		<field name="model">account.move.line</field>
+		<field name="arch" type="xml">
+            <tree string="Journal Items" create="false">
+                <field name="date"/>
+                <field name="move_id" invisible="1" required="0"/>
+				<field name="partner_reference"/>
+				<field name="ref"/>
+                <field name="name"/>
+                <field name="statement_id" invisible="1"/>
+                <!--<field name="partner_id"/>-->
+                <field name="account_id" invisible="1" options='{"no_open":True}' domain="[('company_id', '=', company_id)]"/>
+                <field name="analytic_account_id" groups="analytic.group_analytic_accounting"/>
+                <field name="reconciled" invisible="1"/>
+                <field name="debit" sum="Total Debit"/>
+                <field name="credit" sum="Total Credit"/>
+                <field name="amount_currency" invisible="1" readonly="True" groups="base.group_multi_currency"/>
+                <field name="currency_id" readonly="True" invisible="1" />
+				<field name="cummul_balance"/>
+                <field name="company_currency_id" invisible="1"/>
+                <field name="company_id" invisible="1"/>
+            </tree>
+		</field>
+	</record>
+	
+    <act_window
+        id="action_gl_move_line"
+        name="Journal Items"
+		view_type="tree"
+		view_mode="tree"
+		view_id="view_aml_custom"
+        res_model="account.move.line" />
+	
+</odoo>
