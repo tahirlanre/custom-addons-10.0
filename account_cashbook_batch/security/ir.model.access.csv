@@ -1,1 +1,5 @@
-id	name	model_id:id	group_id:id	perm_read	perm_write	perm_create	perm_unlinkaccess_account_cashbook_batch_user	account.cashbook.batch.user	model_account_cashbook_batch	account.group_account_user	1	1	1	0access_account_cashbook_batch_manager	account.cashbook.batch.manager	model_account_cashbook_batch	account.group_account_manager	1	1	1	1access_account_prepayment_line_user	account.cashbook.batch.line.user	model_account_cashbook_batch_line	account.group_account_user	1	1	1	0access_account_prepayment_line_manager	account.cashbook.batch.line.manager	model_account_cashbook_batch_line	account.group_account_manager	1	1	1	1
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_account_cashbook_batch_user,account.cashbook.batch.user,model_account_cashbook_batch,account.group_account_user,1,1,1,0
+access_account_cashbook_batch_manager,account.cashbook.batch.manager,model_account_cashbook_batch,account.group_account_manager,1,1,1,1
+access_account_prepayment_line_user,account.cashbook.batch.line.user,model_account_cashbook_batch_line,account.group_account_user,1,1,1,0
+access_account_prepayment_line_manager,account.cashbook.batch.line.manager,model_account_cashbook_batch_line,account.group_account_manager,1,1,1,1

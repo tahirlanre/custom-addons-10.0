@@ -5,7 +5,8 @@
 {
     'name': 'Account Cashbook Batch',
     'version': '10.0.1.0.0',
-    'category': 'Warehouse',
+    'description': ''
+    'category': 'Accounting & Finance',
     'license': 'AGPL-3',
     'summary': 'Account cashbook batches for House Affairs Nigeria Limited',
     'author': 'Tahir Aduragba',
