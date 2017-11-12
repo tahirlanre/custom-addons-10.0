@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	
+	<record id="general_ledger_enquiry_wizard" model="ir.ui.view">
+		<field name="name">general.ledger.enquiry.wizard</field>
+		<field name="model">general.ledger.enquiry.wizard</field>
+		<field name="arch" type="xml">
+			<form string="General Ledger Enquiry">
+				<group>
+                    <field name="target_move"/>
+					<field name="account_id" options="{'no_create': True}"/>
+                    <label for="date_from" string="Date(s)"/>
+                    <div>
+                        <field name="date_from" class="oe_inline"/> - 
+                        <field name="date_to" class="oe_inline"/>
+                    </div>
+				</group>
+               	<footer>
+                    <button string="Open Enquiry" name="open_general_ledger_enquiry" type="object" class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+			</form>
+		</field>
+	</record>
+	
+	<act_window
+		id="action_general_ledger_enquiry"
+		name="General Ledger Enquiry"
+		res_model="general.ledger.enquiry.wizard"
+		view_type="form"
+		view_mode="form"
+		view_id="general_ledger_enquiry_wizard"
+		target="new"
+		/>
+	
+	<menuitem 
+		id="menu_action_general_ledger_enquiry"
+		action="action_general_ledger_enquiry"
+        parent="account.menu_finance_entries" sequence="20"
+		/>
+		
+
+</odoo>
