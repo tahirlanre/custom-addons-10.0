@@ -11,5 +11,6 @@
 	        <field eval="False" name="company_id"/>
 	        <field name="padding">4</field>
 	    </record>
-	</data>	
+	</data>
+	
 </odoo>
