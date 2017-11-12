@@ -173,7 +173,7 @@ class account_cashbook_batch_line(models.Model):
         return {
             'name': name,
             'date': self.date,
-            'ref': self.batch_id.name or '',
+            'ref': (self.reference or '') + ' - ' + (self.batch_id.name or ''),
             'company_id': self.batch_id.company_id.id,
             'journal_id': journal.id,
             'batch_line_id': self.id,
