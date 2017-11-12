@@ -91,7 +91,7 @@ class account_cashbook_batch(models.Model):
                     if batch_line.payment > 0.0:
                         amount = batch_line.payment * (batch_line.payment_type in ('ap', 'gl') and 1 or -1)
                     elif batch_line.deposit > 0.0:
-                        amount = batch_line.deposit * (batch_line.payment_type in ('ap', 'gl') and 1 or -1)
+                        amount = batch_line.deposit * (batch_line.payment_type in ('ap', 'gl') and -1 or 1)
                     
                     move = batch_line._create_entry(amount)
                 moves += move

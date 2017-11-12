@@ -33,7 +33,6 @@ class account_move_line(models.Model):
             """
         self.env.cr.execute(sqlstr)
         result = self.env.cr.fetchall()
-        #import pdb; pdb.set_trace()
         for aml in self:
             for res in result:
                 if aml.id == res[0]:
