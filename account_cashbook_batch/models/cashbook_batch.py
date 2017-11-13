@@ -33,7 +33,6 @@ class account_cashbook_batch(models.Model):
     name = fields.Char(readonly=True, copy=False, default="Draft") # The name is attributed upon post()
     payment_type = fields.Selection([('ar', 'Account Receivable'), ('ap', 'Account Payable'),('gl', 'General Ledger')], string='Payment Type')
     payment_date = fields.Date(string='Payment Date', default=fields.Date.context_today, required=True, copy=False)
-    journal_id = fields.Many2one('account.journal', string='Payment Journal', required=True, domain=[('type', 'in', ('bank', 'cash'))])
     company_id = fields.Many2one('res.company', related='journal_id.company_id', string='Company', readonly=True)
     batch_line_no = fields.Integer(compute='_batch_line_no', string='Lines Per Batch')
     batch_line_ids = fields.One2many('account.cashbook.batch.line','batch_id', string='Batch Lines', states={'confirm': [('readonly', True)]}, copy=True)
@@ -44,7 +43,6 @@ class account_cashbook_batch(models.Model):
     journal_id = fields.Many2one('account.journal', string='Journal', required=True, states={'confirm': [('readonly', True)]}, default=_default_journal)
     journal_type = fields.Selection(related='journal_id.type', help="Technical field used for usability purposes")
     currency_id = fields.Many2one('res.currency', string='Currency', required=True, default=lambda self: self.env.user.company_id.currency_id)
-    company_id = fields.Many2one('res.company', related='journal_id.company_id', string='Company', readonly=True)
     
     @api.multi
     def unlink(self):
@@ -299,7 +297,7 @@ class account_journal(models.Model):
 class account_move(models.Model):
     _inherit = 'account.move'
     
-    batch_line_id = fields.Many2one('account.cashbook.batch.line', index=True, string='', copy=False, readonly=True)
+    batch_line_id = fields.Many2one('account.cashbook.batch.line', index=True, string='Cashbook batch line', copy=False, readonly=True)
     
 class account_move_line(models.Model):
     _inherit = 'account.move.line'
