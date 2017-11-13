@@ -5,7 +5,7 @@
 {
     'name': 'Account Cashbook Batch',
     'version': '10.0.1.0.0',
-    'description': ''
+    'description': '',
     'category': 'Accounting & Finance',
     'license': 'AGPL-3',
     'summary': 'Account cashbook batches for House Affairs Nigeria Limited',

@@ -34,7 +34,7 @@
 		view_id="view_aml_custom"
         res_model="account.move.line" />
 		
-		<record id="view_aml_custom" model="ir.ui.view">
+		<record id="view_account_move_line_custom" model="ir.ui.view">
 			<field name="name">account.move.line.tree.custom</field>
 			<field name="model">account.move.line</field>
 			<field name="inherit_id" ref="account.view_move_line_tree"/>
