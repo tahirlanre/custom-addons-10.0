@@ -3,19 +3,18 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 {
-    'name': 'Account Cashbook Batch',
+    'name': 'Journal Batches',
     'version': '10.0.1.0.0',
-    'description': '',
     'category': 'Accounting & Finance',
     'license': 'AGPL-3',
-    'summary': 'Account cashbook batches for House Affairs Nigeria Limited',
+    'summary': 'Journal batches for House Affairs Nigeria Limited',
     'author': 'Tahir Aduragba',
     'depends': ['account'],
     'data': [
-        'views/cashbook_batch_view.xml',
-        'data/cashbook_batch_data.xml',
-        'views/report_cashbook_batch_line.xml',
+        'views/journal_batch_view.xml',
+        'wizard/journal_batch_wizard.xml',
         'security/ir.model.access.csv',
+        'data/journal_batch_data.xml',
     ],
     'installable': True,
 }

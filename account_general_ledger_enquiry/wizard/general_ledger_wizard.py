@@ -49,7 +49,7 @@ class GeneralLedgerEnquiryWizard(models.TransientModel):
             'target': action.target,
             'context': "{'default_account_id': " + str(self.account_id.id) + "}",
             'res_model': action.res_model,
-            'domain': [('account_id', '=', self.account_id.id),('date', '>=', self.date_from),('date','<=',self.date_to)],
+            'domain': [('account_id', '=', self.account_id.id),('date', '>=', self.date_from),('date','<=',self.date_to),('move_id.state','=','posted')],
         }
         result_context = eval(result.get('context','{}')) or {}
         used_context.update(result_context)

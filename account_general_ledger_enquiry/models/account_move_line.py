@@ -27,9 +27,11 @@ class account_move_line(models.Model):
                 sum(s.balance) over (partition by s.account_id order by s.row) 
             	from (
                     select 
-                        id, row_number() over(order by date, id asc) as row, date, name, 
-                        account_id, debit, credit, (debit-credit) AS balance 
-                        from account_move_line order by date, id asc) s
+                        aml.id, row_number() over(order by aml.date, aml.id asc) as row, aml.date, aml.name, 
+                        aml.account_id, aml.debit, aml.credit, (aml.debit-aml.credit) AS balance 
+                        from account_move_line aml
+                        join account_move am on am.id = aml.move_id
+                        where am.state = 'posted' order by aml.date, aml.id asc) s
             """
         self.env.cr.execute(sqlstr)
         result = self.env.cr.fetchall()

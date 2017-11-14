@@ -8,10 +8,10 @@
                 <field name="date"/>
                 <field name="move_id" invisible="1" required="0"/>
 				<field name="partner_reference"/>
+                <field name="partner_id" invisible="1"/>
 				<field name="ref"/>
                 <field name="name"/>
                 <field name="statement_id" invisible="1"/>
-                <!--<field name="partner_id"/>-->
                 <field name="account_id" invisible="1" options='{"no_open":True}' domain="[('company_id', '=', company_id)]"/>
                 <field name="analytic_account_id" groups="analytic.group_analytic_accounting"/>
                 <field name="reconciled" invisible="1"/>
@@ -33,5 +33,16 @@
 		view_mode="tree"
 		view_id="view_aml_custom"
         res_model="account.move.line" />
+		
+		<record id="view_account_move_line_custom" model="ir.ui.view">
+			<field name="name">account.move.line.tree.custom</field>
+			<field name="model">account.move.line</field>
+			<field name="inherit_id" ref="account.view_move_line_tree"/>
+			<field name="arch" type="xml">
+				<field name="credit" position="after">
+					<field name="cummul_balance"/>
+				</field>
+			</field>
+		</record>
 	
 </odoo>
