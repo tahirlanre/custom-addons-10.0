@@ -60,6 +60,7 @@ class SaleOrder(models.Model):
         return res
     
     @api.depends('customer_details')
+    @api.multi
     def _set_name_from_customer_details(self):
         if self.customer_details:
             self.name_from_customer_details = self.customer_details.split('\n')[0]
@@ -73,6 +74,18 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
     
+    @api.multi
+    @api.depends(
+        'product_uom_qty',
+        'product_id')
+    def _get_product_available_qty(self):
+        self.ensure_one()
+        if self.order_id.state == 'draft':
+            self.product_available_qty = self.product_id.with_context(
+                warehouse=self.order_id.warehouse_id.id
+            ).qty_available
+            
+    product_available_qty = fields.Float(string='Available Qty',compute=_get_product_available_qty, readonly=True,store=True)
     #overide _onchange_product_id to use only product name without ref as invoice line description by default
     @api.onchange('product_id')
     def product_id_change(self):

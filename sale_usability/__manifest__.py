@@ -34,7 +34,7 @@
     'depends': ['base', 'sale','report_extended'],
     'license': 'AGPL-3',
     'data': [ 'views/templates.xml',
-    #'views/invoice_report.xml',
+    'views/sale_order_line_view.xml',
     'views/sale_order_report.xml',
     #'views/reports.xml',
     ],
