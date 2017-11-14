@@ -46,7 +46,7 @@
         <field name="arch" type="xml">
 			<form string ="Cashbook batches">
 				<header>
-					<button name="post" string="Process Batch" type="object" class="oe_highlight" attrs="{'invisible':['|',('batch_line_ids','=',[]),('state', '!=', 'open')]}"/>
+					<button name="post" confirm="Do you want to post cashbook batch?" string="Process Batch" type="object" class="oe_highlight" attrs="{'invisible':['|',('batch_line_ids','=',[]),('state', '!=', 'open')]}"/>
 					<button name="print_confirmation" string="Print" type="object" class="oe_highlight" attrs="{'invisible':['|',('batch_line_ids','=',[]),('state', '=', 'open')]}"/>
 					<field name="state" widget="statusbar" statusbar_visible="open,confirm"/>
 				</header>
