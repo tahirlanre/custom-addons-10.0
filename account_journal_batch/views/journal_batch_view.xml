@@ -21,7 +21,7 @@
 		<field name="arch" type="xml">
 			<form string="Journal Batch">
 				<header>
-					<button name="post" string="Post Batch" type="object" class="oe_highlight"/>
+					<button name="post" string="Post Batch" confirm="Are you sure you want to post batches?" type="object" class="oe_highlight"/>
 				</header>
 				<sheet>
 					<group string="Batch">
