@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	
+	<record id="view_account_journal_batch_tree" model="ir.ui.view">
+		<field name="name">account.journal.batch.tree</field>
+		<field name="model">account.journal.batch</field>
+		<field name="arch" type="xml">
+			<tree string="Journal Batches">
+				<field name="name"/>
+				<field name="description"/>
+				<field name="line_count"/>
+				<field name="reference"/>
+				<field name="date"/>
+			</tree>
+		</field>
+	</record>
+	
+	<record id="view_account_journal_batch_form" model="ir.ui.view">
+		<field name="name">account.journal.batch.form</field>
+		<field name="model">account.journal.batch</field>
+		<field name="arch" type="xml">
+			<form string="Journal Batch">
+				<header>
+					<button name="post" string="Post Batch" type="object" class="oe_highlight"/>
+				</header>
+				<sheet>
+					<group string="Batch">
+						<field name="name"/>
+						<field name="description"/>
+						<field name="transaction_code"/>
+					</group>
+					<group string="Options">
+						<field name="clear_batch"/>
+					</group>
+					<group string="Recurring Options">
+						<field name="repeat_batch"/>
+						<field name="repeat_number" attrs="{'invisible':[('repeat_batch','=',False)]}"/>
+						<field name="repeat_count"/>
+					</group>
+					<notebook colspan="4">
+						<page string="Journal Batch Lines">
+							<field name="journal_batch_line_ids" widget="one2many_list" options="{'reload_whole_on_button': true}">
+                                <tree string="Journal batch entries" editable="bottom">
+                                    <field name="date"/>
+                                    <field name="account_id"/>
+                                    <field name="reference"/>
+                                    <field name="description"/>
+                                    <field name="debit" sum="Total debit"/>
+									<field name="credit" sum="Total credit"/>
+                                </tree>
+							</field>
+						</page>
+					</notebook>
+				</sheet>
+			</form>
+		</field>
+	</record>
+	
+	<act_window
+		name="Journal Batches"
+		id="action_journal_batch"
+		res_model="account.journal.batch"
+		view_mode="tree,form"
+		/>
+		
+	<menuitem 
+		id="menu_journal_batch" 
+		name="Journal Batches"
+		action="action_journal_batch"
+		sequence="102"
+		groups="account.group_account_manager"
+		parent="account.menu_finance_entries"/>
+</odoo>
