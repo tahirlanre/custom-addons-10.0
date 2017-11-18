@@ -77,9 +77,9 @@
                                  context="{'default_supplier': payment_type == 'ap', 'default_customer': payment_type == 'ar'}"
                                  attrs="{'required': [('payment_type', '!=', 'gl')], 'readonly' : [('journal_entry_ids', '!=', [])], 'invisible' : [('payment_type', '=', 'gl')]}"/>
                             <field name="reference" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
-                            <field name="description" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
-                            <field name="payment" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
-                            <field name="deposit" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
+                            <field name="description" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }" />
+                            <field name="deposit" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }" sum="Total deposits"/>
+                            <field name="payment" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }" sum="Total payments"/>
 						</tree>
 					</field>
 				</sheet>
