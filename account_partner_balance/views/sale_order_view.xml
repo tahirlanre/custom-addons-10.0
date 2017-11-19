@@ -5,7 +5,7 @@
 		<field name="inherit_id" ref="sale.view_order_form"/>
 		<field name="arch" type="xml">
 			<xpath expr="//field[@name='partner_id']" position="after">
-				<field name="customer_balance"/>
+				<field name="customer_balance" attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}"/>
 			</xpath>
 		</field>
 	</record>

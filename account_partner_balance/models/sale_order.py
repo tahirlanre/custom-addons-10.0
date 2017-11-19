@@ -5,7 +5,7 @@ from odoo.tools import float_compare
 class SaleOrder(models.Model):
     _inherit = "sale.order"
     
-    @api.onchange('partner_id')
+    @api.depends('partner_id')
     def _get_customer_balance(self):
         if self.partner_id:
             self.customer_balance = self.partner_id.balance
