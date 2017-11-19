@@ -5,8 +5,8 @@
 		<field name="inherit_id" ref="sale.view_order_form"/>
 		<field name="arch" type="xml">
 			<xpath expr="//button[@name='print_quotation']" position="after">
-				<button name="process_order" confirm="" states="sent" string="Process Order" class="btn-primary o_sale_confirm" type="object"/>
-				<button name="process_order" confirm="" states="draft" string="Process Order" class="o_sale_confirm" type="object"/>
+				<button name="process_order" confirm="Do you want to process order" states="sent" string="Process Order" class="btn-primary o_sale_confirm" type="object"/>
+				<button name="process_order" confirm="Do you want to process order" states="draft" string="Process Order" class="o_sale_confirm" type="object"/>
 			</xpath>
 			<!-- Hide confirm sale button-->
 			<xpath expr="//button[@name='action_confirm']" position="replace">
