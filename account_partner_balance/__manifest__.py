@@ -30,7 +30,7 @@
     """,
     'author': 'Tahir Aduragba',
     'category': 'Account',
-    'depends': ['account'],
+    'depends': ['account','sale'],
     'license': 'AGPL-3',
     'data': [
         'views/res_partner_views.xml',
