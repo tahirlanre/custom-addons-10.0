@@ -31,7 +31,7 @@
     """,
     'author': 'Tahir Aduragba',
     'category': 'Sales',
-    'depends': ['base', 'sale','report_extended'],
+    'depends': ['sale','report_extended'],
     'license': 'AGPL-3',
     'data': [ 'views/templates.xml',
     'views/sale_order_report.xml',
