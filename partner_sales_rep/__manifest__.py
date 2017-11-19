@@ -4,7 +4,7 @@
     'description': 'Assign sales rep to partners',
     'author': 'Tahir Aduragba',
     'category': 'Sales',
-    'depends': ['base','sale'],
+    'depends': ['sale'],
     'data': [
         'views/res_partner.xml',
         'views/sales_rep.xml',

@@ -7,7 +7,7 @@
     """,
     'version': '10.0.1.0.0',
     'category': 'Accounting & Finance',
-    'depends': ['base','account_financial_report_qweb'],
+    'depends': ['account'],
     'data': [
         'views/general_ledger_view.xml',
         'wizard/general_ledger_wizard.xml',

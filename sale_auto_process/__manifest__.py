@@ -27,7 +27,7 @@
     'description': """Automatically generate and process delivery and invoice for sale order.""",
     'author': 'Tahir Aduragba',
     'category': 'Accounting',
-    'depends': ['base', 'account', 'sale'],
+    'depends': ['sale'],
     'license': 'AGPL-3',
     'data': [
         'views/sale_order_view.xml',

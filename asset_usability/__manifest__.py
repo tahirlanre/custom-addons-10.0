@@ -3,7 +3,7 @@
     'name': 'Asset Usability',
     'description': '',
     'author': 'Tahir Aduragba',
-    'depends': ['account_asset','account'],
+    'depends': ['account_asset'],
     'data': [
         'views/account_asset.xml',
     ],

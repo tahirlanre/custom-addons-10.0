@@ -9,7 +9,7 @@
     'license': 'AGPL-3',
     'summary': 'Stock inventory valuation in PDF and Excel',
     'author': 'Tahir Aduragba',
-    'depends': ['stock','stock_account','report_xlsx'],
+    'depends': ['stock_account','report_xlsx'],
     'data': [
         'views/inventory_valuation.xml',
         'wizard/inventory_valuation_wizard.xml',

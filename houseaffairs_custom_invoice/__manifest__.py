@@ -27,7 +27,7 @@
     'description': """""",
     'author': 'Tahir Aduragba',
     'category': 'Accounting',
-    'depends': ['base', 'account', 'sale_usability'],
+    'depends': ['sale_usability'],
     'license': 'AGPL-3',
     'data': [
         'views/report_invoice.xml',
