@@ -10,7 +10,7 @@
     <field name="inherit_id" ref="account.invoice_form"/>
     <field name="arch" type="xml">
         <xpath expr="//field[@name='payment_term_id']" position="after">
-            <field name="is_refund"/>
+            <field name="is_refund" groups="account.group_account_user"/>
         </xpath>
 		<xpath expr="//field[@name='is_refund']" position="after">
 			<field name="goods_return_note" attrs="{'invisible':[('is_refund','=',False)]}"/>
