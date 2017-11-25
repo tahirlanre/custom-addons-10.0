@@ -27,7 +27,7 @@
     """,
     'author': 'Tahir Aduragba',
     'category': 'Accounts',
-    'depends': ['base', 'account', 'report_xlsx'],
+    'depends': ['account', 'report_xlsx'],
     'license': 'AGPL-3',
     'data': [
         'views/account_financial_report_data.xml',

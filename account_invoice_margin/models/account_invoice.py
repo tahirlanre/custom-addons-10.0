@@ -8,7 +8,7 @@ class AccountInvoiceLine(models.Model):
     _inherit = "account.invoice.line"
     
     margin = fields.Float(compute='_product_margin', digits=dp.get_precision('Product Price'), store=True)
-    purchase_price = fields.Float(string='Cost', digits=dp.get_precision('Product Price'))
+    purchase_price = fields.Float(string='Cost', digits=dp.get_precision('Product Price'), readonly=True)
     
     def _compute_margin(self, invoice_id, product_id):
         frm_cur = self.env.user.company_id.currency_id

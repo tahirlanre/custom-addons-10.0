@@ -21,16 +21,12 @@ class SaleOrder(models.Model):
         invoice_vals.update({'sale_id':self.id})
         return invoice_vals
     
-    @api.one
     def check_limit(self):
         current_user = self.env.user
         manager_group = 'sales_team.group_sale_manager'
         partner = self.partner_id
         moveline_obj = self.env['account.move.line']
-        movelines = moveline_obj.\
-            search([('partner_id', '=', partner.id),
-                    ('account_id.user_type_id.name', 'in',
-                    ['Receivable', 'Payable'])])
+        movelines = moveline_obj.search([('partner_id', '=', partner.id),('account_id.user_type_id.type', 'in',['receivable', 'payable'])])
 
         debit, credit = 0.0, 0.0
         today_dt = datetime.strftime(datetime.now().date(), DF)
@@ -39,30 +35,29 @@ class SaleOrder(models.Model):
             #if line.date_maturity < today_dt:
             credit += line.debit
             debit += line.credit
+        
         if (credit - debit + self.amount_total) > partner.credit_limit:
             if not partner.over_credit:
                 msg = 'Can not confirm Sale Order, Total mature due Amount ' \
                       '%s as on %s !\nCheck Partner Accounts or Credit ' \
                       'Limits !' % (credit - debit, today_dt)
                 raise UserError(_('Credit Over Limits !\n' + msg))
-            #else:
-            #    partner.write({
-            #        'credit_limit': credit - debit + self.amount_total})
-            #    return True
         else:
             return True
 
     @api.multi
     def action_confirm(self):
         res = super(SaleOrder, self).action_confirm()
-        for order in self:
+        for order in self:            
             order.check_limit()
         return res
     
     @api.depends('customer_details')
+    @api.multi
     def _set_name_from_customer_details(self):
-        if self.customer_details:
-            self.name_from_customer_details = self.customer_details.split('\n')[0]
+        for order in self:
+            if self.customer_details:
+                self.name_from_customer_details = self.customer_details.split('\n')[0]
         return {}
         
     customer_details = fields.Text(string='Customer Details')
@@ -73,6 +68,19 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
     
+    @api.multi
+    @api.depends(
+        'product_uom_qty',
+        'product_id')
+    def _get_product_available_qty(self):
+        #self.ensure_one()
+        for line in self:
+            if line.order_id.state == 'draft':
+                line.product_available_qty = line.product_id.with_context(
+                    warehouse=line.order_id.warehouse_id.id
+                ).qty_available
+            
+    product_available_qty = fields.Float(string='Available Qty',compute=_get_product_available_qty, readonly=True,store=True)
     #overide _onchange_product_id to use only product name without ref as invoice line description by default
     @api.onchange('product_id')
     def product_id_change(self):

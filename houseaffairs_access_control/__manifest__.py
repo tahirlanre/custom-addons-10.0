@@ -3,7 +3,7 @@
     'name': 'House Affairs Custom Access Controls',
     'description': 'Access controls and security features',
     'author': 'Tahir Aduragba',
-    'depends': ['base','sale','account','account_cancel'],
+    'depends': ['sale','account','account_cancel'],
     'data': [
         'security/houseaffairs_security.xml',
         'security/ir.model.access.csv',

@@ -27,7 +27,7 @@
     'description': """Automatically create invoice after delivery.""",
     'author': 'Tahir Aduragba',
     'category': 'Accounting',
-    'depends': ['base', 'account', 'sale'],
+    'depends': ['sale'],
     'license': 'AGPL-3',
     'data': [
     ],

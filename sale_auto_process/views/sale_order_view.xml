@@ -1,0 +1,18 @@
+<odoo>
+	<record id="view_order_form_process_button" model="ir.ui.view">
+		<field name="name">sale.order.form.process.button</field>
+		<field name="model">sale.order</field>
+		<field name="inherit_id" ref="sale.view_order_form"/>
+		<field name="arch" type="xml">
+			<xpath expr="//button[@name='print_quotation']" position="after">
+				<button name="process_order" confirm="Do you want to process order" states="sent" string="Process Order" class="btn-primary o_sale_confirm" type="object"/>
+				<button name="process_order" confirm="Do you want to process order" states="draft" string="Process Order" class="o_sale_confirm" type="object"/>
+			</xpath>
+			<!-- Hide confirm sale button-->
+			<xpath expr="//button[@name='action_confirm']" position="replace">
+			</xpath>
+			<xpath expr="//button[@name='action_confirm'][1]" position="replace">
+			</xpath>
+		</field>
+	</record>
+</odoo>
