@@ -32,8 +32,7 @@
     'data': [
         'views/account_financial_report_data.xml',
         'views/report_financial.xml',
-        'wizard/account_financial_report_wizard.xml',
-    ],
+        ],
     'demo': [],
     'installable': True,
     'auto_install': False,
