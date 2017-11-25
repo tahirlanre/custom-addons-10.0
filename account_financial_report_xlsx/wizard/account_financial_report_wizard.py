@@ -16,7 +16,7 @@ class FinancialReportWizard(models.TransientModel):
         used_context = self._build_contexts(data)
         data['form']['used_context'] = dict(used_context, lang=self.env.context.get('lang', 'en_US'))
         return {'type': 'ir.actions.report.xml',
-                'report_name': 'houseaffairs_financial_report.report_financial_report_xlsx',
+                'report_name': 'account_financial_report_xlsx.report_financial_report_xlsx',
                 'datas': data,
                 'name': 'Financial Report'
                 }
