@@ -153,5 +153,5 @@ class account_financial_report_xlsx(ReportXlsx):
     def _get_report_name(self, data):
         return _(data['form']['account_report_id'][1])
 
-account_financial_report_xlsx('report.houseaffairs_financial_report.report_financial_report_xlsx','account.financial.report',parser=report_sxw.rml_parse)
+account_financial_report_xlsx('report.account_financial_report_xlsx.report_financial_report_xlsx','account.financial.report',parser=report_sxw.rml_parse)
     

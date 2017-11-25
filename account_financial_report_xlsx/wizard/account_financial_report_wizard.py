@@ -3,7 +3,7 @@
 from odoo import models, fields, api
 
 
-class TrialBalanceReportWizard(models.TransientModel):
+class FinancialReportWizard(models.TransientModel):
     _inherit = "accounting.report"
     
     @api.multi
