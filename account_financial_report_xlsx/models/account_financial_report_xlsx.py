@@ -35,14 +35,14 @@ class account_financial_report_xlsx(ReportXlsx):
         self.format_report_title = None
         
     def generate_xlsx_report(self, workbook, data, objects):
-        
+                
         report = objects
         
         self.row_pos = 0
         
         self._define_formats(workbook)
         report_name = self._get_report_name(data)
-        #filters = self._get_report_filters(report)
+        filters = self._get_report_filters(data)
         self.columns = self._get_report_columns()
 
         self.sheet = workbook.add_worksheet(report_name[:31])
@@ -51,9 +51,9 @@ class account_financial_report_xlsx(ReportXlsx):
 
         self._write_report_title(report_name)
 
-        #self._write_filters(filters)
+        self._write_filters(filters)
 
-        self._generate_report_content(workbook, report)
+        self._generate_report_content(workbook, data)
     
     def write_array_header(self):
         """Write array header on current line using all defined columns name.
@@ -64,8 +64,34 @@ class account_financial_report_xlsx(ReportXlsx):
                              self.format_header_center)
         self.row_pos += 1
         
-    def _write_filters(self):
-        pass
+    def _write_filters(self, filters):
+        """Write one line per filters on starting on current line.
+        Columns number for filter name is defined
+        with `_get_col_count_filter_name` method.
+        Columns number for filter value is define
+        with `_get_col_count_filter_value` method.
+        """
+        col_name = 1
+        col_count_filter_name = self._get_col_count_filter_name()
+        col_count_filter_value = self._get_col_count_filter_value()
+        col_value = col_name + col_count_filter_name + 1
+        for title, value in filters:
+            self.sheet.merge_range(
+                self.row_pos, col_name,
+                self.row_pos, col_name + col_count_filter_name - 1,
+                title, self.format_header_left)
+            self.sheet.merge_range(
+                self.row_pos, col_value,
+                self.row_pos, col_value + col_count_filter_value - 1,
+                value)
+            self.row_pos += 1
+        self.row_pos += 2
+        
+    def _get_col_count_filter_name(self):
+        return 2
+        
+    def _get_col_count_filter_value(self):
+        return 3
         
     def _set_column_width(self):
         """Set width for all defined columns.
@@ -80,19 +106,28 @@ class account_financial_report_xlsx(ReportXlsx):
                              self.format_header_center)
         self.row_pos += 1
         
-    def _get_report_filters(self, report):
-        pass
+    def _get_report_filters(self, data):
+        return [
+            [_('Date range filter'),
+                _('From: %s To: %s') % (data['form']['date_from'], data['form']['date_to'])],
+            [_('Target moves filter'),
+                _('All posted entries') if data['form']['target_move'] == 'posted'
+                else _('All entries')],
+        ]
     
     def _get_report_columns(self):
         return {
-                5: {'header': 'Actual',
+                0: {'header': 'Account',
+                    'field': 'name',
+                    'width': 60},
+                3: {'header': 'Actual',
                     'field': 'balance',
                     'type': 'amount',
                     'width': 15},
-                7: {'header': 'PY Actual',
-                     'field': 'balance_cmp',
-                     'type': 'amount',
-                     'width': 15},
+                5: {'header': 'PY Actual',
+                    'field': 'balance_cmp',
+                    'type': 'amount',
+                    'width': 15},
                 }
         
     def _write_report_title(self, title):
@@ -147,8 +182,26 @@ class account_financial_report_xlsx(ReportXlsx):
         )
         self.format_percent_bold_italic.set_num_format('#,##0.00%')
     
-    def _generate_report_content(self, workbook, report):
+    def _generate_report_content(self, workbook, data):
         self.write_array_header()
+        
+        for account in data['report_lines']:
+            self.write_line(account)
+            
+    def write_line(self, line_object):
+        for col_pos, column in self.columns.iteritems():
+            value = line_object[column['field']]
+            cell_type = column.get('type', 'string')
+            if cell_type == 'string':
+                self.sheet.write_string(self.row_pos, col_pos, value or '')
+            elif cell_type == 'amount':
+                self.sheet.write_number(
+                    self.row_pos, col_pos, float(value), self.format_amount
+                )
+        self.row_pos += 1
+        if 'sub_lines' in line_object:
+            for line in line_object['sub_lines']:
+                self.write_line(line)
         
     def _get_report_name(self, data):
         return _(data['form']['account_report_id'][1])
