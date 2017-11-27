@@ -45,14 +45,17 @@ class account_financial_report_xlsx(ReportXlsx):
         self._define_formats(workbook)
         report_name = self._get_report_name(data)
         filters = self._get_report_filters(data)
+        company_name = self._get_company_name()
         self.columns = self._get_report_columns()
 
         self.sheet = workbook.add_worksheet(report_name[:31])
 
         self._set_column_width()
+        
+        self._write_company_name(company_name)
 
         self._write_report_title(report_name)
-
+        
         self._write_filters(filters)
 
         self._generate_report_content(workbook, data)
@@ -244,6 +247,18 @@ class account_financial_report_xlsx(ReportXlsx):
                 
     def _get_report_name(self, data):
         return _(data['form']['account_report_id'][1])
+        
+    def _get_company_name(self):
+        return self.env.user.company_id.name
+        
+    def _write_company_name(self,name):
+        self.sheet.merge_range(
+            self.row_pos, 0, self.row_pos, 7,
+            name, self.format_report_title
+        )
+        
+        self.row_pos += 1
+        
 
 account_financial_report_xlsx('report.account_financial_report_xlsx.report_financial_report_xlsx','account.financial.report',parser=report_sxw.rml_parse)
     
