@@ -1,0 +1,12 @@
+<odoo>
+	<report
+	    id="financial_report_xlsx"
+	    model="account.financial.report"
+	    string="Financial Report XLSX"
+	    report_type="xlsx"
+	    name="account_financial_report_xlsx.report_financial_report_xlsx"
+	    file="account_financial_report_xlsx.report_financial_report_xlsx"
+	    attachment_use="False"
+	/>
+	
+</odoo>

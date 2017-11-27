@@ -179,14 +179,4 @@
 		</xpath>
 	</template>
 	
-	<report
-	    id="financial_report_xlsx"
-	    model="account.financial.report"
-	    string="Financial Report XLSX"
-	    report_type="xlsx"
-	    name="houseaffairs_financial_report.report_financial_report_xlsx"
-	    file="houseaffairs_financial_report.report_financial_report_xlsx"
-	    attachment_use="False"
-	/>
-	
 </odoo>
