@@ -7,6 +7,14 @@
 		name="inventory_sales_analysis.report_inventory_sales_analysis_qweb"
 		file="inventory_sales_analysis.report_inventory_sales_analysis_qweb" />
 		
+	<report	
+		id="action_report_inventory_sales_analysis_xlsx"
+		model="report_inventory_sales_analysis_qweb"
+		string="Inventory Sales Analysis Xlsx"
+		report_type="xlsx"
+		name="inventory_sales_analysis.inventory_sales_analysis_xlsx"
+		file="inventory_sales_analysis.inventory_sales_analysis_xlsx" />
+		
 	    <menuitem
 	        parent="stock.menu_warehouse_report"
 	        action="action_inventory_sales_analysis_wizard"

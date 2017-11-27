@@ -31,7 +31,7 @@ class inventory_sales_analysis_wizard(models.TransientModel):
                 }
     
     @api.multi
-    def button_export_excel(self):
+    def button_export_xlsx(self):
         self.ensure_one()
         return self._export(xlsx_report=True)
         
