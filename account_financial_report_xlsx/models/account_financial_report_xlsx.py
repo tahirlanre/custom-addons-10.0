@@ -33,9 +33,11 @@ class account_financial_report_xlsx(ReportXlsx):
         self.format_amount = None
         self.format_percent_bold_italic = None
         self.format_report_title = None
+        self.format_string_bold = None
+        self.format_amount_bold = None
         
     def generate_xlsx_report(self, workbook, data, objects):
-                
+                        
         report = objects
         
         self.row_pos = 0
@@ -71,7 +73,7 @@ class account_financial_report_xlsx(ReportXlsx):
         Columns number for filter value is define
         with `_get_col_count_filter_value` method.
         """
-        col_name = 1
+        col_name = 0
         col_count_filter_name = self._get_col_count_filter_name()
         col_count_filter_value = self._get_col_count_filter_value()
         col_value = col_name + col_count_filter_name + 1
@@ -155,6 +157,8 @@ class account_financial_report_xlsx(ReportXlsx):
          * format_amount
          * format_percent_bold_italic
          * format_report_title
+         * format_amount_bold
+         * format_string_bold
         """
         self.format_report_title = workbook.add_format({'bold': True,'font_size':18,'align': 'center'})
         self.format_bold = workbook.add_format({'bold': True})
@@ -181,28 +185,63 @@ class account_financial_report_xlsx(ReportXlsx):
             {'bold': True, 'italic': True}
         )
         self.format_percent_bold_italic.set_num_format('#,##0.00%')
+        self.format_amount_bold = workbook.add_format(
+            {'bold': True}
+        )
+        self.format_amount_bold.set_num_format('#,##0.00')
+        self.format_string_bold = workbook.add_format(
+            {'bold': True}
+        )
     
     def _generate_report_content(self, workbook, data):
         self.write_array_header()
         
         for account in data['report_lines']:
-            self.write_line(account)
+            if not account['level'] == 0:
+                self.write_line(account)
             
     def write_line(self, line_object):
+        cell_level = line_object['level']
+        
         for col_pos, column in self.columns.iteritems():
             value = line_object[column['field']]
             cell_type = column.get('type', 'string')
-            if cell_type == 'string':
-                self.sheet.write_string(self.row_pos, col_pos, value or '')
-            elif cell_type == 'amount':
-                self.sheet.write_number(
-                    self.row_pos, col_pos, float(value), self.format_amount
-                )
+            if cell_level > 3:
+                if cell_type == 'string':
+                    self.sheet.write_string(self.row_pos, col_pos, value or '')
+                elif cell_type == 'amount':
+                    self.sheet.write_number(
+                        self.row_pos, col_pos, float(value), self.format_amount
+                    )
+            elif cell_level == 2:
+                if cell_type == 'string':
+                    self.sheet.write_string(self.row_pos, col_pos, value or '', self.format_string_bold)
+                elif cell_type == 'amount':
+                    self.sheet.write_number(
+                        self.row_pos, col_pos, float(value), self.format_amount_bold
+                    )
+            elif cell_level == 1:
+                if cell_type == 'string':
+                    self.sheet.write_string(self.row_pos, col_pos, value or '', self.format_string_bold)
+    
         self.row_pos += 1
+        
         if 'sub_lines' in line_object:
             for line in line_object['sub_lines']:
                 self.write_line(line)
         
+        if cell_level == 1:
+            for col_pos, column in self.columns.iteritems():
+                value = line_object[column['field']]
+                cell_type = column.get('type', 'string')
+                if cell_type == 'string':
+                    self.sheet.write_string(self.row_pos, col_pos, ('Total ' + value) or '', self.format_string_bold)
+                elif cell_type == 'amount':
+                    self.sheet.write_number(
+                        self.row_pos, col_pos, float(value), self.format_amount_bold
+                    )
+            self.row_pos += 1
+                
     def _get_report_name(self, data):
         return _(data['form']['account_report_id'][1])
 
