@@ -27,5 +27,15 @@ class InventoryValuationWizard(models.TransientModel):
         return self.env['report'].get_action(self, 'inventory_valuation.report_inventory_valuation', data=data)
         
     @api.multi
-    def button_export_excel(self):
-        return ""
+    def button_export_xlsx(self):
+        self.ensure_one()
+        data = {}
+        date = self.date
+        report = self.env['report.inventory_valuation.report_inventory_valuation']
+        data['report_lines'] = report._get_inventory_valuation_lines(date)
+        data['date'] = date
+        return {'type': 'ir.actions.report.xml',
+                'report_name': 'inventory_valuation.inventory.valuation.xlsx',
+                'datas': data,
+                'name': 'Inventory Valuation'
+                }

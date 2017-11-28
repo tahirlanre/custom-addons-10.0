@@ -16,9 +16,9 @@
 				
 				<div class="row bg-primary">
 				  <div class="col-xs-2">
-				      Product Code
+				      Item Code
 				  </div> 
-				  <div class="col-xs-4">Product Description</div> 
+				  <div class="col-xs-4">Item Description</div> 
 				  <div class="col-xs-2">Unit Cost</div> 
 				  <div class="col-xs-2">Qty On Hand</div> 
 				  <div class="col-xs-2">Value</div> 
