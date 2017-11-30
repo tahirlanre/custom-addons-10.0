@@ -35,7 +35,7 @@
     'license': 'AGPL-3',
     'data': [ 'views/templates.xml',
     'views/sale_order_report.xml',
-    #'views/reports.xml',
+    'views/sale_order_view.xml',
     ],
     'demo': [],
     'installable': True,

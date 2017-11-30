@@ -1,0 +1,13 @@
+<odoo>
+    <record id="view_order_form_order_date" model="ir.ui.view">
+        <field name="name">sale.order.form.order.date</field>
+        <field name="model">sale.order</field>
+		<field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+			<field name="date_order" position="replace">
+				<field name="date_order" attrs="{'invisible': [('state', 'in', ['cancel'])]}"/>
+			</field>
+		</field>
+    </record>
+</odoo>
+
