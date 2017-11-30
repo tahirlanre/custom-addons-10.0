@@ -1,0 +1,113 @@
+<odoo>
+	<template id="sales_rep_commission.report_sales_rep_commission_qweb">
+		<t t-call="report.html_container">
+			<t t-foreach="docs" t-as="o">
+				<div class="page">
+					<h1 align="center">Sales Representative Commission</h1>
+					<h2 align="center">
+						<t t-esc="res_company.name"/>
+					</h2>
+					<div>
+						From Date: 
+						<span t-field="o.start_date"/>
+					</div>
+					<div>
+						To Date: 
+						<span t-field="o.end_date"/>
+					</div>
+					<div>
+						From Sales Reprpresentative: 
+						<span t-field="o.sales_rep_id_from"/>
+					</div>
+					<div>
+						To Sales Representative: 
+						<span t-field="o.sales_rep_id_to"/>
+					</div>
+					
+					<t t-call="sales_rep_commission.report_sales_rep_commission_line"/>
+					
+				</div>
+			</t>
+		</t>
+	</template>
+	<template id="sales_rep_commission.report_sales_rep_commission_line">	
+		<table class="table table-condensed">
+			<thead>
+	  		  <th>
+	  		      Date
+	  		  </th> 
+	  		  <th>Customer Code</th> 
+			  <th>Customer Name</th> 
+	  		  <th class="text-right">Invoice No</th> 
+	  		  <th class="text-right">Category</th> 
+	  		  <th class="text-right">Net Sales</th> 
+	  		  <th class="text-right">% of Disc. Granted</th>
+	  		  <th class="text-right">% of Disc. Balance</th>
+	  		  <th class="text-right">Commission</th>
+			</thead>
+			<tbody>
+				<tr t-foreach="o.sales_rep_report_ids" t-as="sales_rep">
+					<td>
+						<span t-field ="sales_rep.sales_rep_id"/>
+					</td>
+					
+					<tr t-foreach="sales_rep.line_ids" t-as="line">
+						<td>
+							<span t-field="line.date"/>
+						</td>
+						<td>
+							<span t-field="line.partner_code"/>
+						</td>
+						<td>
+							<span t-field="line.partner_name"/>
+						</td>
+						<td class="text-right">
+							<span t-esc="line.invoice_name"/>
+						</td>
+						<td class="text-right">
+							<span t-esc="line.commission_categ"/>
+						</td>
+						<td class="text-right">
+							<span t-esc="'{:,.2f}'.format(line.net_sales)"/>
+						</td>
+						<td class="text-right">
+							<span t-esc="'{:,.2f}'.format(line.disc_granted)"/>
+						</td>
+						<td class="text-right">
+							<span t-esc="'{:,.2f}'.format(line.disc_balance)"/>
+						</td>
+						<td class="text-right">
+							<span t-esc="'{:,.2f}'.format(line.commission)"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+						</td>
+						<td>
+						</td>
+						<td>
+						</td>
+						<td class="text-right">
+						
+						</td>
+						<td class="text-right">
+						
+						</td>
+						<td class="text-right">
+						
+						</td>
+						<td class="text-right">
+						
+						</td>
+						<td class="text-right">
+					
+						</td>
+						<td class="text-right">
+							<span style="font-weight: bold;" t-esc="'{:,.2f}'.format(sum([line.commission for line in sales_rep.line_ids]))"/>
+						</td>
+					</tr>
+				</tr>
+			</tbody>
+		</table>
+	</template>
+</odoo>

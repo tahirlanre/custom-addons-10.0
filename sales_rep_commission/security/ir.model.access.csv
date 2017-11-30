@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sales_rep_product_category_user,sales.rep.product.category.user,model_sales_rep_product_category,base.group_user,1,1,1,1
+access_sales_rep_commission_user,sales.rep.commission.user,model_sales_rep_commission,base.group_user,1,1,1,1

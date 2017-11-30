@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <!-- Product Category Form view -->
+    <record id="view_form_sales_rep_commission_product_cat" model="ir.ui.view">
+      <field name="name">Product Category Form</field>
+      <field name="model">sales_rep_product_category</field>
+      <field name="arch" type="xml">
+
+        <form>
+         
+          <sheet>
+            <group name="group_top">
+              <group name="group_left">
+                <field name="name"/>
+              </group>
+              <group name="group_right">
+                <field name="code"/>
+              </group>
+            </group>
+          </sheet>
+        </form>
+
+      </field>
+    </record> 
+
+    <!-- Product Category List view -->
+    <record id="view_tree_sales_rep_commission_product_cat" model="ir.ui.view">
+      <field name="name">Product Category Tree</field>
+      <field name="model">sales_rep_product_category</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="code"/>
+        </tree>
+      </field>
+    </record> 
+	
+    <!-- Sales Representative Form view -->
+    <record id="view_form_sales_rep_commission" model="ir.ui.view">
+      <field name="name">Sales Representative Form</field>
+      <field name="model">sales_rep_commission</field>
+      <field name="arch" type="xml">
+
+        <form>
+         
+          <sheet>
+            <group name="group_top">
+              <group name="group_left">
+                <field name="sales_rep"/>
+				<field name="product_category"/>
+              </group>
+              <group name="group_right">
+                <field name="discount_allowed"/>
+              </group>
+            </group>
+          </sheet>
+        </form>
+
+      </field>
+    </record> 
+
+    <!-- Sales Representative List view -->
+    <record id="view_tree_sales_rep_commission" model="ir.ui.view">
+      <field name="name">Sales RepresentativeTree</field>
+      <field name="model">sales_rep_commission</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="sales_rep"/>
+          <field name="product_category"/>
+        </tree>
+      </field>
+    </record> 
+
+    <!-- To-Do Task Search view 
+    <record id="view_filter_todo_task" model="ir.ui.view">
+      <field name="name">To-do Task Filter</field>
+      <field name="model">todo.task</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="name"/>
+          <filter string="Not Done" domain="[('is_done','=',False)]"/>
+          <filter string="Done" domain="[('is_done','!=',False)]"/>
+        </search>
+      </field>
+    </record>-->
+
+</odoo>
