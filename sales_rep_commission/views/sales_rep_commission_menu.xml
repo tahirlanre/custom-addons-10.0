@@ -12,6 +12,12 @@
         view_mode="tree,form" />
 	  
 	  <!-- App menu items -->
+	  
+	  <menuitem id="menu_sales_rep_commission"
+	      name="Sales Rep Commission"
+	      action="action_product_category" 
+		  groups="account.group_account_manager"/>
+		  
 	  <menuitem id="menu_product_category_view"
 	    name="Product Category"
 	    parent="menu_sales_rep_commission"
@@ -25,9 +31,6 @@
 		action="action_sales_rep_commission"/>
 		
 
-	    <menuitem id="menu_sales_rep_commission"
-	      name="Sales Rep Commission"
-	      action="action_product_category" 
-		  groups="account.group_account_manager"/>
+	    
 
 </odoo>
