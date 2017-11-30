@@ -50,6 +50,7 @@ class inventory_sales_analysis(models.TransientModel):
         self.refresh()
 
     def inject_line_values(self):
+        
         query_inject_line = """
             INSERT INTO
                 report_inventory_sales_analysis_line
@@ -87,6 +88,33 @@ class inventory_sales_analysis(models.TransientModel):
                     left join res_partner pr on (i.partner_id = pr.id)
                     left join sales_rep sr on (pr.sales_rep_id = sr.id )
                     where i.date_invoice >= %s and i.date_invoice <= %s and i.type in ('out_invoice') and i.state in ('paid', 'open')
+        """
+        if self.filter_product_ids:
+            query_inject_line += """ and a.product_id in %s"""
+            
+        if self.filter_partner_ids:
+            query_inject_line += """ and a.partner_id in %s"""
+            
+        if self.filter_sales_rep_ids:
+            query_inject_line += """ and pr.sales_rep_id in %s"""
+            
+        query_inject_parameters = (
+            self.id,
+            self.env.uid,
+            self.start_date,
+            self.end_date,
+        )
+        
+        if self.filter_product_ids:
+            query_inject_parameters += (tuple(self.filter_product_ids.ids),)
+        
+        if self.filter_partner_ids:
+            query_inject_parameters += (tuple(self.filter_partner_ids.ids),)
+            
+        if self.filter_sales_rep_ids:
+            query_inject_parameters += (tuple(self.filter_sales_rep_ids.ids),)
+         
+        query_inject_line += """
             UNION ALL
             SELECT	
                     %s AS report_id,
@@ -106,17 +134,32 @@ class inventory_sales_analysis(models.TransientModel):
                 	left join sales_rep sr on (pr.sales_rep_id = sr.id )
                 	where i.date_invoice >= %s and i.date_invoice <= %s and i.type in ('out_refund') and i.state in ('paid', 'open')
         """
-        query_inject_parameters = (
-            self.id,
-            self.env.uid,
-            self.start_date,
-            self.end_date,
+        
+        if self.filter_product_ids:
+            query_inject_line += """ and a.product_id in %s"""
+            
+        if self.filter_partner_ids:
+            query_inject_line += """ and a.partner_id in %s"""
+            
+        if self.filter_sales_rep_ids:
+            query_inject_line += """ and pr.sales_rep_id in %s"""
+                    
+        query_inject_parameters += (
             self.id,
             self.env.uid,
             self.start_date,
             self.end_date,
         )
-
+        
+        if self.filter_product_ids:
+            query_inject_parameters += (tuple(self.filter_product_ids.ids),)
+        
+        if self.filter_partner_ids:
+            query_inject_parameters += (tuple(self.filter_partner_ids.ids),)
+        
+        if self.filter_sales_rep_ids:
+            query_inject_parameters += (tuple(self.filter_sales_rep_ids.ids),)
+            
         self.env.cr.execute(query_inject_line, query_inject_parameters)
     
     def inject_product_values(self):
