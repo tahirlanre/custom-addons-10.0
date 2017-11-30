@@ -1,0 +1,17 @@
+<odoo>
+	<report 
+		id="action_report_sales_rep_commission_qweb"
+		model="report_sales_rep_commission_qweb"
+		string="Sales Representative Commission"
+		report_type="qweb-html"
+		name="sales_rep_commission.report_sales_rep_commission_qweb"
+		file="sales_rep_commission.report_sales_rep_commission_qweb" />
+		
+		
+  	  <menuitem id="menu_sales_rep_commission_report"
+  	    name="Commission Report"
+  	    parent="menu_sales_rep_commission"
+  	    sequence="100"
+  		action="action_sales_rep_commission_wizard"/>
+		
+</odoo>

@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<odoo>
+    <!-- Action to open To-do Task list -->
+    <act_window id="action_product_category"
+      name="Product Category"
+      res_model="sales_rep_product_category"
+      view_mode="tree,form" />
+	  
+      <act_window id="action_sales_rep_commission"
+        name="Sales Representative"
+        res_model="sales_rep_commission"
+        view_mode="tree,form" />
+	  
+	  <!-- App menu items -->
+	  <menuitem id="menu_product_category_view"
+	    name="Product Category"
+	    parent="menu_sales_rep_commission"
+	    sequence="10"
+	    action="action_product_category" />
+
+	  <menuitem id="menu_sales_rep_commission_view"
+	    name="Sales Representative"
+	    parent="menu_sales_rep_commission"
+	    sequence="100"
+		action="action_sales_rep_commission"/>
+		
+
+	    <menuitem id="menu_sales_rep_commission"
+	      name="Sales Rep Commission"
+	      action="action_product_category" 
+		  groups="account.group_account_manager"/>
+
+</odoo>
