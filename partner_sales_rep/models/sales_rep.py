@@ -5,6 +5,7 @@ from odoo import models, api, fields, _
 class SalesRep(models.Model):
     _name = "sales.rep"    
     
+    _order = "name asc"
     
     name = fields.Char('Sales Representative', required=True, translate=True)
     phone = fields.Char(string="Phone #")
