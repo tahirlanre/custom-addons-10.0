@@ -105,7 +105,7 @@ class account_journal_batch(models.Model):
         name = journal.sequence_id.next_by_id()
         return {
             'name': name,
-            'date': date.today(),
+            'date': self.journal_batch_line_ids[0].date,
             'ref': self.reference or '',
             'company_id': self.company_id.id,
             'journal_id': journal.id,
