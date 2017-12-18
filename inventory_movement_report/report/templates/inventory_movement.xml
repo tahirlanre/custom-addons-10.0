@@ -1,0 +1,10 @@
+<odoo>
+	<template id="inventory_movement_report.report_inventory_movement_qweb">
+		<t t-call="report.html_container">
+			<t t-foreach="docs" t-as="o">
+				<div class="page">
+				</div>
+			</t>
+		</t>
+	</template>
+</odoo>
