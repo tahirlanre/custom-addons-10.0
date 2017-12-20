@@ -26,12 +26,7 @@ class InventoryMovementWizard(models.TransientModel):
         return {
                     'start_date':self.start_date,
                     'end_date': self.end_date,
-                    #'group_by_product': self.group_by == 'product',
-                    #'group_by_sales_rep': self.group_by == 'sales_rep',
-                    #'group_by_partner': self.group_by == 'customer',
                     'filter_product_ids': [(6, 0, self.product_ids.ids)],
-                    #'filter_partner_ids': [(6, 0, self.partner_ids.ids)],
-                    #'filter_sales_rep_ids': [(6, 0, self.sales_rep_ids.ids)],
                 }
     
     @api.multi

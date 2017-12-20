@@ -9,7 +9,7 @@
     'license': 'AGPL-3',
     'summary': '',
     'author': 'Tahir Aduragba',
-    'depends': ['stock'],
+    'depends': ['stock', 'report_xlsx'],
     'data': [
         'reports.xml',
         'report/templates/inventory_movement.xml',
