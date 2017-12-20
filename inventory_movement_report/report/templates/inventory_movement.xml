@@ -3,8 +3,111 @@
 		<t t-call="report.html_container">
 			<t t-foreach="docs" t-as="o">
 				<div class="page">
+					<h1 align="center">Inventory Movement</h1>
+					<h2 align="center">
+						<t t-esc="res_company.name"/>
+					</h2>
+					<div>
+						From Date: 
+						<span t-field="o.start_date"/>
+					</div>
+					<div>
+						To Date: 
+						<span t-field="o.end_date"/>
+					</div>
+					<br />
+					<t t-call="inventory_movement_report.report_inventory_movement_product"/>
 				</div>
 			</t>
 		</t>
+	</template>
+	
+	<template id="inventory_movement_report.report_inventory_movement_product">
+		<table class="table table-condensed">
+			<thead>
+	  		  <th>
+	  		      <b>Date</b>
+	  		  </th> 
+	  		  <th>Type</th> 
+	  		  <th>Reference</th> 
+	  		  <th>Description</th> 
+	  		  <th class="text-right">Quantity In</th> 
+	  		  <th class="text-right">Quantity Out</th>
+	  		  <th class="text-right">Balance</th>
+			</thead>
+			<tbody>
+				<tr t-foreach="o.product_ids" t-as="product">
+					<td>
+						<b>Inventory Item</b>
+					</td>
+					<td>
+						<b><span t-field="product.code"/></b>
+					</td>
+					<td>
+						<b><span t-field="product.name"/></b>
+					</td>
+					<td>
+						<b>Opening Balance</b>
+					</td>
+					<td class="text-right">
+					</td>
+					<td class="text-right">
+					</td>
+					<td class="text-right">
+						<b><span t-esc="'{:,.0f}'.format(product.opening_balance)"/></b>
+					</td>
+					<t t-call="inventory_movement_report.report_inventory_movement_line"/>
+					<tr>
+						<td>
+						</td>
+						<td>
+						</td>
+						<td>
+						</td>
+						<td>
+							<b>Closing Balance</b>
+						</td>
+						<td class="text-right">
+						</td>
+						<td class="text-right">
+						</td>
+						<td class="text-right">
+							<b><span t-esc="'{:,.0f}'.format(product.closing_balance)"/></b>
+						</td>
+					</tr>
+					
+				</tr>
+			</tbody>
+		</table>
+	</template>
+	
+	<template id="inventory_movement_report.report_inventory_movement_line">
+		<tr t-foreach="product.line_ids" t-as="line">
+			<td>
+				<span t-field="line.date"/>
+			</td>
+			<td>
+				<span t-field="line.movement_type"/>
+			</td>
+			<td>
+				<span t-field="line.reference"/>
+			</td>
+			<td>
+				<span t-field="line.description"/>
+			</td>
+			<td class="text-right">
+				<t t-if="line.qty_in > 0">
+					<span t-field="line.qty_in"/>
+				</t>
+			</td>
+			<td class="text-right">
+				<t t-if="line.qty_out > 0">
+					<span t-field="line.qty_out"/>
+				</t>
+			</td>
+			<td class="text-right">
+			</td>
+			
+		</tr>
 	</template>
 </odoo>
