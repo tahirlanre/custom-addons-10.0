@@ -196,6 +196,7 @@ class inventory_sales_analysis(models.TransientModel):
                 left join product_template pt on p.product_tmpl_id = pt.id
                 where rl.report_id = %s
                 group by rl.product_id, pt.default_code, pt.name
+                order by pt.default_code asc
         """
         
         query_inject_parameters = (
@@ -238,6 +239,7 @@ class inventory_sales_analysis(models.TransientModel):
                 join res_partner p on rl.partner_id = p.id
                 where rl.report_id = %s
                 group by rl.partner_id, p.ref, p.name
+                order by p.ref asc
         """
         
         query_inject_parameters = (
@@ -279,6 +281,7 @@ class inventory_sales_analysis(models.TransientModel):
                 join sales_rep sr on rl.sales_rep_id = sr.id
                 where rl.report_id = %s
                 group by rl.sales_rep_id, sr.name
+                order by sr.name asc
         """
         
         query_inject_parameters = (
