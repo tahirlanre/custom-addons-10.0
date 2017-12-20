@@ -21,7 +21,7 @@ class account_move_line(models.Model):
         if context.get('account_id'):
             account_id = context['account_id']
             
-        sqlstr = """
+        self.env.cr.execute("""
               select 
                 s.id, s.account_id, s.date, s.debit, s.credit, 
                 sum(s.balance) over (partition by s.account_id order by s.row) 
@@ -31,9 +31,9 @@ class account_move_line(models.Model):
                         aml.account_id, aml.debit, aml.credit, (aml.debit-aml.credit) AS balance 
                         from account_move_line aml
                         join account_move am on am.id = aml.move_id
-                        where am.state = 'posted' order by aml.date, aml.id asc) s
-            """
-        self.env.cr.execute(sqlstr)
+                        where am.state = 'posted' and am.date >= %s and am.date <= %s order by aml.date, aml.id asc) s
+            """,(date_from, date_to))
+            
         result = self.env.cr.fetchall()
         for aml in self:
             for res in result:
