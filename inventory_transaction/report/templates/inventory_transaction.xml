@@ -74,12 +74,10 @@
 	  		      Item Code
 	  		  </th> 
 	  		  <th>Item Description</th> 
-	  		  <th class="text-right">Qty</th> 
-	  		  <th class="text-right">Amount</th> 
-	  		  <th class="text-right">Cost</th> 
+	  		  <th class="text-right">Amount</th>
+			  <th class="text-right">Qty</th> 
 	  		  <th class="text-right">Profit</th>
 	  		  <th class="text-right">Profit %</th>
-	  		  <th class="text-right">Markup %</th>
 			</thead>
 			<tbody>
 				<tr t-foreach="o.product_ids" t-as="product">
@@ -90,22 +88,16 @@
 						<span t-field="product.name"/>
 					</td>
 					<td class="text-right">
-						<span t-field="product.qty"/>
-					</td>
-					<td class="text-right">
 						<span t-esc="'{:,.2f}'.format(product.amount)"/>
 					</td>
 					<td class="text-right">
-						<span t-esc="'{:,.2f}'.format(product.cost)"/>
+						<span t-field="product.qty"/>
 					</td>
 					<td class="text-right">
 						<span t-esc="'{:,.2f}'.format(product.profit)"/>
 					</td>
 					<td class="text-right">
 						<span t-esc="'{:,.2f}'.format(product.percent_profit)"/>
-					</td>
-					<td class="text-right">
-						<span t-esc="'{:,.2f}'.format(product.percent_markup)"/>
 					</td>
 				</tr>
 				<tr>
@@ -114,23 +106,16 @@
 					<td>
 					</td>
 					<td class="text-right">
-						<span style="font-weight: bold;" t-esc="sum([product.qty for product in o.product_ids])"/>
-					</td>
-					<td class="text-right">
 						<span style="font-weight: bold;" t-esc="'{:,.2f}'.format(sum([product.amount for product in o.product_ids]))"/>
 					</td>
 					<td class="text-right">
-						<span style="font-weight: bold;" t-esc="'{:,.2f}'.format(sum([product.cost for product in o.product_ids]))"/>
+						<span style="font-weight: bold;" t-esc="sum([product.qty for product in o.product_ids])"/>
 					</td>
 					<td class="text-right">
 						<span style="font-weight: bold;" t-esc="'{:,.2f}'.format(sum([product.profit for product in o.product_ids]))"/>
 					</td>
-					<td class="text-right">
+					<td class="text-right"></td>
 					
-					</td>
-					<td class="text-right">
-						
-					</td>
 				</tr>
 			</tbody>
 		</table>
@@ -167,6 +152,24 @@
 						<span t-esc="'{:,.2f}'.format(partner.percent_profit)"/>
 					</td>
 				</tr>
+				<tr>
+					<td>
+					</td>
+					<td>
+					</td>
+					<td class="text-right">
+						<span style="font-weight: bold;" t-esc="'{:,.2f}'.format(sum([partner.amount for partner in o.partner_ids]))"/>
+					</td>
+					<td class="text-right">
+						<span style="font-weight: bold;" t-esc="sum([partner.qty for partner in o.partner_ids])"/>
+					</td>
+					<td class="text-right">
+						<span style="font-weight: bold;" t-esc="'{:,.2f}'.format(sum([partner.profit for partner in o.partner_ids]))"/>
+					</td>
+					<td class="text-right">
+					
+					</td>
+				</tr>
 			</tbody>
 		</table>
 		
@@ -176,12 +179,10 @@
 		<table class="table table-condensed">
 			<thead>
   	  		  <th>Sales Representative</th> 
-  	  		  <th class="text-right">Qty</th> 
   	  		  <th class="text-right">Amount</th> 
-  	  		  <th class="text-right">Cost</th> 
+  	  		  <th class="text-right">Qty</th> 
   	  		  <th class="text-right">Profit</th>
   	  		  <th class="text-right">Profit %</th>
-  	  		  <th class="text-right">Markup %</th>
 			</thead>
 			<tbody>
 				<tr t-foreach="o.sales_rep_ids" t-as="sales_rep">
@@ -189,22 +190,16 @@
 						<span t-field="sales_rep.name"/>
 					</td>
 					<td class="text-right">
-						<span t-field="sales_rep.qty"/>
-					</td>
-					<td class="text-right">
 						<span t-esc="'{:,.2f}'.format(sales_rep.amount)"/>
 					</td>
 					<td class="text-right">
-						<span t-esc="'{:,.2f}'.format(sales_rep.cost)"/>
+						<span t-field="sales_rep.qty"/>
 					</td>
 					<td class="text-right">
 						<span t-esc="'{:,.2f}'.format(sales_rep.profit)"/>
 					</td>
 					<td class="text-right">
 						<span t-esc="'{:,.2f}'.format(sales_rep.percent_profit)"/>
-					</td>
-					<td class="text-right">
-						<span t-esc="'{:,.2f}'.format(sales_rep.percent_markup)"/>
 					</td>
 				</tr>
 			</tbody>
