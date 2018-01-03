@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<template id="assets_specific" inherit_id="report.assets_common" name="Replacement Fonts">
+        <xpath expr="." position="inside">
+            <link href='/fonts_replace/static/src/less/report.less' rel="stylesheet"/>
+        </xpath>
+    </template>
+	
+	
+</odoo>
