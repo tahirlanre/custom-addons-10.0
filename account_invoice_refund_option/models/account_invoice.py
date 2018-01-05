@@ -136,7 +136,7 @@ class AccountInvoiceLine(models.Model):
                 'move_dest_id': False,
                 'state': 'draft',
                 'company_id': line.invoice_id.company_id.id,
-                'price_unit': price_unit,
+                #'price_unit': price_unit,
                 'picking_type_id': picking.picking_type_id.id,
                 'procurement_id': False,
                 'route_ids': 1 and [
@@ -167,7 +167,7 @@ class AccountInvoiceLine(models.Model):
                 'move_dest_id': False,
                 'state': 'draft',
                 'company_id': line.invoice_id.company_id.id,
-                'price_unit': price_unit,
+                #'price_unit': price_unit,
                 'picking_type_id': picking.picking_type_id.id,
                 'procurement_id': False,
                 'route_ids': 1 and [
