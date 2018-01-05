@@ -7,7 +7,6 @@
 	        <field name="prefix">JB</field>
 	        <field eval="1" name="number_next"/>
 	        <field eval="1" name="number_increment"/>
-	        <field eval="True" name="use_date_range"/>
 	        <field eval="False" name="company_id"/>
 	        <field name="padding">3</field>
 	    </record>
@@ -18,7 +17,6 @@
 	        <field name="prefix">JBR</field>
 	        <field eval="1" name="number_next"/>
 	        <field eval="1" name="number_increment"/>
-	        <field eval="True" name="use_date_range"/>
 	        <field eval="False" name="company_id"/>
 	        <field name="padding">3</field>
 	    </record>
