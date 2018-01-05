@@ -81,11 +81,12 @@ class account_journal_batch(models.Model):
             if not self.journal_batch_line_ids:
                 msg = _("You can not post a journal batch without lines.")
                 raise UserError(msg)
-            aml_obj = self.env['account.move.line'].with_context(check_move_validity=False)
-            move = self.env['account.move'].create(self._get_move_vals())
-        
+                
             sequence_code = 'account.journal.batch.line'
             batch.reference = self.env['ir.sequence'].next_by_code(sequence_code)
+            
+            aml_obj = self.env['account.move.line'].with_context(check_move_validity=False)
+            move = self.env['account.move'].create(self._get_move_vals())
 
             for line in self.journal_batch_line_ids:
                 aml = aml_obj.create(line._get_move_line_vals(move.id))
