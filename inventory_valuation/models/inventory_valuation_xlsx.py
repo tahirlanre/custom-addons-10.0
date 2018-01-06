@@ -22,8 +22,8 @@ class inventory_valuation_xlsx(ReportXlsx):
         
         # columns summary of the report
         self.columns_summary = None
-        self.total_qty = 0
-        self.total_value = 0.0
+        self.total_qty = None
+        self.total_value = None
 
         # row_pos must be incremented at each writing lines
         self.row_pos = None
@@ -48,6 +48,8 @@ class inventory_valuation_xlsx(ReportXlsx):
         report_data = data
         
         self.row_pos = 0
+        self.total_qty = 0
+        self.total_value = 0.0
         
         self._define_formats(workbook)
         report_name = self._get_report_name()
@@ -70,7 +72,7 @@ class inventory_valuation_xlsx(ReportXlsx):
 
         self._generate_report_content(workbook, report_data)
                 
-        self._write_column_summary()
+        
     
     def write_array_header(self):
         """Write array header on current line using all defined columns name.
@@ -218,6 +220,7 @@ class inventory_valuation_xlsx(ReportXlsx):
         for product_id, value in report_data['report_lines'].iteritems():
             product = product_obj.browse([int(product_id)])
             self.write_line(product, value)
+        self._write_column_summary()
     
     def write_line(self, line_object, line_data):
         #import pdb; pdb.set_trace()
