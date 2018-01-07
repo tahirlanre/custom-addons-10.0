@@ -119,13 +119,27 @@ class AccountInvoice(models.Model):
 
 class AccountInvoiceLine(models.Model):
     _inherit = "account.invoice.line"
-         
+    
+    @api.multi
+    def _get_stock_move_price_unit(self):
+        self.ensure_one()
+        line = self[0]
+        invoice = line.invoice_id
+        price_unit = line.price_unit
+        if line.taxes_id:
+            price_unit = line.taxes_id.with_context(round=False).compute_all(price_unit, currency=line.invoice_id.currency_id, quantity=1.0)['total_excluded']
+        if line.product_uom.id != line.product_id.uom_id.id:
+            price_unit *= line.product_uom.factor / line.product_id.uom_id.factor
+        if invoice.currency_id != invoice.company_id.currency_id:
+            price_unit = invoice.currency_id.compute(price_unit, invoice.company_id.currency_id, round=False)
+        return price_unit
+        
     @api.multi
     def _create_stock_moves(self, picking):
         moves = self.env['stock.move']
         done = self.env['stock.move'].browse()
         for line in self:
-            price_unit = line.price_unit
+            price_unit = self._get_stock_move_price_unit()
             template = {
                 'name': line.name or '',
                 'product_id': line.product_id.id,
@@ -136,7 +150,7 @@ class AccountInvoiceLine(models.Model):
                 'move_dest_id': False,
                 'state': 'draft',
                 'company_id': line.invoice_id.company_id.id,
-                #'price_unit': price_unit,
+                'price_unit': price_unit,
                 'picking_type_id': picking.picking_type_id.id,
                 'procurement_id': False,
                 'route_ids': 1 and [
