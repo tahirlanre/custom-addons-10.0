@@ -95,6 +95,7 @@ class purchase_order(models.Model):
             #'partner_shipping_id': self.partner_shipping_id.id,
             'journal_id': journal_id.id,
             'currency_id': self.currency_id.id,
+            'date_invoice':self.date_order,
             #'comment': self.note,
             #'payment_term_id': self.payment_term_id.id,
             #'fiscal_position_id': self.fiscal_position_id.id or self.partner_invoice_id.property_account_position_id.id,

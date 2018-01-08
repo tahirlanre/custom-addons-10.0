@@ -18,6 +18,8 @@ class StockPicking(models.Model):
         invoice = self.env['account.invoice']
         for rec in self: 
             if rec.purchase_id and rec.picking_type_id.code == "incoming":
-                rec.purchase_id.action_invoice_create()
+                invoice_ids = rec.purchase_id.action_invoice_create()
+                for invoice in self.env['account.invoice'].search([('id','in',invoice_ids)]):
+                    invoice.action_invoice_open()
         
         return return_val
