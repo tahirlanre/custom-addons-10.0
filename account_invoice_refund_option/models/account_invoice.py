@@ -73,7 +73,7 @@ class AccountInvoice(models.Model):
                     'partner_id': self.partner_id.id,
                     'origin': self.number,
                     'location_dest_id': self.picking_type_id.default_location_dest_id.id,
-                    'location_id': self.partner_id.property_stock_supplier.id
+                    'location_id': self.partner_id.property_stock_supplier.id,
                 }
                 picking = self.env['stock.picking'].create(pick)
                 self.invoice_picking_id = picking.id
@@ -96,7 +96,7 @@ class AccountInvoice(models.Model):
                     'partner_id': self.partner_id.id,
                     'origin': self.number,
                     'location_dest_id': self.partner_id.property_stock_customer.id,
-                    'location_id': self.picking_transfer_id.default_location_src_id.id
+                    'location_id': self.picking_transfer_id.default_location_src_id.id,
                 }
                 picking = self.env['stock.picking'].create(pick)
                 self.invoice_picking_id = picking.id
@@ -119,27 +119,13 @@ class AccountInvoice(models.Model):
 
 class AccountInvoiceLine(models.Model):
     _inherit = "account.invoice.line"
-    
-    @api.multi
-    def _get_stock_move_price_unit(self):
-        self.ensure_one()
-        line = self[0]
-        invoice = line.invoice_id
-        price_unit = line.price_unit
-        if line.taxes_id:
-            price_unit = line.taxes_id.with_context(round=False).compute_all(price_unit, currency=line.invoice_id.currency_id, quantity=1.0)['total_excluded']
-        if line.product_uom.id != line.product_id.uom_id.id:
-            price_unit *= line.product_uom.factor / line.product_id.uom_id.factor
-        if invoice.currency_id != invoice.company_id.currency_id:
-            price_unit = invoice.currency_id.compute(price_unit, invoice.company_id.currency_id, round=False)
-        return price_unit
         
     @api.multi
     def _create_stock_moves(self, picking):
         moves = self.env['stock.move']
         done = self.env['stock.move'].browse()
         for line in self:
-            price_unit = self._get_stock_move_price_unit()
+            #price_unit = self._get_stock_move_price_unit()
             template = {
                 'name': line.name or '',
                 'product_id': line.product_id.id,
@@ -150,12 +136,13 @@ class AccountInvoiceLine(models.Model):
                 'move_dest_id': False,
                 'state': 'draft',
                 'company_id': line.invoice_id.company_id.id,
-                'price_unit': price_unit,
+                #'price_unit': price_unit,
                 'picking_type_id': picking.picking_type_id.id,
                 'procurement_id': False,
                 'route_ids': 1 and [
                     (6, 0, [x.id for x in self.env['stock.location.route'].search([('id', 'in', (2, 3))])])] or [],
                 'warehouse_id': picking.picking_type_id.warehouse_id.id,
+                'date':line.invoice_id.date_invoice,
             }
             diff_quantity = line.quantity
             tmp = template.copy()
@@ -170,7 +157,7 @@ class AccountInvoiceLine(models.Model):
         moves = self.env['stock.move']
         done = self.env['stock.move'].browse()
         for line in self:
-            price_unit = line.price_unit
+            #price_unit = line.price_unit
             template = {
                 'name': line.name or '',
                 'product_id': line.product_id.id,
@@ -187,6 +174,7 @@ class AccountInvoiceLine(models.Model):
                 'route_ids': 1 and [
                     (6, 0, [x.id for x in self.env['stock.location.route'].search([('id', 'in', (2, 3))])])] or [],
                 'warehouse_id': picking.picking_type_id.warehouse_id.id,
+                'date':line.invoice_id.date_invoice,
             }
             diff_quantity = line.quantity
             tmp = template.copy()
