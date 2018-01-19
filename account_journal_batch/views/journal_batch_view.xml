@@ -18,6 +18,7 @@
 	<record id="view_account_journal_batch_form" model="ir.ui.view">
 		<field name="name">account.journal.batch.form</field>
 		<field name="model">account.journal.batch</field>
+        
 		<field name="arch" type="xml">
 			<form string="Journal Batch">
 				<header>
@@ -35,7 +36,7 @@
 					<group string="Recurring Options">
 						<field name="repeat_batch"/>
 						<field name="repeat_number" attrs="{'invisible':[('repeat_batch','=',False)]}"/>
-						<field name="repeat_count"/>
+						<field name="repeat_count" readonly="1"/>
 					</group>
 					<notebook colspan="4">
 						<page string="Journal Batch Lines">
@@ -56,12 +57,15 @@
 		</field>
 	</record>
 	
-	<act_window
-		name="Journal Batches"
-		id="action_journal_batch"
-		res_model="account.journal.batch"
-		view_mode="tree,form"
-		/>
+    <record id="action_journal_batch" model="ir.actions.act_window">
+        <field name="name">Journal Batches</field>
+        <field name="res_model">account.journal.batch</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">
+            {'readonly_by_pass': ['repeat_count',]}
+        </field>
+    </record>
 		
 	<menuitem 
 		id="menu_journal_batch" 

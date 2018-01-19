@@ -9,7 +9,7 @@
     'license': 'AGPL-3',
     'summary': 'Journal batches for House Affairs Nigeria Limited',
     'author': 'Tahir Aduragba',
-    'depends': ['account'],
+    'depends': ['account','web_readonly_bypass'],
     'data': [
         'views/journal_batch_view.xml',
         'wizard/journal_batch_wizard.xml',

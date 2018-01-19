@@ -35,8 +35,8 @@ class account_journal_batch(models.Model):
     description = fields.Char(string='Batch Description')
     clear_batch = fields.Boolean(string='Clear batch after post?',default=False)
     repeat_batch = fields.Boolean(string='Repeat batch?')
-    repeat_number = fields.Integer(string='RepeatBatch Count')
-    repeat_count = fields.Integer(string='# Posted', readonly=True, default=0)
+    repeat_number = fields.Integer(string='Repeat Batch Count')
+    repeat_count = fields.Integer(string='# Posted', default=0)
     transaction_code = fields.Char(string='Transaction Code')           #
     user_id = fields.Many2one('res.users', string='Responsible', required=False, default=lambda self: self.env.user)
     currency_id = fields.Many2one('res.currency', string='Currency', required=True, default=lambda self: self.env.user.company_id.currency_id)
@@ -51,6 +51,16 @@ class account_journal_batch(models.Model):
     company_id = fields.Many2one('res.company', related='journal_id.company_id', string='Company', store=True, readonly=True,
         default=lambda self: self.env.user.company_id)
     
+    @api.onchange("repeat_number")
+    def recompute_repeat_count(self):
+        for batch in self:
+            if not batch.journal_batch_line_ids and batch.repeat_count != 0:
+                batch.write({'repeat_count':0})
+        
+    def clear_batch_lines(self):
+        commands = [(2, line_id.id, False) for line_id in self.journal_batch_line_ids]
+        self.write({'journal_batch_line_ids': commands})
+        
     @api.model
     def create(self,vals):
         journal_batch = super(account_journal_batch,self).create(vals)
@@ -95,6 +105,10 @@ class account_journal_batch(models.Model):
             batch.repeat_count+=1
             batch.write({'date':time.strftime("%Y-%m-%d %H:%M:%S")})
             
+            #clear batch lines if clear batch option selected or the last entry has been posted
+            if batch.clear_batch or batch.repeat_number == batch.repeat_count:
+                self.clear_batch_lines()
+            
     def _get_move_vals(self, journal=None):
         """ Return dict to create the payment move
         """
@@ -135,9 +149,8 @@ class account_journal_batch(models.Model):
         for journal_batch in self:
             #if journal_batch.state in ['open', 'close']:
             #    raise UserError(_('You cannot delete a document is in %s state.') % (journal_batch.state,))
-            for journal_batch_line in journal_batch.prepayment_line_ids:
-                if journal_batch_line.move_line_id:
-                    raise UserError(_('You cannot delete a document that contains posted entries.'))
+            if not journal_batch.journal_batch_line_ids and journal_batch.repeat_count == 0:
+                raise UserError(_('You cannot delete a document that contains lines or has not finished running.'))
         return super(account_journal_batch, self).unlink()
     
     
