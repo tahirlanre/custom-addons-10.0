@@ -1,0 +1,198 @@
+<?xml version="1.0"?>
+<odoo>
+	<record id="action_document_payment_voucher" model="ir.actions.act_window">
+        <field name="name">Payment Voucher</field>
+        <field name="res_model">document.payment.voucher</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+	</record>
+	
+	<record id="action_document_release_letter" model="ir.actions.act_window">
+        <field name="name">Release Letter</field>
+        <field name="res_model">document.release.letter</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+	</record>
+	
+	<record id="action_document_mda" model="ir.actions.act_window">
+        <field name="name">MDA</field>
+        <field name="res_model">document.mda</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+	</record>
+	
+	<!-- Document Payment Voucher views -->
+	<record id="document_payment_voucher_form" model="ir.ui.view">
+        <field name="name">Payment Voucher</field>
+        <field name="model">document.payment.voucher</field>
+        <field name="arch" type="xml">
+            <form class="o_form_document">
+				<sheet>
+                    <div class="oe_title">
+                        <label for="dept_no" class="oe_edit_only"/>
+                        <h1>
+                            <field name="dept_no"/>
+                        </h1>
+                    </div>
+					<group string="Payment Details">
+						<group>
+							<field name="partner_id"/>
+							<field name="description"/>
+						</group>
+						<group>
+							 <field name="payment_date"/>
+							 <field name="mda"/>
+						</group>
+					</group>
+					<group string="Payment options">
+						<group>
+							<field name="expenditure_type"/>
+							<field name="gross_amount"/>
+							<field name="payment_account"/>
+							<field name="payment_mode"/>
+							<field name="payment_reference"/>
+						</group>
+						<group>
+							 <field name="tax_ids"/>
+							 <field name="net_amount"/>
+						</group>
+					</group>
+					<group string="Tax details">
+						<field name="child_vat"/>
+						<field name="child_wht"/>
+						<field name="child_dl"/>
+						<field name="child_sd"/>
+					</group>
+				</sheet>
+            </form>
+        </field>
+	</record>
+	
+	<record id="document_payment_voucher_tree" model="ir.ui.view">
+        <field name="name">Payment Voucher</field>
+        <field name="model">document.payment.voucher</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="payment_date"/>
+				<field name="dept_no"/>
+				<field name="partner_id"/>
+				<field name="mda"/>
+				<field name="gross_amount"/>
+				<field name="net_amount"/>
+            </tree>
+        </field>
+	</record>
+	
+	<record id="document_payment_voucher_search" model="ir.ui.view">
+        <field name="name">Document Search</field>
+        <field name="model">document.payment.voucher</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="dept_no"/>
+				<field name="partner_id"/>
+                <field name="payment_date"/>
+                <filter name="filter_is_capital" string="Capital" domain="[('expenditure_type', '=', 'capital')]"/>
+				<filter name="filter_is_capital" string="Recurrent" domain="[('expenditure_type', '=', 'recurrent')]"/>
+                <group>
+                     <filter string="MDAs" context="{'group_by': 'mda'}"/>
+                </group>
+            </search>
+        </field>
+	</record>
+	
+	<!--<record id="document_payment_voucher_kanban" model="ir.ui.view">
+	</record>-->
+	
+	<!-- Document Release Letter views -->
+	<record id="document_release_letter_form" model="ir.ui.view">
+        <field name="name">Release Letter</field>
+        <field name="model">document.release.letter</field>
+        <field name="arch" type="xml">
+            <form class="o_form_document">
+				<sheet>
+                    <div class="oe_title">
+                        <label for="reference" class="oe_edit_only"/>
+                        <h1>
+                            <field name="reference"/>
+                        </h1>
+                    </div>
+					<group string="Payment Details">
+						<group>
+							<field name="mda"/>
+							<field name="gross_amount"/>
+						</group>
+						<group>
+							 <field name="date"/>
+						</group>
+					</group>
+				</sheet>
+            </form>
+        </field>
+	</record>
+	
+	<record id="document_release_letter_tree" model="ir.ui.view">
+        <field name="name">Release Letter</field>
+        <field name="model">document.release.letter</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="date"/>
+				<field name="reference"/>
+				<field name="mda"/>
+				<field name="gross_amount"/>
+            </tree>
+        </field>
+	</record>
+	
+	<record id="document_release_letter_search" model="ir.ui.view">
+        <field name="name">Release Letter</field>
+        <field name="model">document.release.letter</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="reference"/>
+				<field name="mda"/>
+                <field name="date"/>
+                <group>
+                    <filter string="MDAs" context="{'group_by': 'mda'}"/>
+                </group>
+            </search>
+        </field>
+	</record>
+	
+    <!-- MDA views-->
+    <record id="document_mda_form" model="ir.ui.view">
+      <field name="name">MDA</field>
+      <field name="model">document.mda</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group name="MDA details">
+                <field name="code"/>
+				<field name="name"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record> 
+	
+    <record id="document_mda_tree" model="ir.ui.view">
+        <field name="name">MDA</field>
+        <field name="model">document.mda</field>
+        <field name="arch" type="xml">
+        <tree>
+            <field name="code"/>
+			<field name="name"/>
+        </tree>
+      </field>
+    </record>
+	
+	<record id="document_mda_search" model="ir.ui.view">
+        <field name="name">MDA Search</field>
+        <field name="model">document.mda</field>
+        <field name="arch" type="xml">
+            <search>
+	            <field name="code"/>
+				<field name="name"/>
+            </search>
+        </field>
+	</record>
+</odoo>

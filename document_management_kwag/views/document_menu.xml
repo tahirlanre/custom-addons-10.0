@@ -1,0 +1,15 @@
+<odoo>
+	<!-- Top menu item -->
+	<menuitem id="menu_document" sequence="4" name="Document" action="action_document_payment_voucher"/>
+	
+	<menuitem id="menu_document_documents" name="Documents" parent="document_management_kwag.menu_document" sequence="2"/>
+	<menuitem id="menu_document_configuration" name="Configuration" parent="document_management_kwag.menu_document" sequence="3"/>
+	<menuitem id="menu_document_reports" name="Reporting" parent="document_management_kwag.menu_document" sequence="4"/>
+	
+	<!-- Document menu item -->
+	<menuitem id="menu_document_payment_voucher" sequence="1" parent="document_management_kwag.menu_document_documents" action="action_document_payment_voucher"/>
+	<menuitem id="menu_document_release_letter" sequence="2" parent="document_management_kwag.menu_document_documents" action="action_document_release_letter"/>
+	
+	<!-- Configuration menu item-->
+	<menuitem id="menu_document_mda" sequence="1" parent="document_management_kwag.menu_document_configuration" action="action_document_mda"/>
+</odoo>
