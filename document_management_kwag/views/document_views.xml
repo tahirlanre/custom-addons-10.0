@@ -21,6 +21,22 @@
         <field name="domain">[]</field>
 	</record>
 	
+    <record id="base.action_partner_form" model="ir.actions.act_window">
+        <field name="name">Payee</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="context">{"search_default_active":1}</field>
+        <field name="search_view_id" ref="base.view_res_partner_filter"/>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to add a contact in your address book.
+          </p><p>
+            Odoo helps you easily track all activities related to
+            a customer: discussions, history of business opportunities,
+            documents, etc.
+          </p>
+        </field>
+    </record>
+	
 	<!-- Document Payment Voucher views -->
 	<record id="document_payment_voucher_form" model="ir.ui.view">
         <field name="name">Payment Voucher</field>
@@ -28,12 +44,10 @@
         <field name="arch" type="xml">
             <form class="o_form_document">
 				<sheet>
-                    <div class="oe_title">
-                        <label for="dept_no" class="oe_edit_only"/>
-                        <h1>
-                            <field name="dept_no"/>
-                        </h1>
+                    <div>
+                        <field name="mda" style="width:10%%" options="{'no_open': True, 'no_create': True}"/>/<field name="voucher_location" style="width:10%%"/>/<field name="voucher_no" style="width:10%%"/>/<field name="voucher_year" options='{"showType": "years"}' style="width:10%%"/>
                     </div>
+					
 					<group string="Payment Details">
 						<group>
 							<field name="partner_id"/>
@@ -41,7 +55,7 @@
 						</group>
 						<group>
 							 <field name="payment_date"/>
-							 <field name="mda"/>
+							 <field name="mda_fullname"/>
 						</group>
 					</group>
 					<group string="Payment options">
@@ -57,11 +71,25 @@
 							 <field name="net_amount"/>
 						</group>
 					</group>
-					<group string="Tax details">
-						<field name="child_vat"/>
-						<field name="child_wht"/>
-						<field name="child_dl"/>
-						<field name="child_sd"/>
+					<group string="Documents">
+						<field name="facevalue_document" widget="binary" filename="facevalue_document_filename"/>
+						<field name="facevalue_document_filename" invisible="1"/>
+						<field name="releaseletter_document" widget="binary" filename="releaseletter_document_filename"/>
+						<field name="releaseletter_document_filename" invisible="1"/>
+						<field name="approvalletter_document" widget="binary" filename="approvalletter_document_filename"/>
+						<field name="approvalletter_document_filename" invisible="1"/>
+						<field name="govapproval_document" widget="binary" filename="govapproval_document_filename"/>
+						<field name="govapproval_document_filename" invisible="1"/>
+						<field name="vat_document" widget="binary" filename="vat_document_filename"/>
+						<field name="vat_document_filename" invisible="1"/>
+						<field name="wht_document" widget="binary" filename="wht_document_filename"/>
+						<field name="wht_document_filename" invisible="1"/>
+						<field name="dl_document" widget="binary" filename="dl_document_filename"/>
+						<field name="dl_document_filename" invisible="1"/>
+						<field name="sd_document" widget="binary" filename="sd_document_filename"/>
+						<field name="sd_document_filename" invisible="1"/>
+						<field name="other_document" widget="binary" filename="other_document_filename"/>
+						<field name="other_document_filename" invisible="1"/>
 					</group>
 				</sheet>
             </form>
@@ -124,6 +152,10 @@
 						<group>
 							 <field name="date"/>
 						</group>
+					</group>
+					<group string="Documents">
+						<field name="releaseletter_document" widget="binary" filename="releaseletter_document_filename"/>
+						<field name="releaseletter_document_filename" invisible="1"/>
 					</group>
 				</sheet>
             </form>

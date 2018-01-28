@@ -16,10 +16,11 @@
     """
     ,
     'author': 'Tahir Aduragba',
-    'depends': ['document','document_attachment_manage','mail'],
+    'depends': ['document','document_attachment_manage','swr_datepicker','mail'],
     'data': [
         'views/document_views.xml',
         'views/document_menu.xml',
+        'security/ir.model.access.csv',
     ],
     'installable': True,
     'application': True,
