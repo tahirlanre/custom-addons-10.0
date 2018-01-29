@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <report
+        id="report_account_cashbook_batch"
+        string="Cashbook Batch Receipt"
+        model="account.cashbook.batch"
+        report_type="qweb-pdf"
+        file="account_cashbook_batch.cashbook_batch_report"
+        name="account_cashbook_batch.cashbook_batch_report"
+		menu="False"
+    />
+	
+    <template id="report_cashbook_batch_document">
+		<t t-foreach="doc.batch_line_ids" t-as="line">
+	        <div class="page">
+				<div class="row">
+					<div class="col-xs-6">
+						<strong>
+							<span t-field="res_company.partner_id" /> <br/>
+                        	<span t-field="res_company.partner_id.street" /><br/>
+                        	<span t-field="res_company.partner_id.street2" /><br/>
+                        	<span t-field="res_company.partner_id.city" /><br/>
+							<span t-field="res_company.phone" /> <br/>
+							<u><span t-field="res_company.email" /></u> <br/>
+						</strong>
+								
+					</div>
+                    <div class="col-xs-6 text-right">
+						<strong>Date: </strong>
+                        <span t-field="line.date"/>
+					</div>
+				</div>
+				<br/>
+				<div class="row">
+					<div class="col-xs-3">
+						<strong>Received from</strong>
+					</div>
+					<div class="col-xs-1 text-right">
+						<strong class="text-right"> : </strong>
+					</div>
+					<div class="col-xs-4">
+						<span t-field="line.partner_id.name"/>
+					</div>
+					<div class="col-xs-4">
+						<span t-field="line.partner_id.name"/>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-3">
+						<strong>The sum of </strong>
+					</div>
+					<div class="col-xs-1 text-right">
+						<strong class="text-right"> : </strong>
+					</div>
+					<div class="col-xs-5">
+						<t t-if="line.deposit &gt; 0">
+							<span t-field="line.deposit" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+						</t>
+						<t t-if="line.payment &gt; 0">
+							<span t-field="line.payment" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+						</t>
+					</div>
+					<div class="col-xs-3">
+					</div>
+				</div>
+				<br/>
+				<div class="row">
+					<div class="col-xs-3">
+						<strong>Being</strong>
+					</div>
+					<div class="col-xs-1 text-right">
+						<strong> : </strong>
+					</div>
+					<div class="col-xs-5">	
+						<span t-field="line.description"/>
+					</div>
+					<div class="col-xs-3">	
+					</div>
+				</div>
+				<br/>
+				<div class="row">
+					<div class="col-xs-3">
+						
+					</div>
+					<div class="col-xs-1 text-right">
+						
+					</div>
+					<div class="col-xs-5">
+						<strong>
+							<t t-if="line.deposit &gt; 0">
+								<span t-field="line.deposit" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+							</t>
+							<t t-if="line.payment &gt; 0">
+								<span t-field="line.payment" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+							</t>
+						</strong>
+					</div>
+					<div class="col-xs-3">	
+						<strong>Cashier Signature</strong>
+					</div>
+				</div>
+	        </div>
+		</t>
+    </template>
+	
+    <template id="cashbook_batch_report">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="account_cashbook_batch.report_cashbook_batch_document"
+                   t-lang="doc.create_uid.lang"/>
+            </t>
+        </t>
+    </template>
+	
+    <record id="cashbook_batch_paperformat" model="report.paperformat">
+        <field name="name">Cashbook batch Paper Format</field>
+        <field name="default" eval="False" />
+        <field name="format">custom</field>
+        <field name="page_height">150</field>
+        <field name="page_width">210</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">20</field>
+        <field name="margin_bottom">4</field>
+        <field name="margin_left">8</field>
+        <field name="margin_right">8</field>
+        <field name="header_line" eval="False" />
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <record id="report_account_cashbook_batch" model="ir.actions.report.xml">
+        <field name="paperformat_id" ref="account_cashbook_batch.cashbook_batch_paperformat"/>
+    </record>
+	
+</odoo>

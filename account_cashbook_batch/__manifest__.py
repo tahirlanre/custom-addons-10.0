@@ -16,6 +16,7 @@
         'data/cashbook_batch_data.xml',
         'views/report_cashbook_batch_line.xml',
         'security/ir.model.access.csv',
+        'report/cashbook_batch_report.xml',
     ],
     'installable': True,
 }
