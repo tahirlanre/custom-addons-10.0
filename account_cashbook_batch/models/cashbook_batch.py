@@ -65,8 +65,10 @@ class account_cashbook_batch(models.Model):
             'domain': [('batch_id', 'in', self.ids)],
         }
     
+    @api.multi
     def print_confirmation(self):
-        pass
+        self.ensure_one()
+        return self.env['report'].get_action(self, 'account_cashbook_batch.cashbook_batch_report')
     
     @api.multi
     def post(self):
