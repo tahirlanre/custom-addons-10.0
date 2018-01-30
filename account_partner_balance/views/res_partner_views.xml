@@ -6,7 +6,8 @@
         <field eval="8" name="priority"/>
         <field name="arch" type="xml">
             <tree decoration-danger="debit &gt; 0" string="Contacts">
-                <field name="display_name" string="Name"/>
+                <field name="ref" string="Code"/>
+                <field name="name" string="Name"/>
                 <field name="function" invisible="1"/>
                 <field name="phone"/>
 				<field name="balance"/>
@@ -34,10 +35,10 @@
 		<field name="model">res.partner</field>
 		<field name="inherit_id" ref="base.view_partner_tree"/>
 		<field name="arch" type="xml">
-			
 			<xpath expr="//tree" position="replace">
 				<tree decoration-danger="credit &gt; 0">
-                    <field name="display_name" string="Name"/>
+                    <field name="ref" string="Code"/>
+                    <field name="name" string="Name"/>
                     <field name="function" invisible="1"/>
                     <field name="phone"/>
 					<field name="balance"/>
