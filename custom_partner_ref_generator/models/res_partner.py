@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields, api
+from openerp import models, fields, api, _
 
 import logging
 
@@ -71,3 +71,22 @@ class res_partner(models.Model):
                     break
                     
         return super(res_partner, self).create(data)
+    
+    @api.multi
+    def button_update_ref(self):
+        for partner in self:
+            view = self.env.ref('custom_partner_ref_generator.view_partner_ref_update')
+            wiz = self.env['res.partner.ref.update'].create({'partner_id': partner.id})
+            # TDE FIXME: a return in a loop, what a good idea. Really.
+            return {
+                'name': _('Internal Reference (Code) Update'),
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'res.partner.ref.update',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wiz.id,
+                'context': self.env.context,
+            }

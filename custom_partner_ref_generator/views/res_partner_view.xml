@@ -5,6 +5,11 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form" />
         <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="button_update_ref" string="Change Internal reference (code)" type="object"/>
+                </header>
+            </xpath>
             <xpath expr="//group//field[@name='ref']" position="replace"></xpath>
             <field name="name" position="before">
                 <div>
