@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_ref_update" model="ir.ui.view">
+        <field name="name">res.partner.ref.update.view.form</field>
+        <field name="model">res.partner.ref.update</field>
+        <field name="arch" type="xml">
+            <form string="Internal Reference (Code) Update">
+                <group>
+                    <field name="new_ref"/>
+                </group>
+                <footer>
+                    <button name="update" string="Update" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-default" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
