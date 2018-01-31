@@ -51,7 +51,7 @@ class SaleOrder(models.Model):
             debit += line.credit
         
         if (credit - debit + self.amount_total) > partner.credit_limit:
-            if not partner.over_credit:
+            if partner.credit_limit:
                 msg = 'Can not confirm Sale Order, Total mature due Amount ' \
                       '%s as on %s !\nCheck Partner Accounts or Credit ' \
                       'Limits !' % (credit - debit, today_dt)
