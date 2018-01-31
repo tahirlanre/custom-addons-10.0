@@ -27,10 +27,12 @@ class InventoryValuation(models.AbstractModel):
         """ , (tuple(locations), date)
         )
         for row in self.env.cr.dictfetchall():
-            data[row['product_id']] = {
-                'qty' : row['qty'],
-                'value': row['value']
-            }
+            if row['qty'] != 0:
+                data[row['product_id']] = {
+                    'qty' : row['qty'],
+                    'value': row['value']
+                }
+            
             
         return data
             

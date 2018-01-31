@@ -17,3 +17,4 @@
     'installable': True,
 }
 
+# TODO create options on wizard not to show zero balances
