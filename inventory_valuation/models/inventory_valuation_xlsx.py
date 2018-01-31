@@ -223,7 +223,6 @@ class inventory_valuation_xlsx(ReportXlsx):
         self._write_column_summary()
     
     def write_line(self, line_object, line_data):
-        #import pdb; pdb.set_trace()
         for col_pos, column in self.columns.iteritems():
             if 'field' in column:
                 value = line_object[column['field']]
