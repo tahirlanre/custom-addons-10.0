@@ -10,7 +10,7 @@ class PartnerRefUpdate(models.TransientModel):
     _description = 'Partner ref update'
 
     partner_id = fields.Many2one('res.partner')
-    new_ref = fields.Char('New internal refrence (code)', required=True)
+    new_ref = fields.Char('New internal refrence (code)')
 
     @api.model
     def default_get(self, fields):

@@ -6,7 +6,7 @@
         <field name="arch" type="xml">
             <form string="Internal Reference (Code) Update">
                 <group>
-                    <field name="new_ref"/>
+                    <field name="new_ref" required="1"/>
                 </group>
                 <footer>
                     <button name="update" string="Update" type="object" class="btn-primary"/>
