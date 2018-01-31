@@ -19,6 +19,7 @@ class AccountInvoice(models.Model):
             self.nb_print = printed_nb + 1
             return self.env['report'].get_action(self, 'houseaffairs_custom_invoice.report_invoice')
         elif self.env.user.has_group('account.group_account_manager'):
+            self.nb_print = printed_nb + 1
             return self.env['report'].get_action(self, 'houseaffairs_custom_invoice.report_invoice')
         else:
             return False

@@ -25,15 +25,16 @@
 						text-align: center;   
 					}
 				</style>
-				<!--<h3 class="invoice_heading">
-	               <strong t-if="o.type == 'out_invoice' and (o.state == 'open' or o.state == 'paid')">SALES INVOICE</strong>
+				<h1 class="invoice_heading">
+	               <!--<strong t-if="o.type == 'out_invoice' and (o.state == 'open' or o.state == 'paid')">SALES INVOICE</strong>-->
 	               <strong t-if="o.type == 'out_invoice' and o.state == 'proforma2'">PRO-FORMA</strong>
 					<strong t-if="o.type == 'out_invoice' and o.state == 'draft'">Draft Invoice</strong>
 		            <strong t-if="o.type == 'out_invoice' and o.state == 'cancel'">Cancelled Invoice</strong>
-		            <strong t-if="o.type == 'out_refund'">Refund</strong>
+		            <strong t-if="o.type == 'out_refund'">Credit Note</strong>
 		            <strong t-if="o.type == 'in_refund'">Vendor Refund</strong>
 	                <strong t-if="o.type == 'in_invoice'">Vendor Bill</strong>
-				</h3>-->
+                    <strong t-if="o.nb_print &gt; 1 and o.type == 'out_invoice'">Copy Invoice</strong>
+				</h1>
 				<br/>
 				<div>
 					To:
@@ -88,7 +89,9 @@
 							<span t-field="o.sale_id.name"/>
 					</div>
 					<div class="col-xs-3">
-							<span t-field="o.sale_id.picking_ids[0].name"/>
+                        <t t-if="o.type == 'out_invoice'">
+                            <span t-field="o.sale_id.picking_ids[0].name"/>
+                        </t>
 					</div>
 					<div class="col-xs-2">
 							<span t-field="o.number"/>
@@ -203,7 +206,7 @@
     	id="account_invoice_houseaffairs"
     	model="account.invoice"
    	 	string="House Affairs Invoice"
-    	report_type="qweb-html"
+    	report_type="qweb-pdf"
     	name="houseaffairs_custom_invoice.report_invoice"
     	file="houseaffairs_custom_invoice.report_invoice"
 		paperformat="paperformat_houseaffairs_custom_invoice_paper"
