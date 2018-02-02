@@ -10,6 +10,7 @@
         'views/sales_rep.xml',
         'security/sales_rep_security.xml',
         'security/ir.model.access.csv',
+        'data/sales_rep_data.xml',
     ],
 }
 

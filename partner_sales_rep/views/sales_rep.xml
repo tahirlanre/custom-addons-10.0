@@ -20,6 +20,7 @@
                       </div>
                       <group>
                           <group name="left">
+                              <field name="code"/>
 							  <field name="phone"/>
                               <field name="user_id" domain="[('share', '=', False)]"/>
                           </group>
@@ -38,6 +39,7 @@
         <field name="model">sales.rep</field>
         <field name="arch" type="xml">
             <tree string="Sales Representative">
+                <field name="code"/>
                 <field name="name"/>
                 <field name="active" invisible="1"/>
                 <field name="phone"/>
