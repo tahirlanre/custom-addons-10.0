@@ -24,7 +24,7 @@ class SaleOrder(models.Model):
     
     def check_product_qty_availability(self):
         for line in self.order_line:
-            if line.product_id.type == 'product':
+            if line.product_id.type != 'service':
                 precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
                 product_qty = line.product_uom._compute_quantity(line.product_uom_qty, line.product_id.uom_id)
                 if float_compare(line.product_id.qty_available, product_qty, precision_digits=precision) == -1:
