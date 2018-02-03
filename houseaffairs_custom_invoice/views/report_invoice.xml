@@ -10,10 +10,10 @@
 						font-style: italic;
 					}
 					div{
-						font-size: 13px;
+						font-size: 17px;
 					}
 					.heading{
-						font-size: 15px;
+						font-size: 17px;
 						font-style: bold;
 					}
 					.rcorners {
@@ -144,12 +144,12 @@
 			<div class="footer">
 				<style>	
 					div{
-						font-size: 14px;
+						font-size: 17px;
 					}
 				</style>
 				<div class="last-page">
 					<div class="row">
-		                <div class="col-xs-4 pull-right">
+		                <div class="col-xs-6 pull-right">
 		                    <table class="table table-condensed">
 		                        <tr>
 		                            <td>Total (Excl)</td>
@@ -171,10 +171,10 @@
 		                                 <span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
 		                            </td>
 		                        </tr>
-								<tr class="border-black" style="font-size: 17px;">
+								<tr class="border-black" style="font-size: 20px;">
 		                            <td><strong>Total (incl)</strong></td>
 		                            <td class="text-right">
-		                                 <span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+		                                <strong> <span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></strong>
 		                            </td>
 								</tr>
 		                    </table>
@@ -189,12 +189,12 @@
 	<record id="paperformat_houseaffairs_custom_invoice_paper"
 	        model="report.paperformat"> 
 	  <field name="name">House Affairs Custom Invoice Paper</field>
-	  <field name="format">A4</field> 
+	  <field name="format">Letter</field> 
 	  <field name="page_height">0</field> 
 	  <field name="page_width">0</field> 
 	  <field name="orientation">Portrait</field> 
 	  <field name="margin_top">40</field> 
-	  <field name="margin_bottom">80</field> 
+	  <field name="margin_bottom">105</field> 
 	  <field name="margin_left">7</field> 
 	  <field name="margin_right">1</field> 
 	  <field name="header_line" eval="False" /> 
