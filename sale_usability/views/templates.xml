@@ -39,8 +39,8 @@
 		<field name="arch" type="xml">
 			<!-- FIXME update view for fde -->
             <field name="credit" position="after">
-                <field name="credit_limit" groups="base.group_erp_manager"/>
-                <field name="over_credit" invisible="1" groups="base.group_erp_manager"/>
+                <field name="credit_limit" groups="sale_usability.group_credit_limit"/>
+                <field name="over_credit" invisible="1" groups="sale_usability.group_credit_limit"/>
             </field>
 		</field>
 	</record>	
@@ -51,8 +51,8 @@
 		<field name="inherit_id" ref="base.view_partner_form"/>
 		<field name="arch" type="xml">
             <field name="credit" position="after">
-                <field name="credit_limit" groups="base.group_erp_manager"/>
-                <field name="over_credit" groups="base.group_erp_manager" invisible="1"/>
+                <field name="credit_limit" groups="sale_usability.group_credit_limit"/>
+                <field name="over_credit" groups="sale_usability.group_credit_limit" invisible="1"/>
             </field>
 		</field>
 	</record>

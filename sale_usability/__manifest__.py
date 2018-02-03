@@ -36,6 +36,7 @@
     'data': [ 'views/templates.xml',
     'views/sale_order_report.xml',
     'views/sale_order_view.xml',
+    'data/data.xml',
     ],
     'demo': [],
     'installable': True,

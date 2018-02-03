@@ -42,6 +42,7 @@
         'views/res_company_view.xml',
         'wizard/partner_ref_update_wizard.xml',
         'security/ir.model.access.csv',
+        'data/data.xml',
     ],
 
 }
