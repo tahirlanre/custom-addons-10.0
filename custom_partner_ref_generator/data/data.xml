@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="group_partner_ref_generator" model="res.groups">
-         <field name="name">Create partner account codes</field>
-         <field name="users" eval="[(4, ref('base.user_root'))]"/>
+         <field name="name">Create partner ref</field>
     </record>
 </odoo>

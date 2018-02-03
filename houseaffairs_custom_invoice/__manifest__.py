@@ -33,6 +33,7 @@
         'views/report_invoice.xml',
         'views/account_invoice.xml',
         'views/res_company_view.xml',
+        'data/data.xml',
     ],
     'demo': [],
     'installable': True,

@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <xpath expr="//sheet" position="before">
                 <header>
-                    <button name="button_update_ref" string="Change Internal reference (code)" type="object" groups="base.group_erp_manager"/>
+                    <button name="button_update_ref" string="Change Internal reference (code)" type="object" groups="custom_partner_ref_generator.group_partner_ref_generator"/>
                 </header>
             </xpath>
             <xpath expr="//group//field[@name='ref']" position="replace"></xpath>
