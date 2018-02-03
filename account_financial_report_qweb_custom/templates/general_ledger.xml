@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<template id="report_trial_balance_qweb_lines_header_custom" inherit_id="account_financial_report_qweb.report_general_ledger_qweb_lines">
+		<xpath expr="//div[@class='act_as_table data_table']" position="replace">
+            <div class="act_as_table data_table" style="width: 1140px !important;">
+
+                <!-- Display table headers for lines -->
+                <div class="act_as_thead">
+                    <div class="act_as_row labels">
+                        <!--## date-->
+                        <div class="act_as_cell first_column" style="width: 60px;">Date</div>
+                        <!--## move-->
+                        <div class="act_as_cell" style="width: 100px;">Entry</div>
+                        <!--## journal
+                        <div class="act_as_cell" style="width: 40px;">Journal</div>-->
+                        <!--## account code-->
+                        <div class="act_as_cell" style="width: 50px;">Account</div>
+                        <!--## partner-->
+                        <div class="act_as_cell" style="width: 140px;">Partner</div>
+                        <!--## ref - label-->
+                        <div class="act_as_cell" style="width: 290px;">Ref - Label</div>
+                        <t t-if="show_cost_center">
+                            <!--## cost_center-->
+                            <div class="act_as_cell" style="width: 100px;">Cost center</div>
+                        </t>
+                        <!--## matching_number
+                        <div class="act_as_cell" style="width: 25px;">Rec.</div>-->
+                        <!--## debit-->
+                        <div class="act_as_cell amount" style="width: 75px;">Debit</div>
+                        <!--## credit-->
+                        <div class="act_as_cell amount" style="width: 75px;">Credit</div>
+                        <!--## balance cumulated-->
+                        <div class="act_as_cell amount" style="width: 75px;">Cumul. Bal.</div>
+                        <t t-if="has_second_currency">
+                            <!--## currency_name-->
+                            <div class="act_as_cell" style="width: 35px;">Cur.</div>
+                            <!--## amount_currency-->
+                            <div class="act_as_cell amount" style="width: 75px;">Amount cur.</div>
+                        </t>
+                    </div>
+                </div>
+
+                <!-- Display first line with initial balance -->
+                <div class="act_as_row lines">
+                    <!--## date-->
+                    <div class="act_as_cell"></div>
+                    <!--## move-->
+                    <div class="act_as_cell"></div>
+                    <!--## journal
+                    <div class="act_as_cell"></div>-->
+                    <!--## account code-->
+                    <div class="act_as_cell"></div>
+                    <!--## partner-->
+                    <div class="act_as_cell"></div>
+                    <!--## ref - label-->
+                    <div class="act_as_cell amount">Initial balance</div>
+                    <t t-if="show_cost_center">
+                        <!--## cost_center-->
+                        <div class="act_as_cell"></div>
+                    </t>
+                    <!--## matching_number
+                    <div class="act_as_cell"></div>-->
+                    <!--## debit-->
+                    <div class="act_as_cell amount"><span t-field="account_or_partner_object.initial_debit"/></div>
+                    <!--## credit-->
+                    <div class="act_as_cell amount"><span t-field="account_or_partner_object.initial_credit"/></div>
+                    <!--## balance cumulated-->
+                    <div class="act_as_cell amount"><span t-field="account_or_partner_object.initial_balance"/></div>
+                    <t t-if="has_second_currency">
+                        <!--## currency_name-->
+                        <div class="act_as_cell"></div>
+                        <!--## amount_currency-->
+                        <div class="act_as_cell"></div>
+                    </t>
+                </div>
+
+                <!-- Display each lines -->
+                <t t-foreach="account_or_partner_object.move_line_ids" t-as="line">
+                    <!-- # lines or centralized lines -->
+                    <div class="act_as_row lines">
+                        <!--## date-->
+                        <div class="act_as_cell left"><span t-field="line.date"/></div>
+                        <!--## move-->
+                        <div class="act_as_cell left"><span t-field="line.entry"/></div>
+                        <!--## journal
+                        <div class="act_as_cell left"><span t-field="line.journal"/></div>-->
+                        <!--## account code-->
+                        <div class="act_as_cell left"><span t-field="line.account"/></div>
+                        <!--## partner-->
+                        <div class="act_as_cell left"><span t-field="line.partner"/></div>
+                        <!--## ref - label-->
+                        <div class="act_as_cell left"><span t-field="line.label"/></div>
+                        <t t-if="show_cost_center">
+                            <!--## cost_center-->
+                            <div class="act_as_cell left"><span t-field="line.cost_center"/></div>
+                        </t>
+                        <!--## matching_number
+                        <div class="act_as_cell"><span t-field="line.matching_number"/></div>-->
+                        <!--## debit-->
+                        <div class="act_as_cell amount"><span t-field="line.debit"/></div>
+                        <!--## credit-->
+                        <div class="act_as_cell amount"><span t-field="line.credit"/></div>
+                        <!--## balance cumulated-->
+                        <div class="act_as_cell amount"><span t-field="line.cumul_balance"/></div>
+                        <t t-if="has_second_currency">
+                            <!--## currency_name-->
+                            <div class="act_as_cell"><span t-field="line.currency_name"/></div>
+                            <t t-if="line.currency_name">
+                                <!--## amount_currency-->
+                                <div class="act_as_cell amount"><span t-field="line.amount_currency"/></div>
+                            </t>
+                            <t t-if="not line.currency_name">
+                                <!--## amount_currency-->
+                                <div class="act_as_cell"></div>
+                            </t>
+                        </t>
+                    </div>
+                </t>
+            </div>
+		</xpath>
+	</template>
+    
+    <template id="report_general_ledger_qweb_ending_cumul_custom" inherit_id="account_financial_report_qweb.report_general_ledger_qweb_ending_cumul">
+        <xpath expr="//div[@class='act_as_table list_table']" position="replace">
+            <!-- Display ending balance line for account or partner -->
+            <div class="act_as_table list_table" style="width: 1141px !important;">
+                <div class="act_as_row labels" style="font-weight: bold;">
+                    <!--## date-->
+                    <t t-if='type == "account_type"'>
+                        <div class="act_as_cell first_column" style="width: 380px;"><span t-field="account_or_partner_object.code"/> - <span t-field="account_or_partner_object.name"/></div>
+                        <div class="act_as_cell right" style="width: 250px;">Ending balance</div>
+                    </t>
+                    <t t-if='type == "partner_type"'>
+                        <div class="act_as_cell first_column" style="width: 380px;"></div>
+                        <div class="act_as_cell right" style="width: 250px;">Partner ending balance</div>
+                    </t>
+                    <t t-if="show_cost_center">
+                        <!--## cost_center-->
+                        <div class="act_as_cell" style="width: 100px;"></div>
+                    </t>
+                    <!--## matching_number
+                    <div class="act_as_cell" style="width: 25px;"></div>-->
+                    <!--## debit-->
+                    <div class="act_as_cell amount" style="width: 75px;"><span t-field="account_or_partner_object.final_debit"/></div>
+                    <!--## credit-->
+                    <div class="act_as_cell amount" style="width: 75px;"><span t-field="account_or_partner_object.final_credit"/></div>
+                    <!--## balance cumulated-->
+                    <div class="act_as_cell amount" style="width: 75px; padding-right: 1px;"><span t-field="account_or_partner_object.final_balance"/></div>
+                    <t t-if="has_second_currency">
+                        <!--## currency_name + amount_currency-->
+                        <div class="act_as_cell" style="width: 110px;"></div>
+                    </t>
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>
