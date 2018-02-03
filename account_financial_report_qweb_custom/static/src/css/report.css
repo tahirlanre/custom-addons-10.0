@@ -1,0 +1,20 @@
+.list_table, .data_table, .totals_table, .list_table .act_as_row {
+    border-left:0px;
+    border-right:0px;
+    text-align:left;
+    font-size:15px;
+    padding-right:3px;
+    padding-left:3px;
+    padding-top:2px;
+    padding-bottom:2px;
+    border-collapse:collapse;
+}
+
+.custom_footer {
+    font-size:7px !important;
+}
+
+.account_title {
+    font-size:17px;
+    font-weight:bold;
+}
