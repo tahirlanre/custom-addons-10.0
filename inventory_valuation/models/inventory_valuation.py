@@ -21,6 +21,7 @@ class InventoryValuation(models.AbstractModel):
         product_ids = self.env['product.product'].search([]).ids
         locations = self._get_internal_locations()
         data = {}
+        cost_price = 0.0
         self.env.cr.execute("""
             SELECT h.product_id, SUM(h.quantity) as qty, SUM(h.price_unit_on_quant * h.quantity) as value FROM stock_history h, stock_move m WHERE h.move_id=m.id 
             AND h.location_id in %s AND m.date <= %s GROUP BY h.product_id
@@ -28,12 +29,13 @@ class InventoryValuation(models.AbstractModel):
         )
         for row in self.env.cr.dictfetchall():
             if row['qty'] != 0:
+                product = self.env['product.product'].browse(row['product_id'])
+                available_qty = row['qty']
+                cost_price = product.standard_price
                 data[row['product_id']] = {
-                    'qty' : row['qty'],
-                    'value': row['value']
+                    'qty' : available_qty,
+                    'value': available_qty * cost_price
                 }
-            
-            
         return data
             
     def render_html(self, docids, data):
