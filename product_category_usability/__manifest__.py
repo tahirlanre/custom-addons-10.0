@@ -22,19 +22,23 @@
 ##############################################################################
 {
     'name': 'Product Usability',
-    'summary': """Set product type to stockable by default""",
+    'summary': """Add code to Product Category""",
     'version': '10.0.1.0',
     'description': """
         - 
     """,
     'author': 'Tahir Aduragba',
     'category': 'Product',
-    'depends': ['stock'],
+    'depends': ['product'],
     'license': 'AGPL-3',
-    'data': [],
+    'data': [ 'views/product_category.xml',
+    'product_category_data.xml',
+    ],
     'demo': [],
     'installable': True,
     'auto_install': False,
 
 }
 
+# TODO overide name_search & name_get functions for product.category
+# TODO Show product price history in product form view
