@@ -3,23 +3,6 @@
 import time
 from odoo import api, models,fields
 
-class account_financial_report(models.Model):
-    _inherit = "account.financial.report"
-
-class AccountingReport(models.TransientModel):
-    _inherit = "accounting.report"
-    
-    @api.multi
-    def check_report(self):
-        if self.date_to and self.date_from:
-            self.enable_filter = True
-            self.label_filter = "Year to Date"
-            self.filter_cmp = 'filter_date'
-            self.date_from_cmp = time.strftime('%Y-01-01')
-            self.date_to_cmp = self.date_to
-        res = super(AccountingReport, self).check_report()
-        
-        return res
     
 class ReportFinancial(models.AbstractModel):
     _inherit = 'report.account.report_financial'

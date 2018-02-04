@@ -30,8 +30,9 @@
     'depends': ['account', 'report_xlsx'],
     'license': 'AGPL-3',
     'data': [
-        'views/account_financial_report_data.xml',
         'views/report_financial.xml',
+        'wizard/account_financial_report_wizard.xml',
+        'reports.xml',
         ],
     'demo': [],
     'installable': True,
