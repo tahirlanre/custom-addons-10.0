@@ -2,27 +2,87 @@
 
 import time
 from odoo import api, models,fields
-
-class account_financial_report(models.Model):
-    _inherit = "account.financial.report"
-
-class AccountingReport(models.TransientModel):
-    _inherit = "accounting.report"
-    
-    @api.multi
-    def check_report(self):
-        if self.date_to and self.date_from:
-            self.enable_filter = True
-            self.label_filter = "Year to Date"
-            self.filter_cmp = 'filter_date'
-            self.date_from_cmp = time.strftime('%Y-01-01')
-            self.date_to_cmp = self.date_to
-        res = super(AccountingReport, self).check_report()
-        
-        return res
     
 class ReportFinancial(models.AbstractModel):
     _inherit = 'report.account.report_financial'
+    
+    @api.depends('company_id')
+    def _compute_unaffected_earnings_account(self):
+        account_type = self.env.ref('account.data_unaffected_earnings')
+        self.unaffected_earnings_account = self.env['account.account'].search(
+            [
+                ('user_type_id', '=', account_type.id),
+                ('company_id', '=', self.company_id.id)
+            ])
+
+    unaffected_earnings_account = fields.Many2one(
+        comodel_name='account.account',
+        compute='_compute_unaffected_earnings_account',
+        store=True
+    )
+    
+    company_id = fields.Many2one('res.company', string='Company', readonly=True, default=lambda self: self.env.user.company_id)
+    
+    def _complete_unaffected_earnings_account_values(self):
+        context = dict(self._context or {})
+        
+        company = self.env.user.company_id
+        unaffected_earnings_account = self.env['account.account'].search([('company_id', '=', company.id), ('user_type_id', '=', self.env.ref('account.data_unaffected_earnings').id)], limit=1)
+        
+        res = {}
+        
+        if context.get('date_from'):
+            date_from = context['date_from']
+            state = context
+            init_balance_history = True
+        else:
+            return
+        
+        query = """
+        
+        SELECT
+            %s as id, COALESCE(SUM(credit), 0) as credit, 
+            COALESCE(SUM(debit),0) - COALESCE(SUM(credit), 0) as balance, 
+            COALESCE(SUM(debit), 0) as debit
+        FROM
+            account_move_line aml
+            LEFT JOIN account_account acc ON (aml.account_id = acc.id)
+            LEFT JOIN account_account_type acc_type ON (acc.user_type_id = acc_type.id)
+            LEFT JOIN account_move m ON (aml.move_id = m.id)
+        WHERE
+            m.state IN %s
+            AND aml.company_id = %s
+            AND aml.date < %s
+            AND acc_type.include_initial_balance = FALSE
+        """
+
+        params = [
+            # SELECT
+            unaffected_earnings_account.id,
+            # WHERE
+            ('posted',), #TODO
+            company.id,
+            date_from,
+        ]
+
+        self.env.cr.execute(query, tuple(params))
+        for row in self.env.cr.dictfetchall():
+            res[row['id']] = row
+        return res
+    
+    def _compute_account_balance(self, accounts):
+        company = self.env.user.company_id
+        unaffected_earnings_account = self.env['account.account'].search([('company_id', '=', company.id), ('user_type_id', '=', self.env.ref('account.data_unaffected_earnings').id)], limit=1)
+        unaffected_earnings_account_id = unaffected_earnings_account.id
+        
+        res = super(ReportFinancial,self)._compute_account_balance(accounts)
+        
+        if unaffected_earnings_account_id in accounts.ids:
+            unaffected_earnings_account_values = self._complete_unaffected_earnings_account_values()
+            res[unaffected_earnings_account_id]['credit'] = res[unaffected_earnings_account_id]['credit'] + unaffected_earnings_account_values[unaffected_earnings_account_id]['credit']
+            res[unaffected_earnings_account_id]['debit'] = res[unaffected_earnings_account_id]['debit'] + unaffected_earnings_account_values[unaffected_earnings_account_id]['debit']
+            res[unaffected_earnings_account_id]['balance'] = res[unaffected_earnings_account_id]['balance'] + unaffected_earnings_account_values[unaffected_earnings_account_id]['balance']
+        return res
         
     def get_account_lines(self,data):
         lines = []

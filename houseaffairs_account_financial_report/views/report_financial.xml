@@ -25,9 +25,6 @@
                         <tr>
                             <th style="text-decoration:underline;">Account</th>
                             <th class="text-right" style="text-decoration:underline;">Actual</th>
-							<th></th>
-                            <th class="text-right" style="text-decoration:underline;">PY Actual</th>
-							<th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -90,7 +87,7 @@
                             <th style="text-decoration:underline;">Account</th>
                             <th class="text-right" style="text-decoration:underline;">Actual</th>
 							<th></th>
-                            <th class="text-right" style="text-decoration:underline;">PY Actual</th>
+                            <th class="text-right" style="text-decoration:underline;"><span t-esc="data['label_filter']"/></th>
 							<th></th>
                         </tr>
                     </thead>
