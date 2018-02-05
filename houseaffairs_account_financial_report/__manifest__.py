@@ -31,6 +31,7 @@
     'license': 'AGPL-3',
     'data': [
         'views/report_financial.xml',
+        'views/account_financial_report_view.xml',
         'wizard/account_financial_report_wizard.xml',
         'reports.xml',
         ],

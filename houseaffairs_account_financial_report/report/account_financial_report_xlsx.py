@@ -129,10 +129,10 @@ class account_financial_report_xlsx(ReportXlsx):
                     'field': 'balance',
                     'type': 'amount',
                     'width': 15},
-                5: {'header': 'PY Actual',
-                    'field': 'balance_cmp',
-                    'type': 'amount',
-                    'width': 15},
+                #5: {'header': 'PY Actual',
+                #    'field': 'balance_cmp',
+                #    'type': 'amount',
+                #    'width': 15},
                 }
         
     def _write_report_title(self, title):
