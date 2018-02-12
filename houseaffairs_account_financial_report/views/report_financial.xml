@@ -30,6 +30,7 @@
                     <tbody>
                         <tr t-foreach="get_account_lines" t-as="a">
                             <t t-if="a['level'] != 0">
+                                <t t-set="style" t-value="'font-weight: bold;'"/>
                                 <td>
                                     <span style="color: white;" t-esc="'..' * a.get('level', 0)"/>
                                     <span t-att-style="style" t-esc="a.get('name')"/>
