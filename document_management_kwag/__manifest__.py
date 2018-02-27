@@ -20,6 +20,7 @@
     'data': [
         'views/document_views.xml',
         'views/document_menu.xml',
+        'views/res_partner_view.xml',
         'security/ir.model.access.csv',
     ],
     'installable': True,

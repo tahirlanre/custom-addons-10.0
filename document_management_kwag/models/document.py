@@ -21,11 +21,6 @@ class mda(models.Model):
                 name = m_da.code
             data.append((m_da.id, name))
         return data
-
-class document_tax(models.Model):
-    _name = 'document.tax'
-    
-    
     
 class document_payment_voucher(models.Model):
     _name = 'document.payment.voucher'
@@ -35,7 +30,15 @@ class document_payment_voucher(models.Model):
     @api.depends('gross_amount','tax_ids')
     def _compute_amount(self):
         for voucher in self:
-            voucher.net_amount = voucher.gross_amount
+            taxes = False
+            total_tax = 0.0
+            if voucher.tax_ids:
+                taxes = voucher.tax_ids
+                for tax in voucher.tax_ids:
+                    if tax.amount_type == 'percent':
+                        tax_amount = voucher.gross_amount * tax.amount / 100
+                        total_tax = total_tax + tax_amount
+            voucher.net_amount = (voucher.gross_amount - total_tax) if taxes else voucher.gross_amount
         
     parent_id = fields.Many2one('document.payment.voucher', "Parent", ondelete="cascade", index=True)
     payment_date = fields.Date('Payment Date', required=True)
@@ -57,14 +60,14 @@ class document_payment_voucher(models.Model):
     expenditure_type = fields.Selection([('capital','Capital'),('recurrent','Recurrent')],'Expenditure type', required=True)
     payment_mode = fields.Selection([('e_payment', 'E-Payment'),('cheque', 'Cheque')],'Payment mode', required=True)
     payment_reference = fields.Char('Payment reference')
-    tax_ids = fields.Char('Tax')
+    tax_ids = fields.Many2many('document.payment.voucher.tax',string='Taxes')
     facevalue_document = fields.Binary('Face value', required=True)
     facevalue_document_filename = fields.Char('File name')
-    releaseletter_document = fields.Binary('Release Letter', required=True)
+    releaseletter_document = fields.Binary('Release Letter')
     releaseletter_document_filename = fields.Char('File name')
-    approvalletter_document = fields.Binary('Letter of Approval', required=True)
+    approvalletter_document = fields.Binary('Letter of Approval')
     approvalletter_document_filename = fields.Char('File name')
-    govapproval_document = fields.Binary("Governor's Approval", required=True)
+    govapproval_document = fields.Binary("Governor's Approval")
     govapproval_document_filename = fields.Char('File name')
     vat_document = fields.Binary('VAT document')
     vat_document_filename = fields.Char('File name')
@@ -103,4 +106,24 @@ class document_release_letter(models.Model):
     releaseletter_document_filename = fields.Char('File name')
     
 
+class document_payment_voucher_tax(models.Model):
+    _name = 'document.payment.voucher.tax'
     
+    name = fields.Char(string='Tax Name', required=True, translate=True)
+    amount_type = fields.Selection(default='percent', string="Tax Computation", required=True, oldname='type',
+        selection=[('group', 'Group of Taxes'), ('fixed', 'Fixed'), ('percent', 'Percentage')])
+    active = fields.Boolean(default=True, help="Set active to false to hide the tax without removing it.")
+    company_id = fields.Many2one('res.company', string='Company', required=True, default=lambda self: self.env.user.company_id)
+    sequence = fields.Integer(required=True, default=1,
+        help="The sequence field is used to define order in which the tax lines are applied.")
+    amount = fields.Float(required=True, digits=(16, 4))
+    description = fields.Char(string='Label on Payment Voucher', translate=True)
+    price_include = fields.Boolean(string='Included in Price', default=False,
+        help="Check this if the price you use on the product and invoices includes this tax.")
+    include_base_amount = fields.Boolean(string='Affect Base of Subsequent Taxes', default=False,
+        help="If set, taxes which are computed after this one will be computed based on the price tax included.")
+    analytic = fields.Boolean(string="Include in Analytic Cost", help="If set, the amount computed by this tax will be assigned to the same analytic account as the invoice line (if any)")
+
+    _sql_constraints = [
+        ('name_company_uniq', 'unique(name, company_id)', 'Tax names must be unique !'),
+    ]

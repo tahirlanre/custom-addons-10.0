@@ -1,1 +1,1 @@
-import document
+import document, res_partner

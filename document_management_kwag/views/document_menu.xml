@@ -13,5 +13,6 @@
 	<!-- Configuration menu item-->
 	<menuitem id="menu_document_payee" name="Payee" sequence="1" parent="document_management_kwag.menu_document_configuration" action="base.action_partner_form"/>
 	<menuitem id="menu_document_mda" sequence="2" parent="document_management_kwag.menu_document_configuration" action="action_document_mda"/>
+    <menuitem id="menu_document_tax" sequence="2" parent="document_management_kwag.menu_document_configuration" action="action_document_tax"/>
 	
 </odoo>
