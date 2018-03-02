@@ -77,7 +77,7 @@ class inventory_sales_analysis(models.TransientModel):
                     NOW() AS create_date,
                     a.product_id, a.name, a.quantity as qty, a.price_subtotal as amount,
 	                a.purchase_price * a.quantity as total_cost,
-	                a.margin as profit, 100 * a.margin/(a.price_subtotal) as percent_profit,
+	                a.margin as profit, 100 * a.margin/NULLIF(a.price_subtotal,0) as percent_profit,
 		            case when a.purchase_price = 0 then 0
 		                else 100 * a.margin/a.purchase_price end as markup,
         	        a.partner_id as partner_id,
@@ -122,7 +122,7 @@ class inventory_sales_analysis(models.TransientModel):
                     NOW() AS create_date,
                     a.product_id, a.name, a.quantity * -1 as qty, a.price_subtotal * -1 as amount,
             	    a.purchase_price * a.quantity * -1 as total_cost,
-                	a.margin * -1 as profit, 100 * a.margin/(a.price_subtotal) as percent_profit,
+                	a.margin * -1 as profit, 100 * a.margin/NULLIF(a.price_subtotal,0) as percent_profit,
                     case when a.purchase_price = 0 then 0
                 		else 100 * a.margin/a.purchase_price end as markup,
                 	a.partner_id as partner_id,
