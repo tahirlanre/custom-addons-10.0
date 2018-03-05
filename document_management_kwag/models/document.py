@@ -64,7 +64,7 @@ class document_payment_voucher(models.Model):
     child_dl = fields.One2many('document.payment.voucher', 'parent_id', string='Development Levy')
     child_sd = fields.One2many('document.payment.voucher', 'parent_id', string='Standing Order')
     mda = fields.Many2one('document.mda', 'MDA',required=True)
-    voucher_location = fields.Selection([('IL','IL')],required=True)
+    voucher_location = fields.Char(required=True)
     voucher_no = fields.Integer(required=True)
     voucher_year = fields.Date(required=True)
     mda_fullname = fields.Char('Ministry/Department', related='mda.name')
@@ -176,3 +176,6 @@ class document_payment_voucher_tax(models.Model):
     _sql_constraints = [
         ('name_company_uniq', 'unique(name, company_id)', 'Tax names must be unique !'),
     ]
+
+class document_payment_voucher_account(models.Model):
+    _name = 'document.payment.voucher.account'

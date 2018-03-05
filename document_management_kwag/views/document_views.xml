@@ -27,6 +27,13 @@
         <field name="view_mode">tree,form</field>
         <field name="domain">[]</field>
 	</record>
+    
+	<record id="action_document_account" model="ir.actions.act_window">
+        <field name="name">Account</field>
+        <field name="res_model">document.payment.voucher.account</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+	</record>
 	
     <record id="base.action_partner_form" model="ir.actions.act_window">
         <field name="name">Payee</field>
@@ -281,6 +288,27 @@
                     </page>
                 </notebook>
             </sheet>
+            </form>
+          </field>
+    </record>
+    
+    <!-- Payment Account -->
+    <record id="document_payment_voucher_account_tree" model="ir.ui.view">
+        <field name="name">document.payment.voucher.account.tree</field>
+        <field name="model">document.payment.voucher.account</field>
+        <field name="arch" type="xml">
+            <tree string="Payment Account">
+            </tree>
+        </field>
+    </record>
+    
+    <record id="document_payment_voucher_account_form" model="ir.ui.view">
+        <field name="name">document.payment.voucher.account.form</field>
+        <field name="model">document.payment.voucher.account</field>
+        <field name="arch" type="xml">
+            <form string="Payment Account">
+                <sheet>
+                </sheet>
             </form>
           </field>
     </record>
