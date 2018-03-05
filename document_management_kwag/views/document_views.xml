@@ -129,6 +129,7 @@
 				<field name="partner_id"/>
                 <field name="payment_date"/>
                 <field name="payment_account"/>
+                <field name="gross_amount"/>
                 <filter name="filter_is_capital" string="Capital" domain="[('expenditure_type', '=', 'capital')]"/>
 				<filter name="filter_is_capital" string="Recurrent" domain="[('expenditure_type', '=', 'recurrent')]"/>
                 <group>

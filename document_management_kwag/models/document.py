@@ -91,7 +91,7 @@ class document_payment_voucher(models.Model):
     other_document = fields.Binary('Other document')
     other_document_filename = fields.Char('File name')
     doc_attachment_id = fields.Many2many('ir.attachment', 'doc_attach_rel', 'doc_id', 'attach_id3', string="Document attachment",
-                                         help='You can attach the copy of your document', copy=False)
+                                         help='You can attach the copy of your document', copy=False, required=True)
     net_amount_text = fields.Char('Net amount in words', compute='_amount_to_text')
     
     @api.model
@@ -139,7 +139,7 @@ class document_release_letter(models.Model):
     gross_amount = fields.Float('Gross Amount', required=True)
     gross_amount_text = fields.Char('Net amount in words', compute='_amount_to_text')
     doc_attachment_id = fields.Many2many('ir.attachment', 'doc_attach_rel', 'doc_id', 'attach_id3', string="Document attachment",
-                                         help='You can attach the copy of your document', copy=False)
+                                         help='You can attach the copy of your document', copy=False, required=True)
     releaseletter_document = fields.Binary('Release Letter', required=True)
     releaseletter_document_filename = fields.Char('File name')
     
