@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import models, api, fields, _
+from odoo.tools import amount_to_text_en
 
 class mda(models.Model):
     _name = 'document.mda'
@@ -40,6 +41,16 @@ class document_payment_voucher(models.Model):
                         total_tax = total_tax + tax_amount
             voucher.net_amount = (voucher.gross_amount - total_tax) if taxes else voucher.gross_amount
         
+    @api.multi
+    @api.depends('net_amount')    
+    def _amount_to_text(self,):
+        for voucher in self:
+            convert_amount_in_words = amount_to_text_en.amount_to_text(voucher.net_amount, lang='en', currency='Naira')        
+            convert_amount_in_words = convert_amount_in_words.replace(' Cents', ' Kobo ')
+            convert_amount_in_words = convert_amount_in_words.replace(' Cent', ' Kobo ')
+            convert_amount_in_words = convert_amount_in_words.replace(' and Zero Kobo', ' Only')
+            voucher.net_amount_text = convert_amount_in_words
+            
     parent_id = fields.Many2one('document.payment.voucher', "Parent", ondelete="cascade", index=True)
     payment_date = fields.Date('Payment Date', required=True)
     payment_account = fields.Char('Payment Account', required=True)
@@ -79,6 +90,9 @@ class document_payment_voucher(models.Model):
     sd_document_filename = fields.Char('File name')
     other_document = fields.Binary('Other document')
     other_document_filename = fields.Char('File name')
+    doc_attachment_id = fields.Many2many('ir.attachment', 'doc_attach_rel', 'doc_id', 'attach_id3', string="Document attachment",
+                                         help='You can attach the copy of your document', copy=False)
+    net_amount_text = fields.Char('Net amount in words', compute='_amount_to_text')
     
     @api.model
     def create(self,vals):
