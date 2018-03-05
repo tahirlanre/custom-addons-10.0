@@ -16,7 +16,7 @@
     """
     ,
     'author': 'Tahir Aduragba',
-    'depends': ['document','document_attachment_manage','swr_datepicker','mail'],
+    'depends': ['document','swr_datepicker','mail'],
     'data': [
         'views/document_views.xml',
         'views/document_menu.xml',

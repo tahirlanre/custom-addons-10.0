@@ -103,7 +103,18 @@ class document_payment_voucher(models.Model):
             voucher_year = vals['voucher_year'].split('-')[0]
             vals['dept_no']=str(code)+'/'+str(voucher_location)+'/'+str(voucher_no)+'/'+str(voucher_year)
         return super(document_payment_voucher,self).create(vals)
-            
+    
+    @api.multi
+    def name_get(self):
+        res = super(document_payment_voucher,self).name_get()
+        data = []
+        for voucher in self:
+            name = ''
+            if voucher.dept_no:
+                name = voucher.dept_no
+            data.append((voucher.id, name))
+        return data
+                
     @api.multi
     def unlink(self):
         #TODO - implement unlink funciton
@@ -112,12 +123,36 @@ class document_payment_voucher(models.Model):
 class document_release_letter(models.Model):
     _name = 'document.release.letter'
     
+    @api.multi
+    @api.depends('gross_amount')    
+    def _amount_to_text(self,):
+        for release_letter in self:
+            convert_amount_in_words = amount_to_text_en.amount_to_text(release_letter.gross_amount, lang='en', currency='Naira')        
+            convert_amount_in_words = convert_amount_in_words.replace(' Cents', ' Kobo ')
+            convert_amount_in_words = convert_amount_in_words.replace(' Cent', ' Kobo ')
+            convert_amount_in_words = convert_amount_in_words.replace(' and Zero Kobo', ' Only')
+            release_letter.gross_amount_text = convert_amount_in_words
+    
     reference = fields.Char('Reference No', required=True)
     date = fields.Date('Date', required=True)
     mda = fields.Many2one('document.mda',string='Ministry/Department', required=True)
     gross_amount = fields.Float('Gross Amount', required=True)
+    gross_amount_text = fields.Char('Net amount in words', compute='_amount_to_text')
+    doc_attachment_id = fields.Many2many('ir.attachment', 'doc_attach_rel', 'doc_id', 'attach_id3', string="Document attachment",
+                                         help='You can attach the copy of your document', copy=False)
     releaseletter_document = fields.Binary('Release Letter', required=True)
     releaseletter_document_filename = fields.Char('File name')
+    
+    @api.multi
+    def name_get(self):
+        res = super(document_release_letter,self).name_get()
+        data = []
+        for release_letter in self:
+            name = ''
+            if release_letter.reference:
+                name = release_letter.reference
+            data.append((release_letter.id, name))
+        return data
     
 
 class document_payment_voucher_tax(models.Model):

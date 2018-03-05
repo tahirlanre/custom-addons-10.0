@@ -157,14 +157,16 @@
 						<group>
 							<field name="mda"/>
 							<field name="gross_amount"/>
+                            <field name="gross_amount_text"/>
 						</group>
 						<group>
 							 <field name="date"/>
 						</group>
 					</group>
 					<group string="Documents">
-						<field name="releaseletter_document" widget="binary" filename="releaseletter_document_filename"/>
-						<field name="releaseletter_document_filename" invisible="1"/>
+                        <field name="doc_attachment_id" widget="many2many_binary" class="oe_inline"/>
+						<!--<field name="releaseletter_document" widget="binary" filename="releaseletter_document_filename"/>
+						<field name="releaseletter_document_filename" invisible="1"/>-->
 					</group>
 				</sheet>
             </form>
