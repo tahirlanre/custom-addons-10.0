@@ -66,6 +66,8 @@
 						<group>
 							<field name="partner_id"/>
 							<field name="description"/>
+                            <field name="release_letter_ref_no"/>
+                            
 						</group>
 						<group>
 							 <field name="payment_date"/>

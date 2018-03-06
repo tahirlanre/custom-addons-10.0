@@ -93,6 +93,7 @@ class document_payment_voucher(models.Model):
     doc_attachment_id = fields.Many2many('ir.attachment', 'doc_attach_rel', 'doc_id', 'attach_id3', string="Document attachment",
                                          help='You can attach the copy of your document', copy=False, required=True)
     net_amount_text = fields.Char('Net amount in words', compute='_amount_to_text')
+    release_letter_ref_no = fields.Char('Release letter ref no')
     
     @api.model
     def create(self,vals):
