@@ -23,15 +23,22 @@ class SaleOrder(models.Model):
         return invoice_vals
     
     def check_product_qty_availability(self):
+        product_list = {}
+        precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
         for line in self.order_line:
-            if line.product_id.type != 'service':
-                precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
-                product_qty = line.product_uom._compute_quantity(line.product_uom_qty, line.product_id.uom_id)
-                if float_compare(line.product_id.qty_available, product_qty, precision_digits=precision) == -1:
-                    is_available = line._check_routing()
-                    if not is_available:
-                        msg = 'You plan to sell %s %s of %s but you only have %s %s available!' % (line.product_uom_qty, line.product_uom.name, line.product_id.display_name, line.product_id.qty_available, line.product_id.uom_id.name)
-                        raise UserError(_('Not enough inventory!\n' + msg))
+            if line.product_id not in product_list.keys() and line.product_id.type != 'service':
+                product_list[line.product_id] = line.product_id.qty_available
+        
+        for key in product_list.keys():
+            product_qty = 0.0
+            qty_available = product_list[key]
+            for line in self.order_line:
+                if line.product_id == key:
+                    product_qty += line.product_uom._compute_quantity(line.product_uom_qty, line.product_id.uom_id)
+            if float_compare(qty_available, product_qty, precision_digits=precision) == -1:
+                msg = 'You plan to sell %s %s of %s but you only have %s %s available!' % (product_qty, line.product_uom.name, line.product_id.display_name, line.product_id.qty_available, line.product_id.uom_id.name)
+                raise UserError(_('Not enough inventory!\n' + msg))
+                
         return {}
         
 
@@ -79,6 +86,7 @@ class SaleOrder(models.Model):
     receipt_no = fields.Char(string='Receipt No', help="Receipt No from Dulux payment receipt")
     customer_code = fields.Char(related="partner_id.ref", string="Customer Code")
     name_from_customer_details = fields.Text(string="Customer Name", compute='_set_name_from_customer_details',store=True)
+    customer_sales_rep = fields.Char(related="partner_id.sales_rep_id.name", string="Sales Representative", readonly=True)
     
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'

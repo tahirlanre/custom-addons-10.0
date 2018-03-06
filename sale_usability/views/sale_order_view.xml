@@ -7,6 +7,9 @@
 			<field name="date_order" position="replace">
 				<field name="date_order" attrs="{'invisible': [('state', 'in', ['cancel'])]}"/>
 			</field>
+            <field name="payment_term_id" position="after">
+                <field name="customer_sales_rep"/>
+            </field>
 		</field>
     </record>
 </odoo>

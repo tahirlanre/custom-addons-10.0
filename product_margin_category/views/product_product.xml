@@ -27,7 +27,7 @@
         </field>
     </record>
 	
-	<record id="view_product_margin_search" model="ir.ui.view">
+	<!--<record id="view_product_margin_search" model="ir.ui.view">
         <field name="name">product.margin.tree.custom</field>
         <field name="model">product.product</field>
         <field name="arch" type="xml">
@@ -35,6 +35,6 @@
 				<filter name="Filter categories" domain="[('categ_id', '=', category_from)]"/>
 			</search>
         </field>
-	</record>
+	</record>-->
 </odoo>
 
