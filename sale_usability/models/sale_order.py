@@ -78,8 +78,8 @@ class SaleOrder(models.Model):
     @api.multi
     def _set_name_from_customer_details(self):
         for order in self:
-            if self.customer_details:
-                self.name_from_customer_details = self.customer_details.split('\n')[0]
+            if order.customer_details:
+                order.name_from_customer_details = self.customer_details.split('\n')[0]
         return {}
         
     customer_details = fields.Text(string='Customer Details')
