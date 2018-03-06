@@ -132,7 +132,7 @@ class sales_rep_commission_report(models.TransientModel):
                             NOW() AS create_date,
                             a.product_id, a.name, a.quantity as qty, a.price_subtotal as amount,
         	                a.purchase_price * a.quantity as total_cost,
-        	                a.margin as profit, 100 * a.margin/(a.price_subtotal) as percent_profit,
+        	                a.margin as profit, 100 * a.margin/NULLIF(a.price_subtotal,0) as percent_profit,
         		            case when a.purchase_price = 0 then 0
         		                else 100 * a.margin/a.purchase_price end as markup,
                 	        a.partner_id as partner_id,
@@ -151,9 +151,9 @@ class sales_rep_commission_report(models.TransientModel):
                             NOW() AS create_date,
                             a.product_id, a.name, a.quantity * -1 as qty, a.price_subtotal * -1 as amount,
                     	    a.purchase_price * a.quantity * -1 as total_cost,
-                        	a.margin * -1 as profit, 100 * a.margin/(a.price_subtotal) as percent_profit,
+                        	a.margin * -1 as profit, 100 * a.margin/NULLIF(a.price_subtotal,0) as percent_profit,
                             case when a.purchase_price = 0 then 0
-                        		else 100 * a.margin/a.purchase_price end as markup,
+                        		else 100 * a.margin/NULLIF(a.purchase_price,0) end as markup,
                         	a.partner_id as partner_id,
                         	pr.sales_rep_id,
                         	i.date_invoice, i.number
@@ -186,9 +186,9 @@ class sales_rep_commission_report(models.TransientModel):
                 sum(rl.qty), sum(rl.amount), sum(rl.total_cost), 
                 sum(rl.profit), 
                 case when sum(rl.amount) = 0 then 0 
-                    else 100 * sum(rl.profit)/sum(rl.amount) end, 
+                    else 100 * sum(rl.profit)/NULLIF(sum(rl.amount),0) end, 
                 case when sum(rl.total_cost) = 0 then 0 
-                    else 100 * sum(rl.profit)/sum(rl.total_cost) end 
+                    else 100 * sum(rl.profit)/NULLIF(sum(rl.total_cost),0) end 
             FROM
                 lines rl
                 join sales_rep sr on rl.sales_rep_id = sr.id
