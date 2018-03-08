@@ -4,6 +4,7 @@
 
 from odoo import models, api, fields, _
 from odoo.tools import amount_to_text_en
+from odoo.osv import expression
 
 class mda(models.Model):
     _name = 'document.mda'
@@ -23,6 +24,17 @@ class mda(models.Model):
             data.append((m_da.id, name))
         return data
     
+    @api.model
+    def name_search(self, name, args=None, operator='ilike', limit=100):
+        args = args or []
+        domain = []
+        if name:
+            domain = ['|', ('code', '=ilike', name + '%'), ('name', operator, name)]
+            if operator in expression.NEGATIVE_TERM_OPERATORS:
+                domain = ['&', '!'] + domain[1:]
+        mdas = self.search(domain + args, limit=limit)
+        return mdas.name_get()
+        
 class document_payment_voucher(models.Model):
     _name = 'document.payment.voucher'
     _order = 'payment_date'
@@ -53,7 +65,7 @@ class document_payment_voucher(models.Model):
             
     parent_id = fields.Many2one('document.payment.voucher', "Parent", ondelete="cascade", index=True)
     payment_date = fields.Date('Payment Date', required=True)
-    payment_account = fields.Char('Payment Account', required=True)
+    payment_account = fields.Many2one('document.payment.voucher.account',string='Payment Account', required=True)
     description = fields.Char('Description')
     dept_no = fields.Char('Department No', required=True)
     partner_id = fields.Many2one('res.partner', string='Payee', required=True)
@@ -72,7 +84,7 @@ class document_payment_voucher(models.Model):
     payment_mode = fields.Selection([('e_payment', 'E-Payment'),('cheque', 'Cheque')],'Payment mode', required=True)
     payment_reference = fields.Char('Payment reference')
     tax_ids = fields.Many2many('document.payment.voucher.tax',string='Taxes')
-    facevalue_document = fields.Binary('Face value', required=True)
+    facevalue_document = fields.Binary('Face value')
     facevalue_document_filename = fields.Char('File name')
     releaseletter_document = fields.Binary('Release Letter')
     releaseletter_document_filename = fields.Char('File name')
@@ -141,8 +153,9 @@ class document_release_letter(models.Model):
     gross_amount_text = fields.Char('Net amount in words', compute='_amount_to_text')
     doc_attachment_id = fields.Many2many('ir.attachment', 'doc_attach_rel', 'doc_id', 'attach_id3', string="Document attachment",
                                          help='You can attach the copy of your document', copy=False, required=True)
-    releaseletter_document = fields.Binary('Release Letter', required=True)
+    releaseletter_document = fields.Binary('Release Letter')
     releaseletter_document_filename = fields.Char('File name')
+    releaseletter_range = fields.Char('Release letter range')
     
     @api.multi
     def name_get(self):
@@ -180,3 +193,30 @@ class document_payment_voucher_tax(models.Model):
 
 class document_payment_voucher_account(models.Model):
     _name = 'document.payment.voucher.account'
+    
+    name = fields.Char(string='Account name', required=True)
+    bank = fields.Char(string='Bank', required=True)
+    account_no = fields.Char('Account No')
+    
+    @api.multi
+    def name_get(self):
+        res = super(document_payment_voucher_account,self).name_get()
+        data = []
+        for account in self:
+            name = ''
+            if account.bank:
+                name = account.name + ' - ' + account.bank
+            data.append((account.id, name))
+        return data
+        
+        
+    @api.model
+    def name_search(self, name, args=None, operator='ilike', limit=100):
+        args = args or []
+        domain = []
+        if name:
+            domain = ['|', ('bank', '=ilike', name + '%'), ('name', operator, name)]
+            if operator in expression.NEGATIVE_TERM_OPERATORS:
+                domain = ['&', '!'] + domain[1:]
+        accounts = self.search(domain + args, limit=limit)
+        return accounts.name_get()
