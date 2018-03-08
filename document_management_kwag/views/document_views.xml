@@ -5,6 +5,7 @@
         <field name="res_model">document.payment.voucher</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[]</field>
+        <field name="context">{'search_default_thisyear': True}</field>
 	</record>
 	
 	<record id="action_document_release_letter" model="ir.actions.act_window">
@@ -61,13 +62,11 @@
                     <div>
                         <field name="mda" style="width:10%%" options="{'no_open': True, 'no_create': True}"/>/<field name="voucher_location" style="width:10%%"/>/<field name="voucher_no" style="width:10%%"/>/<field name="voucher_year" options='{"showType": "years"}' style="width:10%%"/>
                     </div>
-					
 					<group string="Payment Details">
 						<group>
 							<field name="partner_id"/>
 							<field name="description"/>
                             <field name="release_letter_ref_no"/>
-                            
 						</group>
 						<group>
 							 <field name="payment_date"/>
@@ -139,8 +138,10 @@
                 <field name="payment_date"/>
                 <field name="payment_account"/>
                 <field name="gross_amount"/>
+                <field name="description"/>
                 <filter name="filter_is_capital" string="Capital" domain="[('expenditure_type', '=', 'capital')]"/>
 				<filter name="filter_is_capital" string="Recurrent" domain="[('expenditure_type', '=', 'recurrent')]"/>
+                <filter string="This Year" name="thisyear" domain="['|', ('payment_date', '=', False), '&amp;',('payment_date','&lt;=', time.strftime('%%Y-12-31')),('payment_date','&gt;=',time.strftime('%%Y-01-01'))]"/>
                 <group>
                      <filter string="MDAs" context="{'group_by': 'mda'}"/>
                      <filter string="Accounts" context="{'group_by': 'payment_account'}"/>
@@ -173,11 +174,16 @@
 							 <field name="date"/>
 						</group>
 					</group>
+                    
+					<group string="Other details">
+                        <field name="releaseletter_range"/>
+					</group>
 					<group string="Documents">
                         <field name="doc_attachment_id" widget="many2many_binary" class="oe_inline"/>
 						<!--<field name="releaseletter_document" widget="binary" filename="releaseletter_document_filename"/>
 						<field name="releaseletter_document_filename" invisible="1"/>-->
 					</group>
+                    
 				</sheet>
             </form>
         </field>
@@ -204,6 +210,7 @@
                 <field name="reference"/>
 				<field name="mda"/>
                 <field name="date"/>
+                <field name="releaseletter_range"/>
                 <group>
                     <filter string="MDAs" context="{'group_by': 'mda'}"/>
                 </group>
@@ -300,6 +307,8 @@
         <field name="model">document.payment.voucher.account</field>
         <field name="arch" type="xml">
             <tree string="Payment Account">
+                <field name="name"/>
+                <field name="bank"/>
             </tree>
         </field>
     </record>
@@ -310,6 +319,13 @@
         <field name="arch" type="xml">
             <form string="Payment Account">
                 <sheet>
+                    <group>
+                        <group name="Account Details">
+                            <field name="name"/>
+                            <field name="bank"/>
+                            <field name="account_no"/>
+                        </group>
+                    </group>
                 </sheet>
             </form>
           </field>
