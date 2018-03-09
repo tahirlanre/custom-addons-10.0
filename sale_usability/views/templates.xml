@@ -11,8 +11,7 @@
             <xpath expr="//tree/field[@name='product_uom_qty']" position="before">
                 <field name="product_available_qty" groups="base.group_user"/>
             </xpath>
-	        <xpath expr="//field[@name='order_line']/tree/field[@name='tax_id']" position="replace">
-	        </xpath>
+	       
 			<xpath expr="//group[@name='sales_person']" position="before">
 				<group string="Payment Information">
 					<field name="receipt_no"/>
