@@ -51,7 +51,6 @@ class ar_transaction(models.TransientModel):
                     partner_report_id,
                     journal_id,
                     journal_name,
-                    move_id,
                     date,
                     reference,
                     description,
@@ -66,7 +65,6 @@ class ar_transaction(models.TransientModel):
                 pr.id,
                 cbl.journal_id,
                 aj.name,
-                cbl.id,
                 cb.payment_date,
                 cbl.reference,
                 cbl.description,
@@ -77,7 +75,7 @@ class ar_transaction(models.TransientModel):
                 left join account_cashbook_batch cb on cb.id = cbl.batch_id
                 left join account_journal aj on aj.id = cbl.journal_id
                 left join report_ar_transaction_qweb_partner pr on pr.id = cbl.partner_id
-                where cbl.payment_type = 'ar' and cb.payment_date >= %s and cb.payment_date <= %s
+                where cb.state = 'confirm' and cbl.payment_type = 'ar' and cb.payment_date >= %s and cb.payment_date <= %s
         """
         if self.filter_partner_ids:
             query_inject_line_values += """ and cbl.partner_id in %s"""
@@ -105,7 +103,7 @@ class ar_transaction(models.TransientModel):
                         sum(cbl.payment) as total_payment
                         from account_cashbook_batch_line cbl
                         left join account_cashbook_batch cb on cb.id = cbl.batch_id
-                        where cbl.payment_type = 'ar' and cb.payment_date >= %s and cb.payment_date <= %s """
+                        where cbl.payment_type = 'ar' and cb.state = 'confirm' and cb.payment_date >= %s and cb.payment_date <= %s """
         
         if self.filter_partner_ids:
             query_inject_partner_values += """ and cbl.partner_id in %s """

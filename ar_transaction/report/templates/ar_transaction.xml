@@ -55,6 +55,18 @@
                             </t>
     					</td>					
     				</tr>
+                    <tr>
+    					<td>
+    						<b><span>Total</span></b>
+    					</td>
+    					<td class="text-right">
+                            <b><span t-esc="'{:,.2f}'.format(sum([partner.payment for partner in o.partner_ids]))"/></b>
+                            
+    					</td>
+    					<td class="text-right">
+    						 <b><span t-esc="'{:,.2f}'.format(sum([partner.deposit for partner in o.partner_ids]))"/></b>
+    					</td>		
+                    </tr>
     			</tbody>
             </t>
 		</table>
