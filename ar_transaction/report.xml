@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<report 
+		id="action_report_ar_transaction_qweb"
+		model="report_ar_transaction_qweb"
+		string="Account Receivable Transaction"
+		report_type="qweb-html"
+		name="ar_transaction.report_ar_transaction_qweb"
+		file="ar_transaction.report_ar_transaction_qweb" />
+		
+</odoo>

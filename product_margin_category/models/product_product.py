@@ -50,7 +50,8 @@ class ProductProduct(models.Model):
                     sum(l.price_unit * l.quantity)/nullif(sum(l.quantity),0) as avg_unit_price,
                     sum(l.quantity) as num_qty,
                     sum(l.quantity * (l.price_subtotal/(nullif(l.quantity,0)))) as total,
-                    sum(l.quantity * pt.list_price) as sale_expected
+                    sum(l.quantity * pt.list_price) as sale_expected,
+                    sum(l.quantity * l.purchase_price)
                 from account_invoice_line l
                 left join account_invoice i on (l.invoice_id = i.id)
                 left join product_product product on (product.id=l.product_id)
@@ -67,7 +68,7 @@ class ProductProduct(models.Model):
             res[val.id]['turnover'] = result[2] and result[2] or 0.0
             res[val.id]['sale_expected'] = result[3] and result[3] or 0.0
             res[val.id]['sales_gap'] = res[val.id]['sale_expected'] - res[val.id]['turnover']
-            res[val.id]['total_cost'] = val.standard_price * res[val.id]['sale_num_invoiced']
+            res[val.id]['total_cost'] = result[4] and result[4] or 0.0
             ctx = self.env.context.copy()
             ctx['force_company'] = company_id
             
@@ -77,7 +78,7 @@ class ProductProduct(models.Model):
             result = self.env.cr.fetchall()[0]
             sale_qty_returned = result[1] and result[1] or 0.0
             sale_turnover_returned = result[2] and result[2] or 0.0
-            sale_total_cost_returned = val.standard_price * sale_qty_returned
+            sale_total_cost_returned = result[4] and result[4] or 0.0
             sale_expected_return = result[3] and result[3] or 0.0
             res[val.id]['sale_num_invoiced'] -= sale_qty_returned
             res[val.id]['turnover'] -= sale_turnover_returned

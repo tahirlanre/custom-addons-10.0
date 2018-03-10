@@ -33,7 +33,6 @@
 		            <strong t-if="o.type == 'out_refund'">Credit Note</strong>
 		            <strong t-if="o.type == 'in_refund'">Vendor Refund</strong>
 	                <strong t-if="o.type == 'in_invoice'">Vendor Bill</strong>
-                    <strong t-if="o.nb_print &gt; 1 and o.type == 'out_invoice'">Copy Invoice</strong>
 				</h1>
 				<br/>
 				<div>

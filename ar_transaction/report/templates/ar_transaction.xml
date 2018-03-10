@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<template id="ar_transaction.report_ar_transaction_qweb">
+		<t t-call="report.html_container">
+			<t t-foreach="docs" t-as="o">
+				<div class="page">
+                    <t t-if="o.detailed">
+                        <h1 align="center">Account Receivable Transaction</h1>
+                    </t>
+                    <t t-if="o.summary">
+                        <h1 align="center">Account Receivable Transaction Summary</h1>
+                    </t>
+					
+					<h2 align="center">
+						<t t-esc="res_company.name"/>
+					</h2>
+					<div>
+						From Date: 
+						<span t-field="o.start_date"/>
+					</div>
+					<div>
+						To Date: 
+						<span t-field="o.end_date"/>
+					</div>
+					<br />
+					<t t-call="ar_transaction.report_ar_transaction_partner"/>
+				</div>
+			</t>
+        </t>
+    </template>
+    
+    <template id="ar_transaction.report_ar_transaction_partner">
+		<table class="table table-condensed">
+            <t t-if="o.summary">
+    			<thead>
+                  <th>
+    	  		      <b>Name</b>
+    	  		  </th>
+    	  		  <th class="text-right">Debit</th> 
+    	  		  <th class="text-right">Credit</th>
+    			</thead>
+    			<tbody>
+    				<tr t-foreach="o.partner_ids" t-as="partner">
+    					<td>
+    						Total: <span t-field="partner.partner_name"/>
+    					</td>
+    					<td class="text-right">
+                            <t t-if="partner.payment &gt; 0">
+                                <span t-esc="'{:,.2f}'.format(partner.payment)"/>
+                            </t>
+    					</td>
+    					<td class="text-right">
+                            <t t-if="partner.deposit &gt; 0">
+    						    <span t-esc="'{:,.2f}'.format(partner.deposit)"/>
+                            </t>
+    					</td>					
+    				</tr>
+    			</tbody>
+            </t>
+		</table>
+    </template>
+    
+    <template id="ar_transaction.report_ar_transaction_line">
+        
+    </template>
+</odoo>
