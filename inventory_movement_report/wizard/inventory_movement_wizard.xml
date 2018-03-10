@@ -11,9 +11,9 @@
 						<field name="end_date"/>
 						<!--<field name="group_by"/>-->
 					</group>
-					<!--<group name="other_filters">
+					<group name="other_filters">
 						<field name="options"/>
-					</group>-->
+					</group>
 				</group>
 					<group/>
 					<div>

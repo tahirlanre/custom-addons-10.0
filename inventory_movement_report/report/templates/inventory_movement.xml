@@ -3,7 +3,12 @@
 		<t t-call="report.html_container">
 			<t t-foreach="docs" t-as="o">
 				<div class="page">
-					<h1 align="center">Inventory Movement</h1>
+                    <t t-if="o.detailed">
+                            <h1 align="center">Inventory Movement</h1>
+                    </t>
+                    <t t-if="o.summary">
+                        <h1 align="center">Inventory Movement Summary</h1>
+                    </t>
 					<h2 align="center">
 						<t t-esc="res_company.name"/>
 					</h2>
@@ -24,60 +29,94 @@
 	
 	<template id="inventory_movement_report.report_inventory_movement_product">
 		<table class="table table-condensed">
-			<thead>
-	  		  <th>
-	  		      <b>Date</b>
-	  		  </th> 
-	  		  <th>Type</th> 
-	  		  <th>Reference</th> 
-	  		  <th>Description</th> 
-	  		  <th class="text-right">Quantity In</th> 
-	  		  <th class="text-right">Quantity Out</th>
-	  		  <th class="text-right">Balance</th>
-			</thead>
-			<tbody>
-				<tr t-foreach="o.product_ids" t-as="product">
-					<td>
-						<b>Inventory Item</b>
-					</td>
-					<td>
-						<b><span t-field="product.code"/></b>
-					</td>
-					<td>
-						<b><span t-field="product.name"/></b>
-					</td>
-					<td>
-						<b>Opening Balance</b>
-					</td>
-					<td class="text-right">
-					</td>
-					<td class="text-right">
-					</td>
-					<td class="text-right">
-						<b><span t-esc="'{:,.0f}'.format(product.opening_balance)"/></b>
-					</td>
-					<t t-call="inventory_movement_report.report_inventory_movement_line"/>
-					<tr>
-						<td>
-						</td>
-						<td>
-						</td>
-						<td>
-						</td>
-						<td>
-							<b>Closing Balance</b>
-						</td>
-						<td class="text-right">
-						</td>
-						<td class="text-right">
-						</td>
-						<td class="text-right">
-							<b><span t-esc="'{:,.0f}'.format(product.closing_balance)"/></b>
-						</td>
-					</tr>
+            <t t-if="o.detailed">
+    			<thead>
+    	  		  <th>
+    	  		      <b>Date</b>
+    	  		  </th> 
+    	  		  <th>Type</th> 
+    	  		  <th>Reference</th> 
+    	  		  <th>Description</th> 
+    	  		  <th class="text-right">Quantity In</th> 
+    	  		  <th class="text-right">Quantity Out</th>
+    	  		  <th class="text-right">Balance</th>
+    			</thead>
+    			<tbody>
+    				<tr t-foreach="o.product_ids" t-as="product">
+    					<td>
+    						<b>Inventory Item</b>
+    					</td>
+    					<td>
+    						<b><span t-field="product.code"/></b>
+    					</td>
+    					<td>
+    						<b><span t-field="product.name"/></b>
+    					</td>
+    					<td>
+    						<b>Opening Balance</b>
+    					</td>
+    					<td class="text-right">
+    					</td>
+    					<td class="text-right">
+    					</td>
+    					<td class="text-right">
+    						<b><span t-esc="'{:,.0f}'.format(product.opening_balance)"/></b>
+    					</td>
+    					<t t-call="inventory_movement_report.report_inventory_movement_line"/>
+    					<tr>
+    						<td>
+    						</td>
+    						<td>
+    						</td>
+    						<td>
+    						</td>
+    						<td>
+    							<b>Closing Balance</b>
+    						</td>
+    						<td class="text-right">
+    						</td>
+    						<td class="text-right">
+    						</td>
+    						<td class="text-right">
+    							<b><span t-esc="'{:,.0f}'.format(product.closing_balance)"/></b>
+    						</td>
+    					</tr>
 					
-				</tr>
-			</tbody>
+    				</tr>
+    			</tbody>
+            </t>
+            <t t-if="o.summary">
+    			<thead>
+    	  		  <th>Item code</th> 
+    	  		  <th>Item description</th> 
+    	          <th class="text-right">Opening Balance</th> 
+    	  		  <th class="text-right">Quantity In</th> 
+    	  		  <th class="text-right">Quantity Out</th>
+    	  		  <th class="text-right">Closing Balance</th>
+    			</thead>
+    			<tbody>
+    				<tr t-foreach="o.product_ids" t-as="product">
+    					<td>
+    						<span t-field="product.code"/>
+    					</td>
+    					<td>
+    						<span t-field="product.name"/>
+    					</td>
+    					<td class="text-right">
+    						<span t-esc="'{:,.0f}'.format(product.opening_balance)"/>
+    					</td>
+    					<td class="text-right">
+                            <span t-field="product.total_qty_in"/>
+    					</td>
+    					<td class="text-right">
+                            <span t-field="product.total_qty_out"/>
+    					</td>
+						<td class="text-right">
+							<span t-esc="'{:,.0f}'.format(product.closing_balance)"/>
+						</td>	
+    				</tr>
+    			</tbody>
+            </t>
 		</table>
 	</template>
 	

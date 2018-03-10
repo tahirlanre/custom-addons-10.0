@@ -27,6 +27,8 @@ class InventoryMovementWizard(models.TransientModel):
                     'start_date':self.start_date,
                     'end_date': self.end_date,
                     'filter_product_ids': [(6, 0, self.product_ids.ids)],
+                    'detailed': self.options == 'detail',
+                    'summary': self.options == 'summary',
                 }
     
     @api.multi

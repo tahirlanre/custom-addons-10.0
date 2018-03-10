@@ -10,6 +10,8 @@ class InventoryMovement(models.TransientModel):
 
     start_date = fields.Date("Start date")
     end_date = fields.Date("End date")
+    summary = fields.Boolean()
+    detailed = fields.Boolean()
     filter_product_ids = fields.Many2many(comodel_name='product.product')
     product_ids = fields.One2many(comodel_name='report_inventory_movement_product', inverse_name='report_id')
     line_ids = fields.One2many(comodel_name='report_inventory_movement_line', inverse_name='report_id')
@@ -97,8 +99,8 @@ class InventoryMovement(models.TransientModel):
                         %s AS create_uid,
                         NOW() AS create_date,
             			pp.id as product_id,
-            			sum(case when sh.quantity > 0 then sh.quantity else 0 end) as qty_in,
-            			sum(case when sh.quantity < 0 then sh.quantity else 0 end) as qty_out
+            			case when sh.quantity > 0 then sh.quantity else 0 end as qty_in,
+            			case when sh.quantity < 0 then abs(sh.quantity) else 0 end as qty_out
             			from product_product pp
             			inner join stock_history sh on sh.product_id = pp.id
                         where sh.date >= %s and sh.date <= %s """
@@ -107,7 +109,6 @@ class InventoryMovement(models.TransientModel):
             query_inject_product_values += """ and sh.product_id in %s"""
         
         query_inject_product_values += """
-        			group by pp.id
                         ),
         	opening_bal AS (SELECT SUM(h.quantity) as qty, h.product_id as product_id FROM stock_history h, 
         			stock_move m WHERE h.move_id=m.id and m.date < %s
@@ -150,16 +151,18 @@ class InventoryMovement(models.TransientModel):
         			pt.default_code as code,
         			pt.name as product_name,
         			ob.qty as opening,
-        			l.qty_in as total_in,
-        			l.qty_out as total_out,
+        			sum(l.qty_in) as total_in,
+        			sum(l.qty_out) as total_out,
         			cb.qty as closing
         	FROM line l
         			left join product_product pp on pp.id = l.product_id
-        			left join product_template pt on pt.id = pp.id
+        			left join product_template pt on pt.id = pp.product_tmpl_id
         			left join opening_bal ob on ob.product_id = pp.id
         			left join closing_bal cb on cb.product_id = pp.id
             WHERE l.report_id = %s
-            ORDER BY product_name
+            group by l.product_id, pt.default_code, pt.name, ob.qty, cb.qty
+            ORDER BY code
+            
         """   			
             			
         query_inject_parameters = (
