@@ -9,7 +9,7 @@
     'license': 'AGPL-3',
     'summary': '',
     'author': 'Tahir Aduragba',
-    'depends': ['account'],
+    'depends': ['account','account_cashbook_batch'],
     'data': [
        'report.xml',
        'report/templates/ar_transaction.xml',
