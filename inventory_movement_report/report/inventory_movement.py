@@ -151,8 +151,8 @@ class InventoryMovement(models.TransientModel):
         			pt.default_code as code,
         			pt.name as product_name,
         			ob.qty as opening,
-        			sum(l.qty_in) as total_in,
-        			sum(l.qty_out) as total_out,
+        			sum(l.qty_in) OVER (PARTITION BY l.product_id) as total_in,
+        			sum(l.qty_out) OVER (PARTITION BY l.product_id) as total_out,
         			cb.qty as closing
         	FROM line l
         			left join product_product pp on pp.id = l.product_id
@@ -160,7 +160,6 @@ class InventoryMovement(models.TransientModel):
         			left join opening_bal ob on ob.product_id = pp.id
         			left join closing_bal cb on cb.product_id = pp.id
             WHERE l.report_id = %s
-            group by l.product_id, pt.default_code, pt.name, ob.qty, cb.qty
             ORDER BY code
             
         """   			
