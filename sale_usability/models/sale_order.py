@@ -104,6 +104,8 @@ class SaleOrderLine(models.Model):
                 ).qty_available
             
     product_available_qty = fields.Float(string='Available Qty',compute=_get_product_available_qty, readonly=True,store=True)
+    tax_id = fields.Many2many(required=True)
+    
     #overide _onchange_product_id to use only product name without ref as invoice line description by default
     @api.onchange('product_id')
     def product_id_change(self):
