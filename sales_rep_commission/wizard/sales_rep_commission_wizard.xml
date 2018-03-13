@@ -11,8 +11,8 @@
 						<field name="end_date"/>
 					</group>
 					<group name="sales_rep_filters">
-						<field name="sales_rep_from"/>
-						<field name="sales_rep_to"/>
+						<field name="sales_rep_code_from"/>
+						<field name="sales_rep_code_to"/>
 					</group>
 				</group>
 				<footer>

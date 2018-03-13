@@ -9,8 +9,8 @@ class sales_rep_commission_wizard(models.TransientModel):
     
     start_date = fields.Date("Start date", required="True")
     end_date = fields.Date("End date", required="True")
-    sales_rep_from = fields.Many2one('sales.rep')
-    sales_rep_to = fields.Many2one('sales.rep')
+    sales_rep_code_from = fields.Many2one('sales.rep')
+    sales_rep_code_to = fields.Many2one('sales.rep')
     
     @api.multi
     def button_export_pdf(self):
@@ -21,8 +21,8 @@ class sales_rep_commission_wizard(models.TransientModel):
         return {
             'start_date': self.start_date,
             'end_date': self.end_date,
-            'sales_rep_id_from': self.sales_rep_from.id,
-            'sales_rep_id_to': self.sales_rep_to.id,
+            'sales_rep_code_from': self.sales_rep_code_from.id,
+            'sales_rep_code_to': self.sales_rep_code_to.id,
         }
     
     @api.multi

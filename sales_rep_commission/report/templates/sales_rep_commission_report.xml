@@ -17,11 +17,11 @@
 					</div>
 					<div>
 						From Sales Reprpresentative: 
-						<span t-field="o.sales_rep_id_from"/>
+						<span t-field="o.sales_rep_code_from"/>
 					</div>
 					<div>
 						To Sales Representative: 
-						<span t-field="o.sales_rep_id_to"/>
+						<span t-field="o.sales_rep_code_to"/>
 					</div>
 					
 					<t t-call="sales_rep_commission.report_sales_rep_commission_line"/>
