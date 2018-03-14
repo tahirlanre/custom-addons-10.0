@@ -143,7 +143,7 @@ class InventoryMovement(models.TransientModel):
                     total_qty_out,
                     closing_balance
                 )
-            SELECT  
+            SELECT DISTINCT
                     %s AS report_id,
                     %s AS create_uid,
                     NOW() as create_date,
@@ -151,8 +151,8 @@ class InventoryMovement(models.TransientModel):
         			pt.default_code as code,
         			pt.name as product_name,
         			ob.qty as opening,
-        			sum(l.qty_in) OVER (PARTITION BY l.product_id) as total_in,
-        			sum(l.qty_out) OVER (PARTITION BY l.product_id) as total_out,
+        			sum(l.qty_in) OVER (PARTITION BY l.product_id, pt.default_code) as total_in,
+        			sum(l.qty_out) OVER (PARTITION BY l.product_id, pt.default_code) as total_out,
         			cb.qty as closing
         	FROM line l
         			left join product_product pp on pp.id = l.product_id
