@@ -89,10 +89,10 @@
     			<thead>
     	  		  <th>Item code</th> 
     	  		  <th>Item description</th> 
-    	          <th class="text-right">Opening Balance</th> 
-    	  		  <th class="text-right">Quantity In</th> 
-    	  		  <th class="text-right">Quantity Out</th>
-    	  		  <th class="text-right">Closing Balance</th>
+    	          <th class="text-right">Opening Bal.</th> 
+    	  		  <th class="text-right">Qty In</th> 
+    	  		  <th class="text-right">Qty Out</th>
+    	  		  <th class="text-right">Closing Bal.</th>
     			</thead>
     			<tbody>
     				<tr t-foreach="o.product_ids" t-as="product">

@@ -3,7 +3,7 @@
 		id="action_report_inventory_movement_qweb"
 		model="report_inventory_movement_qweb"
 		string="Inventory Movement"
-		report_type="qweb-html"
+		report_type="qweb-pdf"
 		name="inventory_movement_report.report_inventory_movement_qweb"
 		file="inventory_movement_report.report_inventory_movement_qweb" />
 		
