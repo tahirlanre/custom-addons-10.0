@@ -48,7 +48,7 @@ class InventoryValuation(models.AbstractModel):
         docargs = {
             'doc_ids': product_ids,
             'doc_model': 'product.product',
-            'docs': self.env['product.product'].browse(product_ids),
+            'docs': self.env['product.product'].browse(product_ids).sorted(key=lambda r:r.default_code),
             'Lines': lines_to_display,
             'Date': date,
         }
