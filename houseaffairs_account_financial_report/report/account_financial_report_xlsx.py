@@ -46,7 +46,10 @@ class account_financial_report_xlsx(ReportXlsx):
         report_name = self._get_report_name(data)
         filters = self._get_report_filters(data)
         company_name = self._get_company_name()
-        self.columns = self._get_report_columns()
+        if not data['label_filter']:
+            self.columns = self._get_report_columns()
+        else:
+            self.columns = self._get_report_with_comparison_columns(data)
 
         self.sheet = workbook.add_worksheet(report_name[:31])
 
@@ -133,6 +136,21 @@ class account_financial_report_xlsx(ReportXlsx):
                 #    'field': 'balance_cmp',
                 #    'type': 'amount',
                 #    'width': 15},
+                }
+                
+    def _get_report_with_comparison_columns(self,data):
+        return {
+                0: {'header': 'Account',
+                    'field': 'name',
+                    'width': 60},
+                3: {'header': 'Actual',
+                    'field': 'balance',
+                    'type': 'amount',
+                    'width': 15},
+                5: {'header': data['label_filter'],
+                    'field': 'balance_cmp',
+                    'type': 'amount',
+                    'width': 15},
                 }
         
     def _write_report_title(self, title):

@@ -66,7 +66,7 @@ class FinancialReportWizard(models.TransientModel):
         data = {}
         data['ids'] = self.env.context.get('active_ids', [])
         data['model'] = self.env.context.get('active_model', 'ir.ui.menu')
-        data['form'] = self.read(['date_from', 'date_to','account_report_id', 'date_from_cmp', 'date_to_cmp', 'journal_ids', 'filter_cmp', 'target_move'])[0]  
+        data['form'] = self.read(['date_from', 'date_to','account_report_id', 'debit_credit', 'date_from_cmp', 'date_to_cmp', 'journal_ids', 'filter_cmp', 'target_move'])[0]  
         used_context = self._build_contexts(data)
         data['form']['used_context'] = dict(used_context, lang=self.env.context.get('lang', 'en_US'))
         
@@ -78,29 +78,20 @@ class FinancialReportWizard(models.TransientModel):
         
         return self._print_report(data)
     
-    def _build_comparison_context(self, data):
-        result = {}
-        result['journal_ids'] = 'journal_ids' in data['form'] and data['form']['journal_ids'] or False
-        result['state'] = 'target_move' in data['form'] and data['form']['target_move'] or ''
-        if data['form']['filter_cmp'] == 'filter_date':
-            result['date_from'] = data['form']['date_from_cmp']
-            result['date_to'] = data['form']['date_to_cmp']
-            result['strict_range'] = True
-        return result
-    
     @api.multi
     def button_export_xlsx(self):
         self.ensure_one()
         data = {}
         data['ids'] = self.env.context.get('active_ids', [])
         data['model'] = self.env.context.get('active_model', 'ir.ui.menu')
-        data['form'] = self.read(['date_from', 'date_to', 'journal_ids', 'target_move', 'debit_credit', 'account_report_id', 'enable_filter','filter_cmp','target_move'])[0]
+        data['form'] = self.read(['date_from', 'date_to', 'journal_ids', 'target_move', 'debit_credit', 'account_report_id', 'date_from_cmp', 'date_to_cmp','filter_cmp','enable_filter','label_filter'])[0]
         used_context = self._build_contexts(data)
         data['form']['used_context'] = dict(used_context, lang=self.env.context.get('lang', 'en_US'))
         comparison_context = self._build_comparison_context(data)
         data['form']['comparison_context'] = comparison_context
         report = self.env['report.account.report_financial']
         data['report_lines'] = report.get_account_lines(data.get('form'))
+        data['label_filter'] = (data.get('form')['label_filter'])
         #report_lines = report.get_account_lines(data.get('form'))
         
         return {'type': 'ir.actions.report.xml',
