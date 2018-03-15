@@ -46,7 +46,7 @@ class account_financial_report_xlsx(ReportXlsx):
         report_name = self._get_report_name(data)
         filters = self._get_report_filters(data)
         company_name = self._get_company_name()
-        if not data['label_filter']:
+        if not data['enable_filter']:
             self.columns = self._get_report_columns()
         else:
             self.columns = self._get_report_with_comparison_columns(data)
