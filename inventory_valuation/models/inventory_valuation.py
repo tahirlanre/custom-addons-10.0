@@ -25,7 +25,7 @@ class InventoryValuation(models.AbstractModel):
         self.env.cr.execute("""
             SELECT h.product_id, SUM(h.quantity) as qty, SUM(h.price_unit_on_quant * h.quantity) as value FROM stock_history h, stock_move m WHERE h.move_id=m.id 
             AND h.location_id in %s AND m.date <= %s GROUP BY h.product_id
-        """ , (tuple(locations), date)
+        """ , (tuple(locations), date + '23:59:59')
         )
         for row in self.env.cr.dictfetchall():
             if row['qty'] != 0:

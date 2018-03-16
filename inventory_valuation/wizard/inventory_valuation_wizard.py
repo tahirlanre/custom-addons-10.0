@@ -12,7 +12,7 @@ class InventoryValuationWizard(models.TransientModel):
     _name = 'inventory.valuation.wizard'
     
     choose_date = fields.Boolean('Inventory at Date')
-    date = fields.Datetime('Date', default=fields.Datetime.now, required=True)
+    date = fields.Date('Date', default=fields.Date.context_today, required=True)
     
     def _prepare_inventory_valuation(self):
         self.ensure_one()
