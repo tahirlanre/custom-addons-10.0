@@ -11,7 +11,7 @@
 				</h4>
 				
 				<h5 align="center">
-					<t t-esc="time.strftime('%A %d %B %Y %I:%M %p', time.strptime(Date,'%Y-%m-%d %H:%M:%S'))"/>
+                    <t t-esc="time.strftime('%A %d %B %Y', time.strptime(Date,'%Y-%m-%d'))"/>
 				</h5>
 				
 				<div class="row bg-primary">
