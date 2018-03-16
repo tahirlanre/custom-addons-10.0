@@ -13,7 +13,9 @@ class inventory_transaction_wizard(models.TransientModel):
     sales_rep_ids = fields.Many2many(comodel_name='sales.rep', string="Filter Sales Representatives")
     product_ids = fields.Many2many(comodel_name='product.product', string="Filter Products")
     partner_ids = fields.Many2many(comodel_name='res.partner', string="Filter Customers")
+    product_category_ids = fields.Many2many(comodel_name='product.category', string="Product Categories")
     options = fields.Selection([('summary','Summary'),('detail','Detail')], string='Report Option', required=True, default='summary')
+    transaction_options = fields.Many2many(comodel_name='inventory.transaction.type', string="Transaction types")
 
     
     @api.multi
@@ -43,3 +45,4 @@ class inventory_transaction_wizard(models.TransientModel):
         model = self.env['report_inventory_transaction_qweb']
         report = model.create(self._prepare_report_transaction())
         return report.print_report(xlsx_report)
+

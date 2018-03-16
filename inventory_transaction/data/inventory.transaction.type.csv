@@ -1,0 +1,5 @@
+id,name,type
+type_customer_invoice,Customer Invoice,out_invoice
+type_customer_refund,Customer Refund,out_refund
+type_vendor_bill,Vendor Bill,in_invoice
+typer_vendor_return,Vendor Refund,in_refund
