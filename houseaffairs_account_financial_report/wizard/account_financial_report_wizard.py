@@ -54,6 +54,10 @@ class FinancialReportWizard(models.TransientModel):
             result['date_from'] = data['form']['date_from_cmp']
             result['date_to'] = data['form']['date_to_cmp']
             result['strict_range'] = True
+            if self.account_report_id == self.env.ref('account.account_financial_report_balancesheet0'):
+                result['strict_range'] = False
+                if result['date_to']:
+                    result['date_from'] = time.strftime('%Y-01-01')
         return result
 
     def _print_report(self, data):
