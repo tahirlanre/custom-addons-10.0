@@ -21,14 +21,18 @@
                             <group name="by">
                                 <field name="group_by"/>
                                 <field name="product_ids" widget="many2many_tags" options="{'no_create': True}" attrs="{'invisible' : ['|',('group_by','=','customer'),('group_by','=','sales_rep')]}"/>
-                                <field name="product_ids" widget="many2many_tags" options="{'no_create': True}" attrs="{'invisible' : ['|',('group_by','=','customer'),('group_by','=','product')]}"/>
+                                <field name="sales_rep_ids" widget="many2many_tags" options="{'no_create': True}" attrs="{'invisible' : ['|',('group_by','=','customer'),('group_by','=','product')]}"/>
                                 <field name="partner_ids" widget="many2many_tags" options="{'no_create': True}" attrs="{'invisible' : ['|',('group_by','=','sales_rep'),('group_by','=','product')]}"/>
                             </group>   
                         </group>
                     </page>
                     <page string="Transaction" name="transaction">
                         <group name="transactions">
-                            <field name="transaction_options" widget="many2many_tags"/>
+                            <field name="transaction_type_ids" widget="many2many_checkboxes"/>
+                            <!--<field name="in_invoice"/>
+                            <field name="in_refund"/>
+                            <field name="out_invoice"/>
+                            <field name="out_refund"/>-->
                         </group>
                     </page>
                 </notebook>

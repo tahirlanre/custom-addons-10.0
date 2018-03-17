@@ -4,7 +4,12 @@
 		<t t-call="report.html_container">
 			<t t-foreach="docs" t-as="o">
 				<div class="page">
-					<h1 align="center">Inventory Transaction Summary</h1>
+					<t t-if="o.summary">
+					    <h1 align="center">Inventory Transaction Summary</h1>
+					</t>
+					<t t-if="o.detailed">
+					    <h1 align="center">Inventory Transaction</h1>
+					</t>
 					<h2 align="center">
 						<t t-esc="res_company.name"/>
 					</h2>
@@ -35,6 +40,7 @@
 			</t>
 		</t>
 	</template>
+    
 	<template id="inventory_transaction.report_inventory_transaction_line">
 		<t t-foreach="o.line_ids" t-as="line">
 			<div class="row">
@@ -69,55 +75,143 @@
 
 	<template id="inventory_transaction.report_inventory_transaction_product">	
 		<table class="table table-condensed">
-			<thead>
-	  		  <th>
-	  		      Item Code
-	  		  </th> 
-	  		  <th>Item Description</th> 
-	  		  <th class="text-right">Amount</th>
-			  <th class="text-right">Qty</th> 
-	  		  <th class="text-right">Profit</th>
-	  		  <th class="text-right">Profit %</th>
-			</thead>
-			<tbody>
-				<tr t-foreach="o.product_ids" t-as="product">
-					<td>
-						<span t-field="product.code"/>
-					</td>
-					<td>
-						<span t-field="product.name"/>
-					</td>
-					<td class="text-right">
-						<span t-esc="'{:,.2f}'.format(product.amount)"/>
-					</td>
-					<td class="text-right">
-						<span t-field="product.qty"/>
-					</td>
-					<td class="text-right">
-						<span t-esc="'{:,.2f}'.format(product.profit)"/>
-					</td>
-					<td class="text-right">
-						<span t-esc="'{:,.2f}'.format(product.percent_profit)"/>
-					</td>
-				</tr>
-				<tr>
-					<td>
-					</td>
-					<td>
-					</td>
-					<td class="text-right">
-						<span style="font-weight: bold;" t-esc="'{:,.2f}'.format(sum([product.amount for product in o.product_ids]))"/>
-					</td>
-					<td class="text-right">
-						<span style="font-weight: bold;" t-esc="sum([product.qty for product in o.product_ids])"/>
-					</td>
-					<td class="text-right">
-						<span style="font-weight: bold;" t-esc="'{:,.2f}'.format(sum([product.profit for product in o.product_ids]))"/>
-					</td>
-					<td class="text-right"></td>
+            <t t-if="o.summary">
+    			<thead>
+    	  		  <th>
+    	  		      Item Code
+    	  		  </th> 
+    	  		  <th>Item Description</th> 
+    	  		  <th class="text-right">Amount</th>
+    			  <th class="text-right">Qty</th> 
+    	  		  <th class="text-right">Profit</th>
+    	  		  <th class="text-right">Profit %</th>
+    			</thead>
+    			<tbody>
+    				<tr t-foreach="o.product_ids" t-as="product">
+    					<td>
+    						<span t-field="product.code"/>
+    					</td>
+    					<td>
+    						<span t-field="product.name"/>
+    					</td>
+    					<td class="text-right">
+    						<span t-esc="'{:,.2f}'.format(product.amount)"/>
+    					</td>
+    					<td class="text-right">
+    						<span t-field="product.qty"/>
+    					</td>
+    					<td class="text-right">
+    						<span t-esc="'{:,.2f}'.format(product.profit)"/>
+    					</td>
+    					<td class="text-right">
+    						<span t-esc="'{:,.2f}'.format(product.percent_profit)"/>
+    					</td>
+    				</tr>
+    				<tr>
+    					<td>
+                            <b>Total</b>
+    					</td>
+    					<td>
+    					</td>
+    					<td class="text-right">
+    						<span style="font-weight: bold;" t-esc="'{:,.2f}'.format(sum([product.amount for product in o.product_ids]))"/>
+    					</td>
+    					<td class="text-right">
+    						<span style="font-weight: bold;" t-esc="sum([product.qty for product in o.product_ids])"/>
+    					</td>
+    					<td class="text-right">
+    						<span style="font-weight: bold;" t-esc="'{:,.2f}'.format(sum([product.profit for product in o.product_ids]))"/>
+    					</td>
+    					<td class="text-right"></td>
 					
-				</tr>
-			</tbody>
+    				</tr>
+    			</tbody>
+            </t>
+            <t t-if="o.detailed">
+    			<thead>
+    	  		  <th>
+    	  		      Invoice
+    	  		  </th> 
+    	  		  <th>Date</th> 
+    	  		  <th class="text-right">Account</th>
+    			  <th class="text-right">Amount</th>
+                  <th class="text-right">Quantity</th> 
+    	  		  <th class="text-right">Profit</th>
+    	  		  <th class="text-right">Profit %</th>
+    			</thead>
+    			<tbody>
+    				<tr t-foreach="o.product_ids" t-as="product">
+    					<td>
+    						<b><span t-field="product.code"/></b>
+    					</td>
+    					<td>
+                            <b><span t-field="product.name"/></b>
+    					</td>
+                        <tr t-foreach="product.line_ids" t-as="line">
+        					<td>
+        						<span t-field="line.invoice_name"/>
+        					</td>
+        					<td>
+        						<span t-field="line.date"/>
+        					</td>
+        					<td class="text-right">
+                                <span t-field="line.partner_code"/>
+        					</td>
+        					<td class="text-right">
+        						<span t-esc="'{:,.2f}'.format(line.amount)"/>
+        					</td>
+        					<td class="text-right">
+        						<span t-field="line.qty"/>
+        					</td>
+        					<td class="text-right">
+        						<span t-esc="'{:,.2f}'.format(line.profit)"/>
+        					</td>
+        					<td class="text-right">
+        						<span t-esc="'{:,.2f}'.format(line.percent_profit)"/>
+        					</td>
+                            
+                        </tr>
+    					<td class="text-right">
+    					</td>
+    					<td class="text-right">
+    					</td>
+    					<td class="text-right">
+    					</td>
+    					<td class="text-right">
+    						<b><span t-esc="'{:,.2f}'.format(product.amount)"/></b>
+    					</td>
+    					<td class="text-right">
+    						<b><span t-field="product.qty"/></b>
+    					</td>
+    					<td class="text-right">
+    						<b><span t-esc="'{:,.2f}'.format(product.profit)"/></b>
+    					</td>
+    					<td class="text-right">
+    						<b><span t-esc="'{:,.2f}'.format(product.percent_profit)"/></b>
+    					</td>
+    				</tr>
+    				<tr>
+    					<td>
+                            <b>Total</b>
+    					</td>
+    					<td>
+    					</td>
+    					<td>
+    					</td>
+    					<td class="text-right">
+    						<span style="font-weight: bold;" t-esc="'{:,.2f}'.format(sum([product.amount for product in o.product_ids]))"/>
+    					</td>
+    					<td class="text-right">
+    						<span style="font-weight: bold;" t-esc="sum([product.qty for product in o.product_ids])"/>
+    					</td>
+    					<td class="text-right">
+    						<span style="font-weight: bold;" t-esc="'{:,.2f}'.format(sum([product.profit for product in o.product_ids]))"/>
+    					</td>
+    					<td class="text-right"></td>
+					
+    				</tr>
+    			</tbody>
+            </t>
 		</table>
 	</template>
 	
@@ -200,6 +294,21 @@
 					</td>
 					<td class="text-right">
 						<span t-esc="'{:,.2f}'.format(sales_rep.percent_profit)"/>
+					</td>
+				</tr>
+				<tr>
+					<td>
+					</td>
+					<td class="text-right">
+						<span style="font-weight: bold;" t-esc="'{:,.2f}'.format(sum([sales_rep.amount for sales_rep in o.sales_rep_ids]))"/>
+					</td>
+					<td class="text-right">
+						<span style="font-weight: bold;" t-esc="sum([sales_rep.qty for sales_rep in o.sales_rep_ids])"/>
+					</td>
+					<td class="text-right">
+						<span style="font-weight: bold;" t-esc="'{:,.2f}'.format(sum([sales_rep.profit for sales_rep in o.sales_rep_ids]))"/>
+					</td>
+					<td>
 					</td>
 				</tr>
 			</tbody>
