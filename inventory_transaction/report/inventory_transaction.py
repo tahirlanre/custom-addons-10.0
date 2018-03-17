@@ -13,6 +13,7 @@ class inventory_transaction(models.TransientModel):
     group_by_product = fields.Boolean()
     group_by_sales_rep = fields.Boolean()
     group_by_partner = fields.Boolean()
+    group_by_date = fields.Boolean()
     
     summary = fields.Boolean()
     detailed = fields.Boolean()
@@ -22,6 +23,7 @@ class inventory_transaction(models.TransientModel):
     filter_sales_rep_ids = fields.Many2many(comodel_name='sales.rep')
     filter_product_category_ids = fields.Many2many(comodel_name='product.category')
     filter_transaction_types = fields.Many2many(comodel_name='inventory.transaction.type', relation='inventory_transaction_report_qweb_rel')
+    filter_product_categories = fields.Many2many(comodel_name='product.category')
     #filter_in_invoice = fields.Boolean()
     #filter_out_invoice = fields.Boolean()
     #filter_in_refund = fields.Boolean()
@@ -31,6 +33,7 @@ class inventory_transaction(models.TransientModel):
     line_ids = fields.One2many(comodel_name='report_inventory_transaction_line', inverse_name='report_id')
     partner_ids = fields.One2many(comodel_name='report_inventory_transaction_partner', inverse_name='report_id')
     sales_rep_ids = fields.One2many(comodel_name='report_inventory_transaction_sales_rep', inverse_name='report_id')
+    date_ids = fields.One2many(comodel_name='report_inventory_transaction_date', inverse_name='report_id')
 
     @api.multi
     def print_report(self, xlsx_report):
@@ -47,14 +50,16 @@ class inventory_transaction(models.TransientModel):
     def compute_data_for_report(self):
         self.ensure_one()
         
-        if self.group_by_product:
-            self.inject_product_values()
+        self.inject_product_values()
         
-        elif self.group_by_partner:
+        if self.group_by_partner:
             self.inject_partner_values()
         
         elif self.group_by_sales_rep:
             self.inject_sales_rep_values()
+        
+        elif self.group_by_date:
+            self.inject_date_values()
             
         self.inject_line_values()
         
@@ -80,11 +85,17 @@ class inventory_transaction(models.TransientModel):
             query_inject_line += """
                     sales_rep_report_id,
             """
+        elif self.group_by_date:
+            query_inject_line += """
+                    date_report_id,
+            """
+            
         query_inject_line += """
                     create_uid,
                     create_date,
                     product_id,
                     name,
+                    code,
                     qty,
                     amount,
                     cost,
@@ -106,17 +117,23 @@ class inventory_transaction(models.TransientModel):
             """
         elif self.group_by_partner:
             query_inject_line += """
-                    rpartner.partner_report_id,
+                    rpartner.id AS partner_report_id,
             """
         elif self.group_by_sales_rep:
             query_inject_line += """
-                    rs.sales_rep_report_id,
+                    rs.id AS sales_rep_report_id,
             """
+        elif self.group_by_date:
+            query_inject_line += """
+                    rd.id AS date_report_id,
+            """
+            
         query_inject_line += """
                     %s AS create_uid,
                     NOW() AS create_date,
                     a.product_id, 
-                    a.name, 
+                    pt.name, 
+                    pt.default_code,
                     (invoice_type.sign * a.quantity) / u.factor * u2.factor AS product_qty,
                     (a.price_subtotal * invoice_type.sign) as amount,
 	                a.purchase_price * (invoice_type.sign * a.quantity) / u.factor * u2.factor as total_cost,
@@ -148,6 +165,10 @@ class inventory_transaction(models.TransientModel):
             query_inject_line += """
                     left join report_inventory_transaction_sales_rep rs on rs.sales_rep_id = pr.sales_rep_id
             """
+        elif self.group_by_date:
+            query_inject_line += """
+                    left join report_inventory_transaction_date rd on rd.date = i.date_invoice
+            """
         query_inject_line += """
                     JOIN (
                         -- Temporary table to decide if the qty should be added or retrieved (Invoice vs Refund) 
@@ -172,6 +193,9 @@ class inventory_transaction(models.TransientModel):
             
         if self.filter_sales_rep_ids:
             query_inject_line += """ and pr.sales_rep_id in %s"""
+        
+        if self.filter_product_categories:
+            query_inject_line += """ and pt.categ_id in %s"""
             
         query_inject_line += """
                 order by i.date_invoice asc
@@ -195,6 +219,9 @@ class inventory_transaction(models.TransientModel):
             
         if self.filter_sales_rep_ids:
             query_inject_parameters += (tuple(self.filter_sales_rep_ids.ids),)
+        
+        if self.filter_product_categories:
+            query_inject_parameters += (tuple(self.filter_product_categories.ids),)
             
         self.env.cr.execute(query_inject_line, query_inject_parameters)
     
@@ -243,6 +270,9 @@ class inventory_transaction(models.TransientModel):
             
         if self.filter_sales_rep_ids:
             query_inject_product += """ and partner.sales_rep_id in %s""" 
+        
+        if self.filter_product_categories:
+            query_inject_product += """ and pt.categ_id in %s"""
             
         query_inject_product += """
             ) 
@@ -296,6 +326,9 @@ class inventory_transaction(models.TransientModel):
         
         if self.filter_sales_rep_ids:
             query_inject_parameters += (tuple(self.filter_sales_rep_ids.ids),)
+        
+        if self.filter_product_categories:
+            query_inject_parameters += (tuple(self.filter_product_categories.ids),)
             
         query_inject_parameters += (
             self.id,
@@ -306,6 +339,55 @@ class inventory_transaction(models.TransientModel):
         
     def inject_partner_values(self):
         query_inject_partner = """
+            WITH line AS (
+        		SELECT ail.id AS id,
+        			ai.date_invoice AS date,
+        			ail.product_id,
+        			(ail.price_subtotal * invoice_type.sign) as amount,
+        			(invoice_type.sign * ail.quantity) / u.factor * u2.factor AS product_qty,
+        			ail.purchase_price * (invoice_type.sign * ail.quantity) / u.factor * u2.factor as total_cost,
+        			invoice_type.sign * ail.margin as profit, 
+        			invoice_type.sign * 100 * ail.margin/NULLIF(ail.price_subtotal,0) as percent_profit,
+        			case when ail.purchase_price = 0 then 0
+        	                else invoice_type.sign * 100 * ail.margin/ail.purchase_price end as markup,
+                    ai.partner_id as partner_id,
+                    partner.sales_rep_id
+                        FROM account_invoice_line ail
+                        JOIN account_invoice ai ON ai.id = ail.invoice_id
+                        JOIN res_partner partner ON ai.commercial_partner_id = partner.id
+                        LEFT JOIN product_product pr ON pr.id = ail.product_id
+                        left JOIN product_template pt ON pt.id = pr.product_tmpl_id
+                        LEFT JOIN product_uom u ON u.id = ail.uom_id
+                        LEFT JOIN product_uom u2 ON u2.id = pt.uom_id
+                        LEFT JOIN sales_rep sr on (partner.sales_rep_id = sr.id)
+                        JOIN (
+                            -- Temporary table to decide if the qty should be added or retrieved (Invoice vs Refund) 
+                            SELECT id,(CASE
+                                 WHEN ai.type::text = ANY (ARRAY['out_refund'::character varying::text, 'in_invoice'::character varying::text])
+                                    THEN -1
+                                    ELSE 1
+                                END) AS sign
+                            FROM account_invoice ai
+                        ) AS invoice_type ON invoice_type.id = ai.id
+                WHERE ai.state in ('paid', 'open') and ai.date >= %s and ai.date <= %s
+            """
+        if self.filter_transaction_types:
+            query_inject_partner += """ and ai.type in %s """
+            
+        if self.filter_product_ids:
+            query_inject_partner += """ and ail.product_id in %s"""
+            
+        if self.filter_partner_ids:
+            query_inject_partner += """ and a.partner_id in %s"""
+            
+        if self.filter_sales_rep_ids:
+            query_inject_partner += """ and partner.sales_rep_id in %s"""
+        
+        if self.filter_product_categories:
+            query_inject_partner += """ and pt.categ_id in %s"""
+            
+        query_inject_partner += """
+            ) 
             INSERT INTO
                 report_inventory_transaction_partner
                 (
@@ -326,29 +408,97 @@ class inventory_transaction(models.TransientModel):
                 %s AS report_id,
                 %s AS create_uid,
                 NOW() as create_date,
-                rl.partner_id, p.ref, p.name, 
-                sum(rl.qty), sum(rl.amount), sum(rl.cost), 
-                sum(rl.profit),
+                rl.partner_id, partner.ref, partner.name, 
+                sum(rl.product_qty), sum(rl.amount), sum(rl.total_cost), 
+                sum(rl.profit), 
                 case when sum(rl.amount) = 0 then 0 
                     else 100 * sum(rl.profit)/sum(rl.amount) end, 
-                case when sum(rl.cost) = 0 then 0 
-                    else 100 * sum(rl.profit)/sum(rl.cost) end from
-                report_inventory_transaction_line rl
-                join res_partner p on rl.partner_id = p.id
-                where rl.report_id = %s
-                group by rl.partner_id, p.ref, p.name
-                order by p.ref asc
+                case when sum(rl.total_cost) = 0 then 0 
+                    else 100 * sum(rl.profit)/sum(rl.total_cost) end 
+            FROM line rl
+                left join res_partner partner on partner.id = rl.partner_id
+                group by rl.partner_id, partner.ref, partner.name
+                order by partner.ref asc
         """
         
         query_inject_parameters = (
+            self.start_date,
+            self.end_date,
+        )
+        
+        if self.filter_transaction_types:
+            query_inject_parameters += (tuple(self.filter_transaction_types.mapped('type')),)
+             
+        if self.filter_product_ids:
+            query_inject_parameters += (tuple(self.filter_product_ids.ids),)
+        
+        if self.filter_partner_ids:
+            query_inject_parameters += (tuple(self.filter_partner_ids.ids),)
+        
+        if self.filter_sales_rep_ids:
+            query_inject_parameters += (tuple(self.filter_sales_rep_ids.ids),)
+        
+        if self.filter_product_categories:
+            query_inject_parameters += (tuple(self.filter_product_categories.ids),)
+            
+        query_inject_parameters += (
             self.id,
             self.env.uid,
-            self.id,
         )
+
         self.env.cr.execute(query_inject_partner, query_inject_parameters)
     
     def inject_sales_rep_values(self):
         query_inject_sales_rep = """
+            WITH line AS (
+        		SELECT ail.id AS id,
+        			ai.date_invoice AS date,
+        			ail.product_id,
+        			(ail.price_subtotal * invoice_type.sign) as amount,
+        			(invoice_type.sign * ail.quantity) / u.factor * u2.factor AS product_qty,
+        			ail.purchase_price * (invoice_type.sign * ail.quantity) / u.factor * u2.factor as total_cost,
+        			invoice_type.sign * ail.margin as profit, 
+        			invoice_type.sign * 100 * ail.margin/NULLIF(ail.price_subtotal,0) as percent_profit,
+        			case when ail.purchase_price = 0 then 0
+        	                else invoice_type.sign * 100 * ail.margin/ail.purchase_price end as markup,
+                    ai.partner_id as partner_id,
+                    partner.sales_rep_id
+                        FROM account_invoice_line ail
+                        JOIN account_invoice ai ON ai.id = ail.invoice_id
+                        JOIN res_partner partner ON ai.commercial_partner_id = partner.id
+                        LEFT JOIN product_product pr ON pr.id = ail.product_id
+                        left JOIN product_template pt ON pt.id = pr.product_tmpl_id
+                        LEFT JOIN product_uom u ON u.id = ail.uom_id
+                        LEFT JOIN product_uom u2 ON u2.id = pt.uom_id
+                        LEFT JOIN sales_rep sr on (partner.sales_rep_id = sr.id)
+                        JOIN (
+                            -- Temporary table to decide if the qty should be added or retrieved (Invoice vs Refund) 
+                            SELECT id,(CASE
+                                 WHEN ai.type::text = ANY (ARRAY['out_refund'::character varying::text, 'in_invoice'::character varying::text])
+                                    THEN -1
+                                    ELSE 1
+                                END) AS sign
+                            FROM account_invoice ai
+                        ) AS invoice_type ON invoice_type.id = ai.id
+                WHERE ai.state in ('paid', 'open') and ai.date >= %s and ai.date <= %s
+            """
+        if self.filter_transaction_types:
+            query_inject_sales_rep += """ and ai.type in %s """
+            
+        if self.filter_product_ids:
+            query_inject_sales_rep += """ and ail.product_id in %s"""
+            
+        if self.filter_partner_ids:
+            query_inject_sales_rep += """ and a.partner_id in %s"""
+            
+        if self.filter_sales_rep_ids:
+            query_inject_sales_rep += """ and partner.sales_rep_id in %s""" 
+        
+        if self.filter_product_categories:
+            query_inject_sales_rep += """ and pt.categ_id in %s""" 
+            
+        query_inject_sales_rep += """
+            ) 
             INSERT INTO
                 report_inventory_transaction_sales_rep
                 (
@@ -356,6 +506,7 @@ class inventory_transaction(models.TransientModel):
                     create_uid,
                     create_date,
                     sales_rep_id,
+                    code,
                     name,
                     qty,
                     amount,
@@ -368,26 +519,153 @@ class inventory_transaction(models.TransientModel):
                 %s AS report_id,
                 %s AS create_uid,
                 NOW() as create_date,
-                rl.sales_rep_id, sr.name, 
-                sum(rl.qty), sum(rl.amount), sum(rl.cost), 
+                rl.sales_rep_id, sr.code, sr.name, 
+                sum(rl.product_qty), sum(rl.amount), sum(rl.total_cost), 
                 sum(rl.profit), 
                 case when sum(rl.amount) = 0 then 0 
                     else 100 * sum(rl.profit)/sum(rl.amount) end, 
-                case when sum(rl.cost) = 0 then 0 
-                    else 100 * sum(rl.profit)/sum(rl.cost) end from
-                report_inventory_transaction_line rl
+                case when sum(rl.total_cost) = 0 then 0 
+                    else 100 * sum(rl.profit)/sum(rl.total_cost) end 
+            FROM line rl
                 join sales_rep sr on rl.sales_rep_id = sr.id
-                where rl.report_id = %s
-                group by rl.sales_rep_id, sr.name
+                group by rl.sales_rep_id, sr.name, sr.code
                 order by sr.name asc
         """
         
         query_inject_parameters = (
+            self.start_date,
+            self.end_date,
+        )
+        
+        if self.filter_transaction_types:
+            query_inject_parameters += (tuple(self.filter_transaction_types.mapped('type')),)
+             
+        if self.filter_product_ids:
+            query_inject_parameters += (tuple(self.filter_product_ids.ids),)
+        
+        if self.filter_partner_ids:
+            query_inject_parameters += (tuple(self.filter_partner_ids.ids),)
+        
+        if self.filter_sales_rep_ids:
+            query_inject_parameters += (tuple(self.filter_sales_rep_ids.ids),)
+        
+        if self.filter_product_categories:
+            query_inject_parameters += (tuple(self.filter_product_categories.ids),)
+            
+        query_inject_parameters += (
             self.id,
             self.env.uid,
-            self.id,
         )
+
         self.env.cr.execute(query_inject_sales_rep, query_inject_parameters)
+    
+    def inject_date_values(self):
+        query_inject_date = """
+            WITH line AS (
+        		SELECT ail.id AS id,
+        			ai.date_invoice AS date,
+        			ail.product_id,
+        			(ail.price_subtotal * invoice_type.sign) as amount,
+        			(invoice_type.sign * ail.quantity) / u.factor * u2.factor AS product_qty,
+        			ail.purchase_price * (invoice_type.sign * ail.quantity) / u.factor * u2.factor as total_cost,
+        			invoice_type.sign * ail.margin as profit, 
+        			invoice_type.sign * 100 * ail.margin/NULLIF(ail.price_subtotal,0) as percent_profit,
+        			case when ail.purchase_price = 0 then 0
+        	                else invoice_type.sign * 100 * ail.margin/ail.purchase_price end as markup,
+                    ai.partner_id as partner_id,
+                    partner.sales_rep_id
+                        FROM account_invoice_line ail
+                        JOIN account_invoice ai ON ai.id = ail.invoice_id
+                        JOIN res_partner partner ON ai.commercial_partner_id = partner.id
+                        LEFT JOIN product_product pr ON pr.id = ail.product_id
+                        left JOIN product_template pt ON pt.id = pr.product_tmpl_id
+                        LEFT JOIN product_uom u ON u.id = ail.uom_id
+                        LEFT JOIN product_uom u2 ON u2.id = pt.uom_id
+                        LEFT JOIN sales_rep sr on (partner.sales_rep_id = sr.id)
+                        JOIN (
+                            -- Temporary table to decide if the qty should be added or retrieved (Invoice vs Refund) 
+                            SELECT id,(CASE
+                                 WHEN ai.type::text = ANY (ARRAY['out_refund'::character varying::text, 'in_invoice'::character varying::text])
+                                    THEN -1
+                                    ELSE 1
+                                END) AS sign
+                            FROM account_invoice ai
+                        ) AS invoice_type ON invoice_type.id = ai.id
+                WHERE ai.state in ('paid', 'open') and ai.date >= %s and ai.date <= %s
+            """
+        if self.filter_transaction_types:
+            query_inject_date += """ and ai.type in %s """
+            
+        if self.filter_product_ids:
+            query_inject_date += """ and ail.product_id in %s"""
+            
+        if self.filter_partner_ids:
+            query_inject_date += """ and a.partner_id in %s"""
+            
+        if self.filter_sales_rep_ids:
+            query_inject_date += """ and partner.sales_rep_id in %s""" 
+        
+        if self.filter_product_categories:
+            query_inject_date += """ and pt.categ_id in %s""" 
+        
+        query_inject_date += """
+            ) 
+            INSERT INTO
+                report_inventory_transaction_date
+                (
+                    report_id,
+                    create_uid,
+                    create_date,
+                    date,
+                    qty,
+                    amount,
+                    cost,
+                    profit,
+                    percent_profit,
+                    percent_markup
+                )
+            SELECT
+                %s AS report_id,
+                %s AS create_uid,
+                NOW() as create_date, 
+                rl.date, 
+                sum(rl.product_qty), sum(rl.amount), sum(rl.total_cost), 
+                sum(rl.profit), 
+                case when sum(rl.amount) = 0 then 0 
+                    else 100 * sum(rl.profit)/sum(rl.amount) end, 
+                case when sum(rl.total_cost) = 0 then 0 
+                    else 100 * sum(rl.profit)/sum(rl.total_cost) end 
+            FROM line rl
+                group by rl.date
+                order by rl.date asc
+        """
+        
+        query_inject_parameters = (
+            self.start_date,
+            self.end_date,
+        )
+        
+        if self.filter_transaction_types:
+            query_inject_parameters += (tuple(self.filter_transaction_types.mapped('type')),)
+             
+        if self.filter_product_ids:
+            query_inject_parameters += (tuple(self.filter_product_ids.ids),)
+        
+        if self.filter_partner_ids:
+            query_inject_parameters += (tuple(self.filter_partner_ids.ids),)
+        
+        if self.filter_sales_rep_ids:
+            query_inject_parameters += (tuple(self.filter_sales_rep_ids.ids),)
+            
+        if self.filter_product_categories:
+            query_inject_parameters += (tuple(self.filter_product_categories.ids),)
+            
+        query_inject_parameters += (
+            self.id,
+            self.env.uid,
+        )
+
+        self.env.cr.execute(query_inject_date, query_inject_parameters)
         
 class InventorySalesAnalysisProduct(models.TransientModel):
     _name = 'report_inventory_transaction_product'
@@ -422,7 +700,7 @@ class InventorySalesAnalysisPartner(models.TransientModel):
 class InventorySalesAnalysisSalesRep(models.TransientModel):
     _name = 'report_inventory_transaction_sales_rep'
     
-    #code = fields.Char()
+    code = fields.Char()
     name = fields.Char()
     qty = fields.Float()
     amount = fields.Float()
@@ -432,7 +710,23 @@ class InventorySalesAnalysisSalesRep(models.TransientModel):
     percent_markup = fields.Float()
     sales_rep_id = fields.Many2one('sales.rep', index = True)
     report_id = fields.Many2one(comodel_name='report_inventory_transaction_qweb', ondelete='cascade', index=True)
+    line_ids = fields.One2many(comodel_name='report_inventory_transaction_line', inverse_name='sales_rep_report_id')
 
+
+class InventoryTransactionDate(models.TransientModel):
+    _name = 'report_inventory_transaction_date'
+    
+    #code = fields.Char()
+    date = fields.Date()
+    qty = fields.Float()
+    amount = fields.Float()
+    cost = fields.Float()
+    profit = fields.Float()
+    percent_profit = fields.Float()
+    percent_markup = fields.Float()
+    report_id = fields.Many2one(comodel_name='report_inventory_transaction_qweb', ondelete='cascade', index=True)
+    line_ids = fields.One2many(comodel_name='report_inventory_transaction_line', inverse_name='date_report_id')
+    
 class InventorySalesAnalysisLine(models.TransientModel):
     _name = 'report_inventory_transaction_line'
 
@@ -442,7 +736,7 @@ class InventorySalesAnalysisLine(models.TransientModel):
     invoice_name = fields.Char()
     partner_name = fields.Char()
     partner_code = fields.Char()
-    #code = fields.Char()
+    code = fields.Char()
     name = fields.Char()
     qty = fields.Float()
     amount = fields.Float()
@@ -455,4 +749,6 @@ class InventorySalesAnalysisLine(models.TransientModel):
     report_id = fields.Many2one(comodel_name='report_inventory_transaction_qweb', ondelete='cascade', index = True)
     product_report_id = fields.Many2one(comodel_name='report_inventory_transaction_product', ondelete='cascade', index=True)
     partner_report_id = fields.Many2one(comodel_name='report_inventory_transaction_partner', ondelete='cascade', index=True)
+    sales_rep_report_id = fields.Many2one(comodel_name='report_inventory_transaction_sales_rep', ondelete='cascade', index=True)
+    date_report_id = fields.Many2one(comodel_name='report_inventory_transaction_date', ondelete='cascade', index=True)
     
