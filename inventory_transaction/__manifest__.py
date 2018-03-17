@@ -13,7 +13,9 @@
     'data': [
        'report.xml',
        'report/templates/inventory_transaction.xml',
-       'wizard/inventory_transaction_wizard.xml'
+       'wizard/inventory_transaction_wizard.xml',
+       'data/inventory.transaction.type.csv',
+       'security/ir.model.access.csv'
     ],
     'installable': True,
 }

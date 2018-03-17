@@ -1,1 +1,1 @@
-import report, wizard
+import report, wizard, model
