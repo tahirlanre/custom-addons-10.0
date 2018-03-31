@@ -52,7 +52,18 @@ class document_payment_voucher(models.Model):
                         tax_amount = voucher.gross_amount * tax.amount / 100
                         total_tax = total_tax + tax_amount
             voucher.net_amount = (voucher.gross_amount - total_tax) if taxes else voucher.gross_amount
-        
+    
+    @api.multi
+    @api.depends('voucher_location','voucher_no','voucher_year')
+    def _set_dept_no(self):
+        for voucher in self:
+            if voucher.voucher_location and voucher.voucher_no and voucher.voucher_year and voucher.mda:
+                code = voucher.mda.code
+                voucher_location = voucher.voucher_location
+                voucher_no = voucher.voucher_no
+                voucher_year = voucher.voucher_year.split('-')[0]
+                voucher.dept_no = str(code)+'/'+str(voucher_location)+'/'+str(voucher_no)+'/'+str(voucher_year)
+            
     @api.multi
     @api.depends('net_amount')    
     def _amount_to_text(self,):
@@ -67,7 +78,7 @@ class document_payment_voucher(models.Model):
     payment_date = fields.Date('Payment Date', required=True)
     payment_account = fields.Many2one('document.payment.voucher.account',string='Payment Account', required=True)
     description = fields.Char('Description')
-    dept_no = fields.Char('Department No', required=True)
+    dept_no = fields.Char('Department No', compute='_set_dept_no', store=True)
     partner_id = fields.Many2one('res.partner', string='Payee', required=True)
     gross_amount = fields.Float('Gross Amount', required=True)
     net_amount = fields.Float('Net Amount', compute='_compute_amount')
@@ -127,11 +138,6 @@ class document_payment_voucher(models.Model):
                 name = voucher.dept_no
             data.append((voucher.id, name))
         return data
-                
-    @api.multi
-    def unlink(self):
-        #TODO - implement unlink funciton
-        pass
     
 class document_release_letter(models.Model):
     _name = 'document.release.letter'
