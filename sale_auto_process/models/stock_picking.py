@@ -13,5 +13,10 @@ class StockPicking(models.Model):
     @api.multi
     def validate_picking(self):
         self.force_assign()
+        for pack in self.pack_operation_ids:
+            if pack.product_qty > 0:
+                pack.write({'qty_done': pack.product_qty})
+            else:
+                pack.unlink()
         self.do_transfer()
         return True
