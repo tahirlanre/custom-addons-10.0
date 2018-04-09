@@ -6,7 +6,7 @@ from odoo import api, models
 
 class StockPicking(models.Model):
     _inherit = "stock.picking"
-
+    
     @api.multi
     def do_transfer(self):
         """
@@ -17,7 +17,9 @@ class StockPicking(models.Model):
         for rec in self: 
             #FIXME check products invoicing policy
             if rec.sale_id and rec.picking_type_id.code == "outgoing":
-                rec.sale_id.action_invoice_create() 
+                invoice_ids = rec.sale_id.action_invoice_create() 
+                for invoice in self.env['account.invoice'].search([('id','in',invoice_ids)]):
+                    invoice.action_invoice_open()
         
         return return_val
         
