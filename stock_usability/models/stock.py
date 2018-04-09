@@ -85,6 +85,7 @@ class StockMove(models.Model):
             'account_id': debit_account_id,
             'move_id': move_id,
         }
+        # create account move line instead of using the write operation on to-many fields.
         debit_aml = aml_obj.create(debit_line_vals)
         
         credit_line_vals = {
@@ -99,6 +100,7 @@ class StockMove(models.Model):
             'account_id': credit_account_id,
             'move_id': move_id,
         }
+        # create account move line instead of using the write operation on to-many fields.
         credit_aml = aml_obj.create(credit_line_vals)
         
         res = [(0, 0, debit_line_vals), (0, 0, credit_line_vals)]
@@ -122,6 +124,7 @@ class StockMove(models.Model):
                 'account_id': price_diff_account.id,
                 'move_id': move_id,
             }
+            # create account move line instead of using the write operation on to-many fields.
             price_diff_aml = aml.create(price_diff_line)
             
             res.append((0, 0, price_diff_line))
