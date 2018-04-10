@@ -27,7 +27,7 @@ class SaleOrder(models.Model):
         for line in self.order_line:
             if line.product_id not in product_list.keys() and line.product_id.type != 'service':
                 product_list[line.product_id] = line.product_id.qty_available
-        
+                        
         for key in product_list.keys():
             product_qty = 0.0
             qty_available = product_list[key]
@@ -35,7 +35,7 @@ class SaleOrder(models.Model):
                 if line.product_id == key:
                     product_qty += line.product_uom._compute_quantity(line.product_uom_qty, line.product_id.uom_id)
             if float_compare(qty_available, product_qty, precision_digits=precision) == -1:
-                msg = 'You plan to sell %s %s of %s but you only have %s %s available!' % (product_qty, line.product_uom.name, line.product_id.display_name, line.product_id.qty_available, line.product_id.uom_id.name)
+                msg = 'You plan to sell %s of %s but you only have %s %s available!' % (product_qty, key.display_name, key.qty_available, key.uom_id.name)
                 raise UserError(_('Not enough inventory!\n' + msg))
                 
         return {}
