@@ -97,12 +97,12 @@ class SaleOrderLine(models.Model):
     def _get_product_available_qty(self):
         #self.ensure_one()
         for line in self:
-            if line.order_id.state == 'draft':
+            if line.order_id.state not in ('sale', 'done'):
                 line.product_available_qty = line.product_id.with_context(
                     warehouse=line.order_id.warehouse_id.id
                 ).qty_available
             
-    product_available_qty = fields.Float(string='Available Qty',compute=_get_product_available_qty, readonly=True,store=True)
+    product_available_qty = fields.Float(string='Available Qty',compute=_get_product_available_qty, readonly=True)
     tax_id = fields.Many2many(required=True)
     
     #overide _onchange_product_id to use only product name without ref as invoice line description by default

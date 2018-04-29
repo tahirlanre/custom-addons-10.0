@@ -9,7 +9,7 @@
 	        </field>
 
             <xpath expr="//tree/field[@name='product_uom_qty']" position="before">
-                <field name="product_available_qty" groups="base.group_user"/>
+                <field name="product_available_qty" attrs="{'invisible':[('state','not in',['draft','sent'])]}" groups="base.group_user"/>
             </xpath>
 	       
 			<xpath expr="//group[@name='sales_person']" position="before">
