@@ -62,10 +62,10 @@ class sales_rep_commission_report(models.TransientModel):
                     NOW() AS create_date,
                     pr.ref,
                     pr.name,
-                    a.price_subtotal + a.discount_net_amount,
-                    a.discount,
-                    (src.discount_allowed - a.discount) as disc_balance,
-                    (a.price_subtotal + a.discount_net_amount) * (src.discount_allowed - a.discount)/100 as commission,
+                    (a.price_subtotal + a.discount_net_amount) * invoice_type.sign,
+                    a.discount * invoice_type.sign,
+                    (src.discount_allowed - a.discount) * invoice_type.sign as disc_balance,
+                    ((a.price_subtotal + a.discount_net_amount) * (src.discount_allowed - a.discount)/100) * invoice_type.sign as commission,
 	                rs.id,
                     i.date_invoice,
                     i.number,
@@ -80,7 +80,16 @@ class sales_rep_commission_report(models.TransientModel):
                     left join sales_rep_commission src on (src.sales_rep = sr.id and src.product_category = pt.commission_product_categ_code)
                     left join sales_rep_product_category spc on (spc.id = src.product_category)
                     left join report_sales_rep_commission_sr rs on (rs.sales_rep_id = sr.id)
-                    where i.date_invoice >= %s and i.date_invoice <= %s and i.type in ('out_invoice') and i.state in ('paid', 'open')
+                    JOIN (
+                        -- Temporary table to decide if the qty should be added or retrieved (Invoice vs Refund) 
+                        SELECT id,(CASE
+                             WHEN ai.type::text = ANY (ARRAY['out_refund'::character varying::text, 'in_invoice'::character varying::text])
+                                THEN -1
+                                ELSE 1
+                            END) AS sign
+                        FROM account_invoice ai
+                    ) AS invoice_type ON invoice_type.id = i.id
+                    where i.date_invoice >= %s and i.date_invoice <= %s and i.type in ('out_invoice', 'out_refund') and i.state in ('paid', 'open')
         
             """
         if self.sales_rep_code_from:
@@ -91,59 +100,12 @@ class sales_rep_commission_report(models.TransientModel):
             query_inject_line += """
                     and sr.code <= %s
             """
-        
+            
         query_inject_line += """
-            UNION ALL
-            SELECT	
-                  %s AS report_id,
-                  %s AS create_uid,
-                  NOW() AS create_date,
-                  pr.ref,
-                  pr.name,
-                  -1 * (a.price_subtotal + a.discount_net_amount),
-                  -1 * a.discount,
-                  -1 * (src.discount_allowed - a.discount) as disc_balance,
-                  -1 * ((a.price_subtotal + a.discount_net_amount) * (src.discount_allowed - a.discount)/100) as commission,
-                rs.id,
-                  i.date_invoice,
-                  i.number,
-                  i.id,
-                  spc.code
-                  from account_invoice_line a
-                  left join account_invoice i on (i.id = a.invoice_id)
-                  left join res_partner pr on (i.partner_id = pr.id)
-                  left join sales_rep sr on (pr.sales_rep_id = sr.id)
-                  left join product_product pp on (pp.id = a.product_id)
-                  left join product_template pt on (pt.id = pp.product_tmpl_id)
-                  left join sales_rep_commission src on (src.sales_rep = sr.id and src.product_category = pt.commission_product_categ_code)
-                  left join sales_rep_product_category spc on (spc.id = src.product_category)
-                  left join report_sales_rep_commission_sr rs on (rs.sales_rep_id = sr.id)
-                  where i.date_invoice >= %s and i.date_invoice <= %s and i.type in ('out_refund') and i.state in ('paid', 'open')
+                order by i.date_invoice asc, i.number asc
         """
         
-        if self.sales_rep_code_from:
-            query_inject_line += """
-                    and sr.code >= %s
-            """
-        if self.sales_rep_code_to:
-            query_inject_line += """
-                    and sr.code <= %s
-            """
-            
         query_inject_parameters = (
-            self.id,
-            self.env.uid,
-            self.start_date,
-            self.end_date,
-        )
-        
-        if self.sales_rep_code_from:
-            query_inject_parameters += (self.sales_rep_code_from.code,)
-            
-        if self.sales_rep_code_to:
-            query_inject_parameters += (self.sales_rep_code_to.code,)
-        
-        query_inject_parameters += (
             self.id,
             self.env.uid,
             self.start_date,
