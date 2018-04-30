@@ -53,6 +53,22 @@
 			</xpath>
 		</field>
 	</record>
+    
+    <record id="view_res_partner_filter_balance" model="ir.ui.view">
+        <field name="name">res.partner.select.balance</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='supplier']" position="after">
+                <separator/>
+                <filter string="Credit balances" name="credit" domain="[('balance','&gt;=',1)]"/>
+                <filter string="Debit balances" name="credit" domain="[('balance','&lt;',0)]"/>
+                <filter string="Zero balances" name="credit" domain="[('balance','=',0)]"/>
+                
+                
+            </xpath>
+        </field>
+    </record>
 	
     <record id="base.action_partner_form_view1" model="ir.actions.act_window.view">
             <field eval="1" name="sequence"/>
