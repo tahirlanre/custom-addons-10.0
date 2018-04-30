@@ -64,8 +64,6 @@
                 <filter string="Credit balances" name="credit" domain="[('balance','&gt;=',1)]"/>
                 <filter string="Debit balances" name="credit" domain="[('balance','&lt;',0)]"/>
                 <filter string="Zero balances" name="credit" domain="[('balance','=',0)]"/>
-                
-                
             </xpath>
         </field>
     </record>
