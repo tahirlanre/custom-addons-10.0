@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- AGED RECEIVEABLE BALANCE -->
+    <record id="aged_receivable_balance_wizard" model="ir.ui.view">
+        <field name="name">Aged Receivable Balance</field>
+        <field name="model">aged.receivable.balance.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group name="main_info">
+                    <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+                </group>
+                <group name="filters">
+                    <group name="date_range">
+                        <field name="date_at"/>
+                    </group>
+                    <group name="other_filters">
+                        <field name="target_move" widget="radio"/>
+                        <field name="show_move_line_details"/>
+                    </group>
+                </group>
+                <label for="partner_ids"/>
+                <field name="partner_ids" nolabel="1" options="{'no_create': True}"/>
+                <group/>
+                <footer>
+                    <button name="button_export_pdf" string="Export PDF" type="object" default_focus="1" class="oe_highlight"/>
+                    or
+                    <button name="button_export_xlsx" string="Export XLSX" type="object"/>
+                    or
+                    <button string="Cancel" class="oe_link" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window id="action_aged_receivable_balance_wizard"
+                name="Aged Receivable Balance"
+                res_model="aged.receivable.balance.wizard"
+                view_type="form"
+                view_mode="form"
+                view_id="aged_receivable_balance_wizard"
+                target="new" /> 
+                
+    <!-- AGED PAYABLE BALANCE -->
+    <record id="aged_payable_balance_wizard" model="ir.ui.view">
+        <field name="name">Aged Payable Balance</field>
+        <field name="model">aged.payable.balance.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group name="main_info">
+                    <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+                </group>
+                <group name="filters">
+                    <group name="date_range">
+                        <field name="date_at"/>
+                    </group>
+                    <group name="other_filters">
+                        <field name="target_move" widget="radio"/>
+                        <field name="show_move_line_details"/>
+                    </group>
+                </group>
+                <label for="partner_ids"/>
+                <field name="partner_ids" nolabel="1" options="{'no_create': True}"/>
+                <group/>
+                <footer>
+                    <button name="button_export_pdf" string="Export PDF" type="object" default_focus="1" class="oe_highlight"/>
+                    or
+                    <button name="button_export_xlsx" string="Export XLSX" type="object"/>
+                    or
+                    <button string="Cancel" class="oe_link" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window id="action_aged_payable_balance_wizard"
+                name="Aged Payable Balance"
+                res_model="aged.payable.balance.wizard"
+                view_type="form"
+                view_mode="form"
+                view_id="aged_payable_balance_wizard"
+                target="new" /> 
+</odoo>

@@ -7,6 +7,8 @@
         - Show account balance in credit/debit side in OCA Trial Balance report
         - Hide Odoo reports menu that are provided by OCA QWeb Financial Reports module
         - Hide unnecessary columns on General Ledger
+        - Aged Receiveable Balance
+        - Aged Payable Balance
     """,
     'version': '10.0.1.0.0',
     'category': 'Accounting & Finance',
@@ -15,5 +17,7 @@
         'templates/trial_balance.xml',
         'templates/general_ledger.xml',
         'templates/layouts.xml',
+        'menuitems.xml',
+        'wizard/aged_balance_wizard_view.xml',
     ],
 }
