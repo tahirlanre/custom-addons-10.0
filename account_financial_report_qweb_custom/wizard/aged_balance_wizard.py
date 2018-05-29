@@ -11,7 +11,7 @@ from odoo import api, fields, models
 
 class AgedReceivableBalance(models.TransientModel):
     """Aged partner balance report wizard."""
-
+    
     _name = 'aged.receivable.balance.wizard'
     _description = 'Aged Receivable Balance Wizard'
 
@@ -36,6 +36,9 @@ class AgedReceivableBalance(models.TransientModel):
         string='Filter partners',
     )
     show_move_line_details = fields.Boolean()
+    show_credit_balances_only = fields.Boolean(string='Show credit balances only')
+    show_debit_balances_only = fields.Boolean(string='Show debit balances only')
+    hide_account_balance_at_0 = fields.Boolean(string='Hide zero balances',default=True)
 
 
     @api.multi
@@ -58,6 +61,11 @@ class AgedReceivableBalance(models.TransientModel):
             'filter_account_ids': [(6, 0, self.account_ids.ids)],
             'filter_partner_ids': [(6, 0, self.partner_ids.ids)],
             'show_move_line_details': self.show_move_line_details,
+            'hide_account_balance_at_0': self.hide_account_balance_at_0,
+            'show_credit_balances_only': self.show_credit_balances_only,
+            'show_debit_balances_only': self.show_debit_balances_only,
+            'receiveable_accounts_only': True,
+            'payable_accounts_only': False,
         }
 
     def _export(self, xlsx_report=False):
@@ -94,6 +102,9 @@ class AgedPayableBalance(models.TransientModel):
         string='Filter partners',
     )
     show_move_line_details = fields.Boolean()
+    show_credit_balances_only = fields.Boolean(string='Show credit balances only')
+    show_debit_balances_only = fields.Boolean(string='Show debit balances only')
+    hide_account_balance_at_0 = fields.Boolean(string='Hide zero balances',default=True)
 
 
     @api.multi
@@ -116,6 +127,11 @@ class AgedPayableBalance(models.TransientModel):
             'filter_account_ids': [(6, 0, self.account_ids.ids)],
             'filter_partner_ids': [(6, 0, self.partner_ids.ids)],
             'show_move_line_details': self.show_move_line_details,
+            'hide_account_balance_at_0': self.hide_account_balance_at_0,
+            'show_credit_balances_only': self.show_credit_balances_only,
+            'show_debit_balances_only': self.show_debit_balances_only,
+            'payable_accounts_only': True,
+            'receiveable_accounts_only': False,
         }
 
     def _export(self, xlsx_report=False):

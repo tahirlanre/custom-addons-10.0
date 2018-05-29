@@ -16,6 +16,9 @@
                     <group name="other_filters">
                         <field name="target_move" widget="radio"/>
                         <field name="show_move_line_details"/>
+                        <field name="show_credit_balances_only"/>
+                        <field name="show_debit_balances_only"/>
+                        <field name="hide_account_balance_at_0"/>
                     </group>
                 </group>
                 <label for="partner_ids"/>
@@ -56,6 +59,9 @@
                     <group name="other_filters">
                         <field name="target_move" widget="radio"/>
                         <field name="show_move_line_details"/>
+                        <field name="show_credit_balances_only"/>
+                        <field name="show_debit_balances_only"/>
+                        <field name="hide_account_balance_at_0"/>
                     </group>
                 </group>
                 <label for="partner_ids"/>
