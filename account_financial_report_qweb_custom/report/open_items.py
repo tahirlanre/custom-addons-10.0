@@ -69,35 +69,19 @@ WHERE
                 ra.report_id = %s
         """
         if only_delete_account_balance_gt_0:
-            if self.receiveable_accounts_only:
-                query_clean_partners += """
-                AND (
-                    rp.final_amount_residual IS NULL
-                    OR round(rp.final_amount_residual,2) >= 0
-                    )
-                """
-            else:
-                query_clean_partners += """
-                AND (
-                    rp.final_amount_residual IS NULL
-                    or round(rp.final_amount_residual,2) <= 0
-                    )
-                """
+            query_clean_partners += """
+            AND (
+                rp.final_amount_residual IS NULL
+                OR round(rp.final_amount_residual,2) >= 0
+                )
+            """
         elif only_delete_account_balance_lt_0:
-            if self.receiveable_accounts_only:
-                query_clean_partners += """
-                AND (
-                    rp.final_amount_residual IS NULL
-                    or round(rp.final_amount_residual,2) <= 0
-                    )
-                """
-            else:
-                query_clean_partners += """
-                AND (
-                    rp.final_amount_residual IS NULL
-                    or round(rp.final_amount_residual,2) >= 0
-                    )
-                """
+            query_clean_partners += """
+            AND (
+                rp.final_amount_residual IS NULL
+                or round(rp.final_amount_residual,2) <= 0
+                )
+            """
         elif only_delete_account_balance_at_0:
             query_clean_partners += """
             AND (
