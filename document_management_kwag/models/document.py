@@ -12,6 +12,7 @@ class mda(models.Model):
     
     code = fields.Char("Code", required=True, index=True)
     name = fields.Char("Name", required=True)
+    economic_code = fields.Char("Economic Code")
     
     @api.multi
     def name_get(self):
@@ -73,11 +74,17 @@ class document_payment_voucher(models.Model):
             convert_amount_in_words = convert_amount_in_words.replace(' Cent', ' Kobo ')
             convert_amount_in_words = convert_amount_in_words.replace(' and Zero Kobo', ' Only')
             voucher.net_amount_text = convert_amount_in_words
+    
+    @api.multi
+    @api.onchange('sub_code')
+    def _set_sub_sub_code(self):
+        for voucher in self:
+            voucher.sub_sub_code = voucher.sub_code
             
     parent_id = fields.Many2one('document.payment.voucher', "Parent", ondelete="cascade", index=True)
     payment_date = fields.Date('Payment Date', required=True)
     payment_account = fields.Many2one('document.payment.voucher.account',string='Payment Account', required=True)
-    description = fields.Char('Description')
+    description = fields.Text('Description')
     dept_no = fields.Char('Department No', compute='_set_dept_no', store=True)
     partner_id = fields.Many2one('res.partner', string='Payee', required=True)
     gross_amount = fields.Float('Gross Amount', required=True)
@@ -117,6 +124,9 @@ class document_payment_voucher(models.Model):
                                          help='You can attach the copy of your document', copy=False, required=True)
     net_amount_text = fields.Char('Net amount in words', compute='_amount_to_text')
     release_letter_ref_no = fields.Char('Release letter ref no')
+    code = fields.Char('Code', related='mda.economic_code')
+    sub_code = fields.Char('Sub-code', required=True)
+    sub_sub_code = fields.Char('Sub Sub-code')
     
     @api.model
     def create(self,vals):

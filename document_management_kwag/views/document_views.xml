@@ -76,6 +76,9 @@
 					<group string="Payment options">
 						<group>
 							<field name="expenditure_type"/>
+                            <field name="code"/>
+                            <field name="sub_code"/>
+                            <field name="sub_sub_code"/>
 							<field name="gross_amount"/>
 							<field name="payment_account"/>
 							<field name="payment_mode"/>
@@ -228,6 +231,7 @@
             <group name="MDA details">
                 <field name="code"/>
 				<field name="name"/>
+                <field name="economic_code"/>
             </group>
           </sheet>
         </form>
@@ -241,6 +245,7 @@
         <tree>
             <field name="code"/>
 			<field name="name"/>
+            <field name="economic_code"/>
         </tree>
       </field>
     </record>
@@ -252,6 +257,7 @@
             <search>
 	            <field name="code"/>
 				<field name="name"/>
+                <field name="economic_code"/>
             </search>
         </field>
 	</record>
