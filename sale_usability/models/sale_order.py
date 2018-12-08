@@ -8,8 +8,8 @@ from odoo.exceptions import UserError
 
 
 class SaleOrder(models.Model):
-    _inherit = 'sale.order'
-        
+    _inherit = 'sale.order'  
+    
     @api.onchange('partner_id')
     def _change_customer_details(self):
         if self.partner_id:
@@ -89,7 +89,7 @@ class SaleOrder(models.Model):
     
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
-    
+
     @api.multi
     @api.depends(
         'product_uom_qty',
@@ -110,6 +110,12 @@ class SaleOrderLine(models.Model):
     def product_id_change(self):
         res = super(SaleOrderLine,self).product_id_change()
         self.name = self.product_id.name             
+        return res
+        
+    @api.multi
+    def _prepare_order_line_procurement(self, group_id=False):
+        res = super(SaleOrderLine,self)._prepare_order_line_procurement(group_id=self.order_id.procurement_group_id.id)
+        res.update({'date_planned': fields.Datetime.now()})
         return res
     
     
