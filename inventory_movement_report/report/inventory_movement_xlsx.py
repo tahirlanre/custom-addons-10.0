@@ -39,20 +39,21 @@ class InventoryMovementReportXlsx(ReportXlsx):
         self.format_amount_bold = None
         
     def generate_xlsx_report(self, workbook, data, objects):
-                        
         report = objects
+        report_data = data
         
-        """self.row_pos = 0
+        self.row_pos = 0
         
         self._define_formats(workbook)
         report_name = self._get_report_name()
         filters = self._get_report_filters(report)
         company_name = self._get_company_name()
         
-
+        self.columns = self._get_report_columns()
+        
         self.sheet = workbook.add_worksheet(report_name[:31])
 
-        #self._set_column_width()
+        self._set_column_width()
         
         self._write_company_name(company_name)
         
@@ -60,7 +61,7 @@ class InventoryMovementReportXlsx(ReportXlsx):
 
         self._write_filters(filters)
 
-        self._generate_report_content(workbook, report)"""
+        self._generate_report_content(workbook, report)
     
     def write_array_header(self):
         """Write array header on current line using all defined columns name.
@@ -119,7 +120,7 @@ class InventoryMovementReportXlsx(ReportXlsx):
                 _('From: %s To: %s') % (report.start_date, report.end_date)],
         ]
     
-    def _get_product_report_columns(self):
+    def _get_report_columns(self):
         return {
                 0: {'header': 'Item Code',
                     'field': 'code',
@@ -127,102 +128,20 @@ class InventoryMovementReportXlsx(ReportXlsx):
                 1: {'header': 'Item Description',
                     'field': 'name',
                     'width': 30},
-                2: {'header': 'Qty',
-                    'field': 'qty',
+                2: {'header': 'Opening Balance',
+                    'field': 'opening_balance',
                     'type': 'amount',
                     'width': 15},
-                3: {'header': 'Amount',
-                    'field': 'amount',
+                3: {'header': 'Qty in',
+                    'field': 'total_qty_in',
                     'type': 'amount',
                     'width': 15},
-                4: {'header': 'Cost',
-                    'field': 'cost',
+                4: {'header': 'Qty out',
+                    'field': 'total_qty_out',
                     'type': 'amount',
                     'width': 15},
-                5: {'header': 'Profit',
-                    'field': 'profit',
-                    'type': 'amount',
-                    'width': 15},
-                6: {'header': 'Amount',
-                    'field': 'amount',
-                    'type': 'amount',
-                    'width': 15},
-                7: {'header': 'Profit %',
-                    'field': 'percent_profit',
-                    'type': 'amount',
-                    'width': 15},
-                8: {'header': 'Markup %',
-                    'field': 'percent_markup',
-                    'type': 'amount',
-                    'width': 15},
-                }
-    
-    def _get_salesrep_report_columns(self):
-        return {
-                0: {'header': 'Sales Representative',
-                    'field': 'name',
-                    'width': 30},
-                1: {'header': 'Qty',
-                    'field': 'qty',
-                    'type': 'amount',
-                    'width': 15},
-                2: {'header': 'Amount',
-                    'field': 'amount',
-                    'type': 'amount',
-                    'width': 15},
-                3: {'header': 'Cost',
-                    'field': 'cost',
-                    'type': 'amount',
-                    'width': 15},
-                4: {'header': 'Profit',
-                    'field': 'profit',
-                    'type': 'amount',
-                    'width': 15},
-                5: {'header': 'Amount',
-                    'field': 'amount',
-                    'type': 'amount',
-                    'width': 15},
-                6: {'header': 'Profit %',
-                    'field': 'percent_profit',
-                    'type': 'amount',
-                    'width': 15},
-                7: {'header': 'Markup %',
-                    'field': 'percent_markup',
-                    'type': 'amount',
-                    'width': 15},
-                }
-        
-    def _get_partner_report_columns(self):
-        return {
-                0: {'header': 'Customer',
-                    'field': 'name',
-                    'width': 30},
-                1: {'header': 'Qty',
-                    'field': 'qty',
-                    'type': 'amount',
-                    'width': 15},
-                2: {'header': 'Amount',
-                    'field': 'amount',
-                    'type': 'amount',
-                    'width': 15},
-                3: {'header': 'Cost',
-                    'field': 'cost',
-                    'type': 'amount',
-                    'width': 15},
-                4: {'header': 'Profit',
-                    'field': 'profit',
-                    'type': 'amount',
-                    'width': 15},
-                5: {'header': 'Amount',
-                    'field': 'amount',
-                    'type': 'amount',
-                    'width': 15},
-                6: {'header': 'Profit %',
-                    'field': 'percent_profit',
-                    'type': 'amount',
-                    'width': 15},
-                7: {'header': 'Markup %',
-                    'field': 'percent_markup',
+                5: {'header': 'Closing Balance',
+                    'field': 'closing_balance',
                     'type': 'amount',
                     'width': 15},
                 }
@@ -290,11 +209,13 @@ class InventoryMovementReportXlsx(ReportXlsx):
     
     def _generate_report_content(self, workbook, report):
         self.write_array_header()
+        #import pdb; pdb.set_trace()  
+        for product in report.product_ids:
+            self.write_line(product)
         
             
     def write_line(self, line_object):
         #cell_level = line_object['level']
-        
         for col_pos, column in self.columns.iteritems():
             value = line_object[column['field']]
             cell_type = column.get('type', 'string')
