@@ -1,0 +1,1 @@
+#Custom modules for Odoo 10.0
