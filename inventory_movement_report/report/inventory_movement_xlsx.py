@@ -49,7 +49,10 @@ class InventoryMovementReportXlsx(ReportXlsx):
         filters = self._get_report_filters(report)
         company_name = self._get_company_name()
         
-        self.columns = self._get_report_columns()
+        if report.summary:
+            self.columns = self._get_summary_report_columns()
+        elif report.detailed:
+            self.columns = self._get_detailed_report_columns()
         
         self.sheet = workbook.add_worksheet(report_name[:31])
 
@@ -120,7 +123,7 @@ class InventoryMovementReportXlsx(ReportXlsx):
                 _('From: %s To: %s') % (report.start_date, report.end_date)],
         ]
     
-    def _get_report_columns(self):
+    def _get_summary_report_columns(self):
         return {
                 0: {'header': 'Item Code',
                     'field': 'code',
@@ -142,6 +145,30 @@ class InventoryMovementReportXlsx(ReportXlsx):
                     'width': 15},
                 5: {'header': 'Closing Balance',
                     'field': 'closing_balance',
+                    'type': 'amount',
+                    'width': 15},
+                }
+                
+    def _get_detailed_report_columns(self):
+        return {
+                0: {'header': 'Date',
+                    'field': 'date',
+                    'width': 20},
+                1: {'header': 'Type',
+                    'field': 'movement_type',
+                    'width': 15},
+                2: {'header': 'Reference',
+                    'field': 'reference',
+                    'width': 30},
+                3: {'header': 'Description',
+                    'field': 'description',
+                    'width': 30},
+                4: {'header': 'Qty in',
+                    'field': 'qty_in',
+                    'type': 'amount',
+                    'width': 15},
+                5: {'header': 'Qty out',
+                    'field': 'qty_out',
                     'type': 'amount',
                     'width': 15},
                 }
@@ -192,9 +219,9 @@ class InventoryMovementReportXlsx(ReportXlsx):
         self.format_header_amount = workbook.add_format(
             {'bold': True,
              'border': True,})
-        self.format_header_amount.set_num_format('#,##0.00')
+        self.format_header_amount.set_num_format('#,##0')
         self.format_amount = workbook.add_format()
-        self.format_amount.set_num_format('#,##0.00')
+        self.format_amount.set_num_format('#,##0')
         self.format_percent_bold_italic = workbook.add_format(
             {'bold': True, 'italic': True}
         )
@@ -202,19 +229,25 @@ class InventoryMovementReportXlsx(ReportXlsx):
         self.format_amount_bold = workbook.add_format(
             {'bold': True}
         )
-        self.format_amount_bold.set_num_format('#,##0.00')
+        self.format_amount_bold.set_num_format('#,##0')
         self.format_string_bold = workbook.add_format(
             {'bold': True}
         )
     
     def _generate_report_content(self, workbook, report):
         self.write_array_header()
-        #import pdb; pdb.set_trace()  
-        for product in report.product_ids:
-            self.write_line(product)
-        
-            
-    def write_line(self, line_object):
+        #import pdb; pdb.set_trace()
+        if report.summary:  
+            for product in report.product_ids:
+                self.summary_write_line(product)
+        if report.detailed:
+            for product in report.product_ids:
+                self.write_header_line(product)
+                for line in product.line_ids:
+                    self.detailed_write_line(line)
+                self.write_end_line(product)
+    
+    def summary_write_line(self, line_object):
         #cell_level = line_object['level']
         for col_pos, column in self.columns.iteritems():
             value = line_object[column['field']]
@@ -225,9 +258,99 @@ class InventoryMovementReportXlsx(ReportXlsx):
                 self.sheet.write_number(
                     self.row_pos, col_pos, float(value), self.format_amount
                 )
-    
         self.row_pos += 1
                 
+    def write_header_line(self, line_object):
+        header_columns = {
+                0: {'header': 'Inventory Item',
+                    'field': None,
+                    'width': 20},
+                1: {'header': 'Product code',
+                    'field': 'code',
+                    'width': 15},
+                2: {'header': 'Name',
+                    'field': 'name',
+                    'width': 30},
+                3: {'header': 'Opening Balance',
+                    'field': None,
+                    'width': 30},
+                4: {'header': '',
+                    'field': None,
+                    'width': 15},
+                5: {'header': 'Opening Balance',
+                    'field': 'opening_balance',
+                    'type': 'amount',
+                    'width': 15},
+                }
+                
+        for col_pos, column in header_columns.iteritems():
+            if column['field'] == None:
+                self.sheet.write_string(self.row_pos, col_pos,column.get('header',''),self.format_header_center)
+                continue
+                
+            value = line_object[column['field']]
+            cell_type = column.get('type', 'string')
+            if cell_type == 'string':
+                self.sheet.write_string(self.row_pos, col_pos, value or '',self.format_header_center)
+            elif cell_type == 'amount':
+                self.sheet.write_number(
+                    self.row_pos, col_pos, float(value), self.format_amount_bold
+                )
+        self.row_pos += 1
+        
+    def detailed_write_line(self, line_object):
+        #cell_level = line_object['level']
+        for col_pos, column in self.columns.iteritems():
+            value = line_object[column['field']]
+            cell_type = column.get('type', 'string')
+            if cell_type == 'string':
+                self.sheet.write_string(self.row_pos, col_pos, value or '')
+            elif cell_type == 'amount':
+                if float(value) == 0:
+                    continue
+                self.sheet.write_number(
+                    self.row_pos, col_pos, float(value), self.format_amount
+                )
+        self.row_pos += 1
+    
+    def write_end_line(self, line_object):
+        end_columns = {
+                0: {'header': '',
+                    'field': None,
+                    'width': 20},
+                1: {'header': '',
+                    'field': None,
+                    'width': 15},
+                2: {'header': '',
+                    'field': None,
+                    'width': 30},
+                3: {'header': 'Closing balance',
+                    'field': None,
+                    'width': 30},
+                4: {'header': '',
+                    'field': None,
+                    'width': 15},
+                5: {'header': 'Closing Balance',
+                    'field': 'closing_balance',
+                    'type': 'amount',
+                    'width': 15},
+                }
+                
+        for col_pos, column in end_columns.iteritems():
+            if column['field'] == None:
+                self.sheet.write_string(self.row_pos, col_pos,column.get('header',''),self.format_header_center)
+                continue
+                
+            value = line_object[column['field']]
+            cell_type = column.get('type', 'string')
+            if cell_type == 'string':
+                self.sheet.write_string(self.row_pos, col_pos, value or '',self.format_header_center)
+            elif cell_type == 'amount':
+                self.sheet.write_number(
+                    self.row_pos, col_pos, float(value), self.format_amount_bold
+                )
+        self.row_pos += 1
+    
     def _get_report_name(self):
         return _("Inventory Movement Report")
     
