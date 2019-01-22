@@ -62,7 +62,8 @@ class InventoryMovement(models.TransientModel):
                     rp.id,
                     sh.date as date,
                     pit.name,
-                    m.origin,
+                    case when m.origin like %s or m.origin like %s THEN ai.number 
+                    ELSE pi.origin end,
                     m.name,
                     case when sh.quantity > 0 THEN sh.quantity end as qty_in,
                     case when sh.quantity < 0 THEN sh.quantity * -1 end as qty_out,
@@ -72,6 +73,7 @@ class InventoryMovement(models.TransientModel):
                     left join stock_move m on m.id = sh.move_id
                     left join report_inventory_movement_product rp on rp.product_id = sh.product_id
                     left join stock_picking pi on pi.id = m.picking_id
+                    left join account_invoice ai on ai.origin = m.origin
                     left join stock_picking_type pit on pit.id = m.picking_type_id
                     where sh.date >= %s and sh.date <= %s    
         """
@@ -83,6 +85,8 @@ class InventoryMovement(models.TransientModel):
         query_inject_parameters = (
             self.id,
             self.env.uid,
+            '%SO%',
+            '%PO%',
             self.start_date + ' 00:00:00',
             self.end_date + ' 23:59:59',
         )
