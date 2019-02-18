@@ -32,7 +32,6 @@
                         <field name="partner_id"/>
                         <field name="pickup_location"/>
                         <field name="pickup_number"/>
-                        <field name="pickup_rider"/>
                     </group>
                     <group string="Date" name="delivery_date">
                         <field name="booked_delivery_date"/>
@@ -44,7 +43,6 @@
                         <field name="delivery_location"/>
                         <field name="delivery_number"/>
                         <field name="item_description"/>
-                        <field name="dropoff_rider"/>
                         <field name="delivery_fee"/>
                         <field name="amount_to_collect"/>
                         <field name="weight"/>
@@ -55,8 +53,9 @@
                     </group>
                 </group>
                 <group>
-                    <group name="despatch_info" string="Rider Information">
-                        
+                    <group name="rider_info" string="Rider Information">
+                        <field name="dropoff_rider"/>
+                        <field name="pickup_rider"/>
                     </group>
                     <group name="other_info" string="Other Information">
                         <field name="delivery_note"/>
@@ -125,11 +124,11 @@
       <field name="view_mode">tree,form</field>
     </record>
     
-    <record model="ir.actions.act_window" id="dmx_delivery_management.action_delivery_type">
+    <!--<record model="ir.actions.act_window" id="dmx_delivery_management.action_delivery_type">
       <field name="name">Delivery Type</field>
       <field name="res_model">delivery.type</field>
       <field name="view_mode">tree,form</field>
-    </record>
+    </record>-->
     
     <record model="ir.actions.act_window" id="dmx_delivery_management.action_delivery_payment_mode">
       <field name="name">Delivery Payment Mode</field>
