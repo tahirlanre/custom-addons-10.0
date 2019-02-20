@@ -1,0 +1,172 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+    
+    <record model="ir.ui.view" id="delivery_form">
+      <field name="name">delivery.form</field>
+      <field name="model">delivery</field>
+      <field name="arch" type="xml">
+        <form>
+            <header>
+				<!--<button name="update_status" string="Update Status" type="object" class="oe_highlight"/>-->
+                <button name="confirm_delivery" confirm="Do you want to confirm this Delivery" string="Confirm Delivery" type="object" class="oe_highlight" attrs="{'invisible':[('state', '!=', 'open')]}"/>
+                <button name="invoice" string="Invoice" type="object" class="oe_highlight"/>
+				<field name="status" widget="statusbar" clickable="True"/>
+                <field name="state" invisible="1"/>
+            </header>
+            <sheet>
+                <div class="oe_button_box" name="button_box">
+                    <button class="oe_stat_button" name="button_invoice"
+                            string="Invoice" type="object"
+                            attrs="{'invisible':[('invoice_ids','!=',[])]}" icon="fa-bars"/>
+                    <field name="invoice_ids" invisible="1"/>
+                </div>
+                <div class="oe_title">
+                    <h1>
+                        <field name="job_number" readonly="1"/>
+                    </h1>
+                    <field name="delivery_type"  widget="radio"/>
+                </div>
+                <group>
+                    <group name="pickup_info" string="Pick Up Information">
+                        <field name="partner_id"/>
+                        <field name="pickup_location"/>
+                        <field name="pickup_number"/>
+                        <field name="item_description"/>
+                    </group>
+                    <group string="Date" name="delivery_date">
+                        <field name="booked_delivery_date"/>
+                        <field name="actual_delivery_date"/>
+                    </group>
+                </group>
+                <group>
+                    <group name="delivery_info" string="Delivery Information">
+                        <field name="delivery_location"/>
+                        <field name="delivery_number"/>
+                        <field name="delivery_fee"/>
+                        <field name="amount_to_collect"/>
+                        <field name="weight"/>
+                    </group>
+                    <group name="payment_info" string="Payment Information">
+                        <field name="payment_mode_id"/>
+                        <field name="payment_status"/>
+                    </group>
+                </group>
+                <group>
+                    <group name="rider_info" string="Rider Information">
+                        <field name="dropoff_rider"/>
+                        <field name="pickup_rider"/>
+                    </group>
+                    <group name="other_info" string="Other Information">
+                        <field name="delivery_note"/>
+                        <field name="third_party_company"/>
+                        <field name="third_party_info"/>
+                    </group>
+                </group>
+                
+            </sheet>
+          
+        </form>
+      </field>
+    </record>
+    
+    <record id="delivery_tree" model="ir.ui.view">
+        <field name="name">delivery.tree</field>
+        <field name="model">delivery</field>
+        <field name="arch" type="xml">
+            <tree string="Deliveries">
+                <field name="job_number"/>
+                <field name="partner_id"/>
+				<field name="pickup_location"/>
+				<field name="delivery_location"/>
+                <field name="booked_delivery_date"/>
+                <field name="actual_delivery_date"/>
+                <field name="dropoff_rider"/>
+                <field name="pickup_rider"/>
+                <field name="status"/>
+                <field name="state" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+    
+	<record id="delivery_search" model="ir.ui.view">
+        <field name="name">Delivery Search</field>
+        <field name="model">delivery</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="job_number"/>
+                <filter string="Today" domain="[('booked_delivery_date','=',datetime.now())]"/>
+                <group>
+                    <filter string="Delivery Type" context="{'group_by': 'delivery_type'}"/>
+                </group>
+            </search>
+        </field>
+	</record>
+    
+
+    <!-- actions opening views on models -->
+    
+    <record model="ir.actions.act_window" id="dmx_delivery_management.action_delivery">
+      <field name="name">Delivery</field>
+      <field name="res_model">delivery</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    
+    <record model="ir.actions.act_window" id="dmx_delivery_management.action_despatch_rider">
+      <field name="name">Despatch Rider</field>
+      <field name="res_model">despatch.rider</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    
+    <record model="ir.actions.act_window" id="dmx_delivery_management.action_delivery_status">
+      <field name="name">Delivery Status</field>
+      <field name="res_model">delivery.status</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    
+    <!--<record model="ir.actions.act_window" id="dmx_delivery_management.action_delivery_type">
+      <field name="name">Delivery Type</field>
+      <field name="res_model">delivery.type</field>
+      <field name="view_mode">tree,form</field>
+    </record>-->
+    
+    <record model="ir.actions.act_window" id="dmx_delivery_management.action_delivery_payment_mode">
+      <field name="name">Delivery Payment Mode</field>
+      <field name="res_model">delivery.payment.mode</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    
+    <record model="ir.actions.act_window" id="dmx_delivery_management.action_delivery_location">
+      <field name="name">Delivery Location</field>
+      <field name="res_model">delivery.location</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- server action to the one above -->
+    <!--
+    <record model="ir.actions.server" id="dmx_delivery_management.action_server">
+      <field name="name">dmx_delivery_management server</field>
+      <field name="model_id" ref="model_dmx_delivery_management_dmx_delivery_management"/>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": self._name,
+        }
+      </field>
+    </record>
+    -->
+        
+	<record id="view_partner_form_tin" model="ir.ui.view">
+        <field name="name">res.partner.geoplaces</field>
+        <field name="model">res.partner</field>
+		<field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+			<field name="street" position="replace">
+				<field name="street" widget="gplaces_address_form" options="{'component_form': {'street_number': 'short_name'}}"/>
+			</field>
+		</field>
+	</record>
+
+  </data>
+</odoo>
