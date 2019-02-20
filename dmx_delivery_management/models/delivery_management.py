@@ -15,6 +15,24 @@ class delivery(models.Model):
     def _calculate_actual_delivery_date(self):
         pass
     
+    @api.onchange('partner_id')
+    def _set_default_pickup_deatils(self):
+        for delivery in self:
+            street = ''
+            street2 = ''
+            city = ''
+            if delivery.partner_id.street:
+                street = delivery.partner_id.street
+            if delivery.partner_id.street2:
+                street2 = delivery.partner_id.street2
+            if delivery.partner_id.city:
+                city = delivery.partner_id.city
+            delivery.pickup_location = street + street2 + city
+            if delivery.partner_id.phone:
+                delivery.pickup_number = delivery.partner_id.phone
+                
+            
+    
     #TODO set required fields
     job_number = fields.Char('Tracking number', readonly=True, copy=False, default="Draft")
     partner_id = fields.Many2one('res.partner', string='Customer', required=True)
@@ -29,8 +47,8 @@ class delivery(models.Model):
     pickup_rider= fields.Many2one('despatch.rider', string='Pick up Rider')
     reference = fields.Char(string='Reference')
     status_id = fields.Many2one('delivery.status', string='Status', readonly=True, copy=False)
-    pickup_location = fields.Many2one('delivery.location', string='Pickup Location')
-    delivery_location = fields.Many2one('delivery.location', string='Delivery Location')
+    pickup_location = fields.Char(string='Pickup Location')
+    delivery_location = fields.Char(string='Delivery Location')
     pickup_number = fields.Char('Pick up Number')
     delivery_number = fields.Char('Delivery Number')
     item_description = fields.Char('Item Description')

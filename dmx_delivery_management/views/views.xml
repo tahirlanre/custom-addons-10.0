@@ -32,6 +32,7 @@
                         <field name="partner_id"/>
                         <field name="pickup_location"/>
                         <field name="pickup_number"/>
+                        <field name="item_description"/>
                     </group>
                     <group string="Date" name="delivery_date">
                         <field name="booked_delivery_date"/>
@@ -42,7 +43,6 @@
                     <group name="delivery_info" string="Delivery Information">
                         <field name="delivery_location"/>
                         <field name="delivery_number"/>
-                        <field name="item_description"/>
                         <field name="delivery_fee"/>
                         <field name="amount_to_collect"/>
                         <field name="weight"/>
