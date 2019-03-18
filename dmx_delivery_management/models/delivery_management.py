@@ -15,6 +15,11 @@ class delivery(models.Model):
     def _calculate_actual_delivery_date(self):
         pass
     
+    @api.depends('partner_id')
+    def _get_partner_balance(self):
+        if self.partner_id:
+            self.partner_balance = self.partner_id.balance
+    
     @api.onchange('partner_id')
     def _set_default_pickup_deatils(self):
         for delivery in self:
@@ -64,6 +69,9 @@ class delivery(models.Model):
     status = fields.Selection([('ready_pick', 'Ready for Pickup'), ('pick', 'Picked up'),('out','Out for Delivery'),('deliver','Delivered'),('not_deliver','Not Delivered'),('cancel','Cancelled'),('pend','Pending'),('next','Next Day'),('return', 'Returned')], string='Status', required=True, readonly=True, copy=False, default='ready_pick')
     weight = fields.Float('Weight (KG)')
     duration = fields.Integer(readonly=True)
+    user_id = fields.Many2one('res.users', string='Created by', track_visibility='onchange',
+        readonly=True, default=lambda self: self.env.user)
+    partner_balance = fields.Float(string="Customer Balance",compute=_get_partner_balance, readonly=True)
     #delivery_cost = fields.Float('Delivery Cost')
     
     def invoice(self):

@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-from . import delivery_management
+from . import delivery_management, res_partner

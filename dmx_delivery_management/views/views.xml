@@ -30,6 +30,7 @@
                 <group>
                     <group name="pickup_info" string="Pick Up Information">
                         <field name="partner_id"/>
+                        <field name="partner_balance"/>
                         <field name="pickup_location"/>
                         <field name="pickup_number"/>
                         <field name="item_description"/>
@@ -61,6 +62,7 @@
                         <field name="delivery_note"/>
                         <field name="third_party_company"/>
                         <field name="third_party_info"/>
+                        <field name="user_id"/>
                     </group>
                 </group>
                 
@@ -79,6 +81,7 @@
                 <field name="partner_id"/>
 				<field name="pickup_location"/>
 				<field name="delivery_location"/>
+                <field name="user_id"/>
                 <field name="booked_delivery_date"/>
                 <field name="actual_delivery_date"/>
                 <field name="dropoff_rider"/>
@@ -95,7 +98,7 @@
         <field name="arch" type="xml">
             <search>
                 <field name="job_number"/>
-                <filter string="Today" domain="[('booked_delivery_date','=',datetime.now())]"/>
+                <filter string="Today" domain="[('booked_delivery_date', '&gt;=', datetime.datetime.now().strftime('%Y-%m-%d 00:00:00')),('booked_delivery_date', '&lt;=',datetime.datetime.now().strftime('%Y-%m-%d 23:23:59'))]"/>
                 <group>
                     <filter string="Delivery Type" context="{'group_by': 'delivery_type'}"/>
                 </group>
@@ -123,12 +126,6 @@
       <field name="res_model">delivery.status</field>
       <field name="view_mode">tree,form</field>
     </record>
-    
-    <!--<record model="ir.actions.act_window" id="dmx_delivery_management.action_delivery_type">
-      <field name="name">Delivery Type</field>
-      <field name="res_model">delivery.type</field>
-      <field name="view_mode">tree,form</field>
-    </record>-->
     
     <record model="ir.actions.act_window" id="dmx_delivery_management.action_delivery_payment_mode">
       <field name="name">Delivery Payment Mode</field>
