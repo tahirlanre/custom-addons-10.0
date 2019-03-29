@@ -3,4 +3,28 @@
     <menuitem name="Generate Assets Entries" action="account_asset.action_asset_depreciation_confirmation_wizard"
         id="account_asset.menu_asset_depreciation_confirmation_wizard"
         parent="account.menu_finance_entries" sequence="111" groups="account.group_account_user"/>
+        
+        <record id="view_account_asset_search_inherited" model="ir.ui.view">
+            <field name="name">account.asset.asset.search.inherited</field>
+            <field name="model">account.asset.asset</field>
+            <field name="inherit_id" ref="account_asset.view_account_asset_search"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="after">
+                    <filter string="Running" name="running" domain="[('state','in', ('draft','open'))]"/>
+                </field>
+            </field>
+        </record>
+        
+    <!--Change default tree view to show running/active assets only!-->
+    <record id="account_asset.action_account_asset_asset_form" model="ir.actions.act_window">
+        <field name="name">Assets</field>
+        <field name="res_model">account.asset.asset</field>
+        <field name="view_type">form</field>
+        <field name="view_id" ref="account_asset.view_account_asset_asset_purchase_tree"/>
+        <field name="domain">[('category_id.type', '=', 'purchase')]</field>
+        <field name="context">{'search_default_running': True}</field>
+    </record>
+    
+    
+   
 </odoo>
