@@ -50,11 +50,12 @@ class AssetReport(models.TransientModel):
                     aa.state AS state,
                     aa.date AS date
                     from account_asset_asset aa
-                    left join account_asset_depreciation_line adl on adl.asset_id = aa.id and adl.move_check = 'true'
+                    left join account_asset_depreciation_line adl on adl.asset_id = aa.id
+                    where adl.depreciation_date >= %s and adl.depreciation_date <%s
                     """
        
         if self.filter_asset_cat_ids:
-            query_inject_asset_cat_values += """ where aa.category_id in %s"""
+            query_inject_asset_cat_values += """ and aa.category_id in %s"""
             
         query_inject_asset_cat_values += """    
                     GROUP BY aa.id, aa.name
@@ -91,7 +92,10 @@ class AssetReport(models.TransientModel):
         
         query_inject_parameters = (
             self.id,
+            self.start_date,
+            self.end_date
             )
+            
         if self.filter_asset_cat_ids:
             query_inject_parameters += (tuple(self.filter_asset_cat_ids.ids),)
         
@@ -137,15 +141,19 @@ class AssetReport(models.TransientModel):
                 account_asset_asset aa
                 left join account_asset_depreciation_line adl on adl.asset_id = aa.id
                 inner join report_asset_register_cat rac on rac.asset_cat_id = aa.category_id
-                WHERE aa.date >= %s and aa.date <= %s and aa.state in ('open','close')
+                WHERE aa.date >= %s and aa.date <= %s and aa.state in ('open','close') and adl.depreciation_date >= %s and adl.depreciation_date <%s
                 GROUP BY aa.id, rac.id
         """
         query_inject_parameters = (
             self.id,
             self.env.uid,
             self.start_date,
+            self.end_date,
+            self.start_date,
             self.end_date
         )
+        
+        print "----"
         
         self.env.cr.execute(query_inject_asset_cat_lines, query_inject_parameters)
         
