@@ -10,6 +10,7 @@ class AssetReport(models.TransientModel):
     
     start_date = fields.Date("From purchase date")
     end_date = fields.Date("To purchase date")
+    filter_asset_cat_ids = fields.Many2many(comodel_name='account.asset.category', string="Filter Categories")
     
     asset_cat_ids = fields.One2many(comodel_name='report_asset_register_cat', inverse_name='report_id')
     asset_cat_line_ids = fields.One2many(comodel_name='report_asset_register_line', inverse_name='report_id')
@@ -31,6 +32,8 @@ class AssetReport(models.TransientModel):
         
         self.inject_asset_cat_values()
         
+        self.inject_asset_cat_lines()
+        
         self.refresh()
     
     def inject_asset_cat_values(self):
@@ -47,8 +50,13 @@ class AssetReport(models.TransientModel):
                     aa.state AS state,
                     aa.date AS date
                     from account_asset_asset aa
-                    left join account_asset_depreciation_line adl on adl.asset_id = aa.id
-                    where adl.move_check = 'true' or aa.salvage_value > 0
+                    left join account_asset_depreciation_line adl on adl.asset_id = aa.id and adl.move_check = 'true'
+                    """
+       
+        if self.filter_asset_cat_ids:
+            query_inject_asset_cat_values += """ where aa.category_id in %s"""
+            
+        query_inject_asset_cat_values += """    
                     GROUP BY aa.id, aa.name
             )
             INSERT INTO
@@ -76,13 +84,18 @@ class AssetReport(models.TransientModel):
                 sum(l.salvage_value) as total_salvage_value
             FROM line l
                 left join account_asset_category ac on ac.id = l.asset_cat_id
-            WHERE l.report_id = %s and l.state = 'open' and l.date >= %s and l.date <= %s
+            WHERE l.report_id = %s and l.state in ('open','close') and l.date >= %s and l.date <= %s
             GROUP BY ac.id
             ORDER BY name
         """
         
         query_inject_parameters = (
             self.id,
+            )
+        if self.filter_asset_cat_ids:
+            query_inject_parameters += (tuple(self.filter_asset_cat_ids.ids),)
+        
+        query_inject_parameters += (
             self.id,
             self.env.uid,
             self.id,
@@ -102,11 +115,39 @@ class AssetReport(models.TransientModel):
                     asset_cat_report_id,
                     description,
                     purchase_date,
-                    depr_start_date,
                     purchase_price,
-                    book_value
+                    book_value,
+                    total_depr,
+                    salvage_value,
+                    asset_id
                 )
+            SELECT 
+                %s AS report_id,
+                %s AS create_uid,
+                NOW() AS create_date,
+                rac.id,
+                aa.name,
+                aa.date,
+                aa.value,
+                (aa.value -  SUM(adl.amount)),
+                SUM(adl.amount),
+                aa.salvage_value,
+                aa.id
+            FROM
+                account_asset_asset aa
+                left join account_asset_depreciation_line adl on adl.asset_id = aa.id
+                inner join report_asset_register_cat rac on rac.asset_cat_id = aa.category_id
+                WHERE aa.date >= %s and aa.date <= %s and aa.state in ('open','close')
+                GROUP BY aa.id, rac.id
         """
+        query_inject_parameters = (
+            self.id,
+            self.env.uid,
+            self.start_date,
+            self.end_date
+        )
+        
+        self.env.cr.execute(query_inject_asset_cat_lines, query_inject_parameters)
         
 class AssetReportCategory(models.TransientModel):
     _name = 'report_asset_register_cat'
@@ -137,6 +178,7 @@ class AssetReportLines(models.TransientModel):
     current_year_depr = fields.Float()
     current_month_depr = fields.Float()
     book_value = fields.Float()
+    salvage_value = fields.Float()
     asset_id = fields.Many2one('account.asset.asset', index=True)
     
     asset_cat_report_id = fields.Many2one(comodel_name='report_asset_register_cat', ondelete='cascade', index=True)
