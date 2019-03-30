@@ -43,6 +43,7 @@
             <td>
                 <b><span t-field="asset_cat.name"/></b>
             </td>
+            <t t-call="account_asset_report.report_asset_register_line_qweb"/>
             <tr>
                 <td>
                     <b><span t-field="asset_cat.name"/></b>
@@ -59,5 +60,22 @@
                 </td>
             </tr>
 		</tr>
+    </template>
+    <template id="account_asset_report.report_asset_register_line_qweb">
+        <tr t-foreach="asset_cat.line_ids" t-as="asset">
+            <td>
+                <span t-field="asset.description"/>
+            </td>
+            <td></td>
+            <td></td>
+            <td><span t-field="asset.purchase_price"/></td>
+            <td class="text-right"><span t-field="asset.total_depr"/></td>
+            <td class="text-right"><span t-field="asset.salvage_value"/></td>
+            <td class="text-right"></td>
+            <td class="text-right"></td>
+            <td class="text-right">
+                <span t-field="asset.book_value"/>
+            </td>
+        </tr>
     </template>
 </odoo>
