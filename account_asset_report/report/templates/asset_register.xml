@@ -1,0 +1,63 @@
+<odoo>
+	<template id="account_asset_report.report_asset_register_qweb">
+		<t t-call="report.html_container">
+			<t t-foreach="docs" t-as="o">
+				<div class="page">
+                    
+                    <h1 align="center">Asset Register</h1>
+            
+					<h2 align="center">
+						<t t-esc="res_company.name"/>
+					</h2>
+					<div>
+						From Date: 
+						<span t-field="o.start_date"/>
+					</div>
+					<div>
+						To Date: 
+						<span t-field="o.end_date"/>
+					</div>
+					<br />
+            		<table class="table table-condensed">
+            			<thead>
+            	  		  <th>Asset Description</th> 
+            	  		  <th>Purchase Date</th> 
+            	  		  <th>Depr Start Date</th> 
+            	  		  <th>Purchase Price</th> 
+            	  		  <th class="text-right">Total Depr</th> 
+            	  		  <th class="text-right">Salvage Value</th>
+            	  		  <th class="text-right">Current Year Depr</th>
+                          <th class="text-right">Current Period Depr</th>
+                          <th class="text-right">Book Value</th>
+            			</thead>
+            			<tbody>
+            			    <t t-call="account_asset_report.report_asset_cat_register_qweb"/>
+            			</tbody>
+                    </table>
+				</div>
+			</t>
+		</t>
+	</template>
+    <template id="account_asset_report.report_asset_cat_register_qweb">
+		<tr t-foreach="o.asset_cat_ids" t-as="asset_cat">
+            <td>
+                <b><span t-field="asset_cat.name"/></b>
+            </td>
+            <tr>
+                <td>
+                    <b><span t-field="asset_cat.name"/></b>
+                </td>
+                <td></td>
+                <td></td>
+                <td><b><span t-field="asset_cat.total_purchase_price"/></b></td>
+                <td class="text-right"><b><span t-field="asset_cat.total_depr"/></b></td>
+                <td class="text-right"><b><span t-field="asset_cat.total_salvage_value"/></b></td>
+                <td class="text-right"></td>
+                <td class="text-right"></td>
+                <td class="text-right">
+                    <b><span t-field="asset_cat.total_book_value"/></b>
+                </td>
+            </tr>
+		</tr>
+    </template>
+</odoo>

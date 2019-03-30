@@ -1,0 +1,18 @@
+<odoo>
+	<report 
+		id="action_report_asset_register_qweb"
+		model="report_asset_register_qweb"
+		string="Asset Register"
+		report_type="qweb-html"
+		name="account_asset_report.report_asset_register_qweb"
+		file="account_asset_report.report_asset_register_qweb" />
+		
+	<report	
+		id="action_report_asset_register_xlsx"
+		model="report_asset_register_qweb"
+		string="Asset Register Xlsx"
+		report_type="xlsx"
+		name="account_asset_report.report_asset_register_xlsx"
+		file="account_asset_report.report_asset_register_xlsx" />
+		
+</odoo>
