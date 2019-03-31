@@ -44,7 +44,7 @@ class AssetReport(models.TransientModel):
                        		LEFT JOIN account_asset_depreciation_line adl on adl.asset_id = aa.id 
             		   		WHERE adl.depreciation_date <= %s or adl.asset_id is NULL
             		   		GROUP BY aa.id
-            		)  
+            		)       
             INSERT INTO
                 report_asset_register_cat
                 (
@@ -118,19 +118,18 @@ class AssetReport(models.TransientModel):
                     salvage_value,
                     asset_id
                 )
-
             SELECT
-                (aa.value -  SUM(adl.amount)),
-                SUM(adl.amount),
-                aa.salvage_value,
-                aa.id
-            FROM
-                account_asset_asset aa
-                left join account_asset_depreciation_line adl on adl.asset_id = aa.id
-                inner join report_asset_register_cat rac on rac.asset_cat_id = aa.category_id
-                WHERE aa.date >= %s and aa.date <= %s and aa.state in ('open','close')
-                GROUP BY aa.id, rac.id
-
+                %s AS report_id,
+                %s AS create_uid,
+                NOW() AS create_date,
+                rac.id,
+                aa.name,
+                aa.date,
+                aa.value,
+                l.residual,
+                l.total,
+                l.salvage,
+                l.id
             FROM
                 account_asset_asset aa
                 left join line l on l.id = aa.id
@@ -145,7 +144,10 @@ class AssetReport(models.TransientModel):
             self.start_date,
             self.end_date,
         )
-
+        
+        
+        print query_inject_asset_cat_lines
+        
         self.env.cr.execute(query_inject_asset_cat_lines, query_inject_parameters)
         
 class AssetReportCategory(models.TransientModel):
