@@ -128,18 +128,23 @@ class AssetReport(models.TransientModel):
                 aa.value,
                 l.residual,
                 l.total,
-                l.salvage_value,
+                l.salvage,
                 l.id
             FROM
                 account_asset_asset aa
                 left join line l on l.id = aa.id
                 inner join report_asset_register_cat rac on rac.asset_cat_id = aa.category_id
+                WHERE aa.state in ('close', 'open') AND aa.date >= %s AND aa.date <= %s
+                
         """
         query_inject_parameters = (
             self.end_date,
             self.id,
             self.env.uid,
+            self.start_date,
+            self.end_date,
         )
+        
         
         print query_inject_asset_cat_lines
         
