@@ -38,27 +38,13 @@ class AssetReport(models.TransientModel):
     
     def inject_asset_cat_values(self):
         query_inject_asset_cat_values = """
-            WITH line AS (SELECT
-                    %s AS report_id,
-                    aa.id AS asset_id,
-                    aa.name AS name,
-                    aa.category_id AS asset_cat_id,
-                    aa.value AS purchase_price,
-                    (aa.value -  SUM(adl.amount)) AS book_value,
-                    SUM(adl.amount) AS total_depr, 
-                    aa.salvage_value as salvage_value,
-                    aa.state AS state,
-                    aa.date AS date
-                    from account_asset_asset aa
-                    left join account_asset_depreciation_line adl on adl.asset_id = aa.id and adl.move_check = 'true'
-                    """
-       
-        if self.filter_asset_cat_ids:
-            query_inject_asset_cat_values += """ where aa.category_id in %s"""
-            
-        query_inject_asset_cat_values += """    
-                    GROUP BY aa.id, aa.name
-            )
+            WITH line AS(SELECT aa.id as id, aa.name as name, aa.value as value, sum(adl.amount) as total, aa.value - sum(adl.amount) as residual, aa.salvage_value as salvage,
+            			    aa.state as state, aa.date as date, aa.category_id as categ_id
+            		        FROM account_asset_asset aa
+                       		LEFT JOIN account_asset_depreciation_line adl on adl.asset_id = aa.id 
+            		   		WHERE adl.depreciation_date <= %s or adl.asset_id is NULL
+            		   		GROUP BY aa.id
+            		)  
             INSERT INTO
                 report_asset_register_cat
                 (
@@ -72,41 +58,52 @@ class AssetReport(models.TransientModel):
                     total_book_value,
                     total_salvage_value
                 )
-            SELECT DISTINCT
+            SELECT 
                 %s AS report_id,
                 %s AS create_uid,
                 NOW() as create_date,
                 ac.id as asset_cat_id,
                 ac.name as name,
-                sum(l.purchase_price) as total_purchase_price,
-                sum(l.total_depr) as total_depr,
-                sum(l.book_value) as total_book_value,
-                sum(l.salvage_value) as total_salvage_value
-            FROM line l
-                left join account_asset_category ac on ac.id = l.asset_cat_id
-            WHERE l.report_id = %s and l.state in ('open','close') and l.date >= %s and l.date <= %s
+                SUM(l.value),
+                SUM(l.total),
+                SUM(l.residual),
+                sum(l.salvage)
+            FROM account_asset_category ac
+                left join line l on l.categ_id = ac.id
+            WHERE l.state in ('close', 'open') AND l.date >= %s AND l.date <= %s """
+            
+        if self.filter_asset_cat_ids:
+            query_inject_asset_cat_values += """
+                    AND ac.id in %s
+                """
+        query_inject_asset_cat_values += """
             GROUP BY ac.id
             ORDER BY name
         """
         
         query_inject_parameters = (
-            self.id,
-            )
-        if self.filter_asset_cat_ids:
-            query_inject_parameters += (tuple(self.filter_asset_cat_ids.ids),)
-        
-        query_inject_parameters += (
+            self.end_date,
             self.id,
             self.env.uid,
-            self.id,
             self.start_date,
-            self.end_date
-        )
+            self.end_date,
+            )
+            
+        if self.filter_asset_cat_ids:
+            query_inject_parameters += (tuple(self.filter_asset_cat_ids.ids),)
         
         self.env.cr.execute(query_inject_asset_cat_values, query_inject_parameters)
         
     def inject_asset_cat_lines(self):
         query_inject_asset_cat_lines = """
+            WITH line AS(SELECT aa.id as id, aa.name as name, aa.value as value, sum(adl.amount) as total, aa.value - sum(adl.amount) as residual, aa.salvage_value as salvage,
+            			    aa.state as state, aa.date as date, aa.category_id as categ_id
+            		        FROM account_asset_asset aa
+                       		LEFT JOIN account_asset_depreciation_line adl on adl.asset_id = aa.id 
+            		   		WHERE adl.depreciation_date <= %s or adl.asset_id is NULL
+            		   		GROUP BY aa.id
+            		)
+            
             INSERT INTO
                 report_asset_register_line(
                     report_id,
@@ -121,14 +118,8 @@ class AssetReport(models.TransientModel):
                     salvage_value,
                     asset_id
                 )
-            SELECT 
-                %s AS report_id,
-                %s AS create_uid,
-                NOW() AS create_date,
-                rac.id,
-                aa.name,
-                aa.date,
-                aa.value,
+
+            SELECT
                 (aa.value -  SUM(adl.amount)),
                 SUM(adl.amount),
                 aa.salvage_value,
@@ -139,14 +130,22 @@ class AssetReport(models.TransientModel):
                 inner join report_asset_register_cat rac on rac.asset_cat_id = aa.category_id
                 WHERE aa.date >= %s and aa.date <= %s and aa.state in ('open','close')
                 GROUP BY aa.id, rac.id
+
+            FROM
+                account_asset_asset aa
+                left join line l on l.id = aa.id
+                inner join report_asset_register_cat rac on rac.asset_cat_id = aa.category_id
+                WHERE aa.state in ('close', 'open') AND aa.date >= %s AND aa.date <= %s
+                
         """
         query_inject_parameters = (
+            self.end_date,
             self.id,
             self.env.uid,
             self.start_date,
-            self.end_date
+            self.end_date,
         )
-        
+
         self.env.cr.execute(query_inject_asset_cat_lines, query_inject_parameters)
         
 class AssetReportCategory(models.TransientModel):
