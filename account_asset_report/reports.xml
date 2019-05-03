@@ -12,7 +12,7 @@
 		model="report_asset_register_qweb"
 		string="Asset Register Xlsx"
 		report_type="xlsx"
-		name="account_asset_report.report_asset_register_xlsx"
-		file="account_asset_report.report_asset_register_xlsx" />
+		name="account_asset_report.asset_report_xlsx"
+		file="account_asset_report.asset_report_xlsx" />
 		
 </odoo>

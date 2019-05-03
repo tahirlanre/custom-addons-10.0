@@ -21,7 +21,7 @@ class AssetReport(models.TransientModel):
         self.ensure_one()
         self.compute_data_for_report()
         if xlsx_report:
-            report_name=''
+            report_name='account_asset_report.asset_report_xlsx'
         else:
             report_name='account_asset_report.report_asset_register_qweb'
 
@@ -146,10 +146,7 @@ class AssetReport(models.TransientModel):
             self.end_date,
             self.active,
         )
-        
-        
-        print query_inject_asset_cat_lines
-        
+                
         self.env.cr.execute(query_inject_asset_cat_lines, query_inject_parameters)
         
 class AssetReportCategory(models.TransientModel):

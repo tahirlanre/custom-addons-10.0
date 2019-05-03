@@ -319,7 +319,7 @@ class InventorySalesAnalysisXlsx(ReportXlsx):
                 self.sheet.write_string(self.row_pos, col_pos, value or '')
             elif cell_type == 'amount':
                 self.sheet.write_number(
-                    self.row_pos, col_pos, float(value), self.format_amount
+                    self.row_pos, col_pos, float(value or 0), self.format_amount
                 )
     
         self.row_pos += 1
