@@ -9,6 +9,7 @@ class AssetRegisterWizard(models.TransientModel):
     
     start_date = fields.Date("From purchase date", required="True")
     end_date = fields.Date("To purchase date", required="True")
+    active = fields.Boolean("Active?", default="True")
     
     asset_cat_ids = fields.Many2many(comodel_name='account.asset.category', string="Filter Categories")
     
@@ -22,6 +23,7 @@ class AssetRegisterWizard(models.TransientModel):
                     'start_date':self.start_date,
                     'end_date': self.end_date,
                     'filter_asset_cat_ids': [(6, 0, self.asset_cat_ids.ids)],
+                    'active': self.active,
                 }
     
     @api.multi

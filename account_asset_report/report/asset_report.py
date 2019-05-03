@@ -10,6 +10,7 @@ class AssetReport(models.TransientModel):
     
     start_date = fields.Date("From purchase date")
     end_date = fields.Date("To purchase date")
+    active = fields.Boolean("Active?")
     filter_asset_cat_ids = fields.Many2many(comodel_name='account.asset.category', string="Filter Categories")
     
     asset_cat_ids = fields.One2many(comodel_name='report_asset_register_cat', inverse_name='report_id')
@@ -39,7 +40,7 @@ class AssetReport(models.TransientModel):
     def inject_asset_cat_values(self):
         query_inject_asset_cat_values = """
             WITH line AS(SELECT aa.id as id, aa.name as name, aa.value as value, sum(adl.amount) as total, aa.value - sum(adl.amount) as residual, aa.salvage_value as salvage,
-            			    aa.state as state, aa.date as date, aa.category_id as categ_id
+            			    aa.state as state, aa.date as date, aa.category_id as categ_id, aa.active as active
             		        FROM account_asset_asset aa
                        		LEFT JOIN account_asset_depreciation_line adl on adl.asset_id = aa.id 
             		   		WHERE adl.depreciation_date <= %s or adl.asset_id is NULL
@@ -70,7 +71,7 @@ class AssetReport(models.TransientModel):
                 sum(l.salvage)
             FROM account_asset_category ac
                 left join line l on l.categ_id = ac.id
-            WHERE l.state in ('close', 'open') AND l.date >= %s AND l.date <= %s """
+            WHERE l.state in ('close', 'open') AND l.date >= %s AND l.date <= %s AND l.active = %s"""
             
         if self.filter_asset_cat_ids:
             query_inject_asset_cat_values += """
@@ -87,6 +88,7 @@ class AssetReport(models.TransientModel):
             self.env.uid,
             self.start_date,
             self.end_date,
+            self.active,
             )
             
         if self.filter_asset_cat_ids:
@@ -103,7 +105,6 @@ class AssetReport(models.TransientModel):
             		   		WHERE adl.depreciation_date <= %s or adl.asset_id is NULL
             		   		GROUP BY aa.id
             		)
-            
             INSERT INTO
                 report_asset_register_line(
                     report_id,
@@ -134,7 +135,7 @@ class AssetReport(models.TransientModel):
                 account_asset_asset aa
                 left join line l on l.id = aa.id
                 inner join report_asset_register_cat rac on rac.asset_cat_id = aa.category_id
-                WHERE aa.state in ('close', 'open') AND aa.date >= %s AND aa.date <= %s
+                WHERE aa.state in ('close', 'open') AND aa.date >= %s AND aa.date <= %s AND aa.active = %s
                 
         """
         query_inject_parameters = (
@@ -143,6 +144,7 @@ class AssetReport(models.TransientModel):
             self.env.uid,
             self.start_date,
             self.end_date,
+            self.active,
         )
         
         

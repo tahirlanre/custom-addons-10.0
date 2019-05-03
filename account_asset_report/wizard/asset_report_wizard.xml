@@ -12,6 +12,7 @@
 						<!--<field name="group_by"/>-->
 					</group>
 					<group name="other_filters">
+                        <field name="active"/>
 					</group>
 				</group>
 				<group/>
