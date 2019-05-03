@@ -3,7 +3,7 @@
 		id="action_report_asset_register_qweb"
 		model="report_asset_register_qweb"
 		string="Asset Register"
-		report_type="qweb-html"
+		report_type="qweb-pdf"
 		name="account_asset_report.report_asset_register_qweb"
 		file="account_asset_report.report_asset_register_qweb" />
 		
