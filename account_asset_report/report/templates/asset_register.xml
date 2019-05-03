@@ -21,13 +21,13 @@
             		<table class="table table-condensed">
             			<thead>
             	  		  <th>Asset Description</th> 
-            	  		  <th>Purchase Date</th> 
-            	  		  <th>Depr Start Date</th> 
-            	  		  <th>Purchase Price</th> 
+            	  		  <th class="text-right">Purchase Date</th> 
+            	  		  <!--<th>Depr Start Date</th> -->
+            	  		  <th class="text-right">Purchase Price</th> 
             	  		  <th class="text-right">Total Depr</th> 
             	  		  <th class="text-right">Salvage Value</th>
-            	  		  <th class="text-right">Current Year Depr</th>
-                          <th class="text-right">Current Period Depr</th>
+            	  		  <!--<th class="text-right">Current Year Depr</th>
+                          <th class="text-right">Current Period Depr</th>-->
                           <th class="text-right">Book Value</th>
             			</thead>
             			<tbody>
@@ -48,13 +48,13 @@
                 <td>
                     <b><span t-field="asset_cat.name"/></b>
                 </td>
-                <td></td>
-                <td></td>
-                <td><b><span t-field="asset_cat.total_purchase_price"/></b></td>
+                <td class="text-right"></td>
+                <!--<td></td>-->
+                <td class="text-right"><b><span t-field="asset_cat.total_purchase_price"/></b></td>
                 <td class="text-right"><b><span t-field="asset_cat.total_depr"/></b></td>
                 <td class="text-right"><b><span t-field="asset_cat.total_salvage_value"/></b></td>
-                <td class="text-right"></td>
-                <td class="text-right"></td>
+                <!--<td class="text-right"></td>
+                <td class="text-right"></td>-->
                 <td class="text-right">
                     <b><span t-field="asset_cat.total_book_value"/></b>
                 </td>
@@ -66,13 +66,15 @@
             <td>
                 <span t-field="asset.description"/>
             </td>
-            <td></td>
-            <td></td>
-            <td><span t-field="asset.purchase_price"/></td>
+            <td class="text-right">
+                <span t-field="asset.purchase_date"/>
+            </td>
+            <!--<td></td>-->
+            <td class="text-right"><span t-field="asset.purchase_price"/></td>
             <td class="text-right"><span t-field="asset.total_depr"/></td>
             <td class="text-right"><span t-field="asset.salvage_value"/></td>
-            <td class="text-right"></td>
-            <td class="text-right"></td>
+            <!--<td class="text-right"></td>
+            <td class="text-right"></td>-->
             <td class="text-right">
                 <span t-field="asset.book_value"/>
             </td>
