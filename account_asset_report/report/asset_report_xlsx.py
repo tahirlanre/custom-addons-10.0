@@ -211,32 +211,18 @@ class AssetReportXlsx(ReportXlsx):
         self.write_array_header()
         #import pdb; pdb.set_trace()
         for asset_cat in report.asset_cat_ids:
+            self.write_header_line(asset_cat)
             for asset in asset_cat.line_ids:
                 self.write_line(asset)
-    
-    def summary_write_line(self, line_object):
-        #cell_level = line_object['level']
-        for col_pos, column in self.columns.iteritems():
-            value = line_object[column['field']]
-            cell_type = column.get('type', 'string')
-            if cell_type == 'string':
-                self.sheet.write_string(self.row_pos, col_pos, value or '')
-            elif cell_type == 'amount':
-                self.sheet.write_number(
-                    self.row_pos, col_pos, float(value), self.format_amount
-                )
-        self.row_pos += 1
+            self.write_end_line(asset_cat)
                 
     def write_header_line(self, line_object):
         header_columns = {
                 0: {'header': '',
                     'field': 'name',
-                    'width': 20},}
-        for col_pos, column in header_columns.iteritems():
-            if column['field'] == None:
-                self.sheet.write_string(self.row_pos, col_pos,column.get('header',''),self.format_header_center)
-                continue
-                
+                    'width': 20},
+                    }
+        for col_pos, column in header_columns.iteritems():       
             value = line_object[column['field']]
             cell_type = column.get('type', 'string')
             if cell_type == 'string':
@@ -256,36 +242,39 @@ class AssetReportXlsx(ReportXlsx):
                 self.sheet.write_string(self.row_pos, col_pos, value or '')
             elif cell_type == 'amount':
                 self.sheet.write_number(
-                    self.row_pos, col_pos, float(value or 0), self.format_amount
+                    self.row_pos, col_pos, float(value), self.format_amount
                 )
         self.row_pos += 1
     
     def write_end_line(self, line_object):
         end_columns = {
                 0: {'header': '',
-                    'field': None,
-                    'width': 20},
+                    'field': 'name',
+                    'width': 30},
                 1: {'header': '',
                     'field': None,
+                    'type': 'amount',
                     'width': 15},
                 2: {'header': '',
-                    'field': None,
-                    'width': 30},
-                3: {'header': 'Closing balance',
-                    'field': None,
-                    'width': 30},
-                4: {'header': '',
-                    'field': None,
+                    'field': 'total_purchase_price',
+                    'type': 'amount',
                     'width': 15},
-                5: {'header': 'Closing Balance',
-                    'field': 'closing_balance',
+                3: {'header': '',
+                    'field': 'total_depr',
+                    'type': 'amount',
+                    'width': 15},
+                4: {'header': '',
+                    'field': 'total_salvage_value',
+                    'type': 'amount',
+                    'width': 15},
+                5: {'header': '',
+                    'field': 'total_book_value',
                     'type': 'amount',
                     'width': 15},
                 }
                 
         for col_pos, column in end_columns.iteritems():
             if column['field'] == None:
-                self.sheet.write_string(self.row_pos, col_pos,column.get('header',''),self.format_header_center)
                 continue
                 
             value = line_object[column['field']]
