@@ -31,10 +31,10 @@ class InventoryValuation(models.AbstractModel):
             if row['qty'] != 0:
                 product = self.env['product.product'].browse(row['product_id'])
                 available_qty = row['qty']
-                cost_price = product.standard_price
+                value = row['value']
                 data[row['product_id']] = {
                     'qty' : available_qty,
-                    'value': available_qty * cost_price
+                    'value': value
                 }
         return data
             
