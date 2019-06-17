@@ -20,4 +20,7 @@ class res_partner(models.Model):
     business_type = fields.Char(string='Business Type') #change to fields.Many2one
     phone2 = fields.Char(string='Phone 2')
     referral = fields.Char(string='Referral')
+    instagram_account = fields.Text(string='Instagram')
+    twitter_account = fields.Text(string='Twitter')
+    facebook_account = fields.Text(string='Facebook')
     

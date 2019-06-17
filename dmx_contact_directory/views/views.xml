@@ -8,12 +8,25 @@
               <field name="parent_id" position="after">
                 <field name="business_type" placeholder="business type"/>
               </field>
+              <field name="phone" position="before">
+                  <field name="mobile"/>
+              </field>
               <field name="phone" position="after">
                   <field name="phone2"/>
               </field>
               <field name="category_id" position="after">
                     <field name="referral"/>
               </field>
+              <field name="title" position="before">
+                    <field name="instagram_account"/>
+              </field>
+              <field name="title" position="before">
+                    <field name="twitter_account"/>
+              </field>
+              <field name="title" position="before">
+                    <field name="facebook_account"/>
+              </field>
+              <field name="fax" invisible="1"/>
           </field>
       </record>  
   </data>
