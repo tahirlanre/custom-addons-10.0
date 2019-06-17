@@ -72,6 +72,8 @@ class delivery(models.Model):
     user_id = fields.Many2one('res.users', string='Created by', track_visibility='onchange',
         readonly=True, default=lambda self: self.env.user)
     partner_balance = fields.Float(string="Customer Balance",compute=_get_partner_balance, readonly=True)
+    pickup_name = fields.Char(string='Pick up name')
+    delivery_name = fields.Char(string='Delivery name')
     #delivery_cost = fields.Float('Delivery Cost')
     
     def invoice(self):
