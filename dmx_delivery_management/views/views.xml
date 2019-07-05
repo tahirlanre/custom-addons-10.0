@@ -31,6 +31,7 @@
                     <group name="pickup_info" string="Pick Up Information">
                         <field name="partner_id"/>
                         <field name="partner_balance"/>
+                        <field name="pickup_name"/>
                         <field name="pickup_location"/>
                         <field name="pickup_number"/>
                         <field name="item_description"/>
@@ -42,22 +43,19 @@
                 </group>
                 <group>
                     <group name="delivery_info" string="Delivery Information">
+                        <field name="delivery_name"/>
                         <field name="delivery_location"/>
                         <field name="delivery_number"/>
                         <field name="delivery_fee"/>
                         <field name="amount_to_collect"/>
                         <field name="weight"/>
                     </group>
-                    <group name="payment_info" string="Payment Information">
-                        <field name="payment_mode_id"/>
-                        <field name="payment_status"/>
-                    </group>
-                </group>
-                <group>
                     <group name="rider_info" string="Rider Information">
                         <field name="dropoff_rider"/>
                         <field name="pickup_rider"/>
                     </group>
+                </group>
+                <group>
                     <group name="other_info" string="Other Information">
                         <field name="delivery_note"/>
                         <field name="third_party_company"/>
@@ -65,7 +63,6 @@
                         <field name="user_id"/>
                     </group>
                 </group>
-                
             </sheet>
           
         </form>
@@ -116,7 +113,7 @@
     </record>
     
     <record model="ir.actions.act_window" id="dmx_delivery_management.action_despatch_rider">
-      <field name="name">Despatch Rider</field>
+      <field name="name">Dispatch Rider</field>
       <field name="res_model">despatch.rider</field>
       <field name="view_mode">tree,form</field>
     </record>

@@ -13,7 +13,7 @@
     
     <menuitem name="Delivery" id="dmx_delivery_management.menu_delivery" parent="dmx_delivery_management.menu_root"
               action="dmx_delivery_management.action_delivery" sequence="0"/>
-    <menuitem name="Desptach Riders" id="dmx_delivery_management.menu_despatch_rider" parent="dmx_delivery_management.configuration"                    action="dmx_delivery_management.action_despatch_rider"/>
+    <menuitem name="Disptach Riders" id="dmx_delivery_management.menu_despatch_rider" parent="dmx_delivery_management.configuration"                    action="dmx_delivery_management.action_despatch_rider"/>
     <!--<menuitem name="Delivery Type" id="dmx_delivery_management.menu_delivery_type" parent="dmx_delivery_management.configuration"                       action="dmx_delivery_management.action_delivery_type"/>-->
     <menuitem name="Delivery Payment Mode" id="dmx_delivery_management.menu_delivery_payment_mode" parent="dmx_delivery_management.configuration" action="dmx_delivery_management.action_delivery_payment_mode"/>
     <!--<menuitem name="Delivery Status" id="dmx_delivery_management.menu_delivery_status" parent="dmx_delivery_management.configuration"
