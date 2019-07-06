@@ -18,7 +18,7 @@ class res_partner(models.Model):
     _inherit = "res.partner"
     
     business_type = fields.Char(string='Business Type') #change to fields.Many2one
-    phone2 = fields.Char(string='Phone 2')
+    #phone2 = fields.Char(string='Phone 2')
     referral = fields.Char(string='Referral')
     instagram_account = fields.Char(string='Instagram')
     twitter_account = fields.Char(string='Twitter')
