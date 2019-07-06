@@ -12,5 +12,15 @@
 	        <field name="padding">4</field>
 	    </record>
 	</data>
-	
+    
+    <data noupdate="1">
+        <record id="delivery_product" model="product.product">
+            <field name="name">Delivery</field>
+            <field name="standard_price">0.0</field>
+            <field name="list_price">0.0</field>
+            <field name="type">service</field>
+            <field name="default_code">DL00</field>
+            <field name="sale_line_warn">no-message</field>
+        </record>
+    </data>
 </odoo>
