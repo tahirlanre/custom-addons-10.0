@@ -109,9 +109,9 @@ class AccountInvoice(models.Model):
     def invoice_validate(self):
         super(AccountInvoice, self).invoice_validate()
         for invoice in self:
-            if invoice.type in ('out_refund') and invoice.state == 'open':
+            if invoice.type in ('out_refund') and (invoice.state == 'open' or invoice.state == 'paid'):
                 self.action_stock_receive()
-            elif invoice.type in ('in_refund') and invoice.state == 'open':
+            elif invoice.type in ('in_refund') and (invoice.state == 'open' or invoice.state == 'paid'):
                 self.action_stock_transfer()
         return True
 

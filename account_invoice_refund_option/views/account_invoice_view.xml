@@ -35,7 +35,7 @@
 	<field name="inherit_id" ref="account.invoice_tree"/>
 	<field name="arch" type="xml">
 		<xpath expr="//tree" position="replace">
-            <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" decoration-danger="amount_total_signed &lt; 0" string="Invoice">
+            <tree decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" decoration-danger="type == 'out_refund'" string="Invoice">
                 <field name="partner_id" groups="base.group_user" string="Customer"/>
                 <field name="date_invoice"/>
                 <field name="number"/>
